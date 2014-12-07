@@ -1,4 +1,4 @@
-rs-farming-timer
+RuneScape Farming Timer
 ================
 
-RuneScape Farming Timer
+Take the guesswork out of RuneScape farm runs.

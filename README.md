@@ -1,4 +1,4 @@
-RuneScape Farming Timer
+RuneScape Timer
 ================
 
-Take the guesswork out of RuneScape farm runs.
+Take the guesswork out of RuneScape farm runs, dailies, and more.

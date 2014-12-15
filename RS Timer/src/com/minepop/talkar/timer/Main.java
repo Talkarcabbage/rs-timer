@@ -26,6 +26,7 @@ import com.minepop.talkar.util.FileManager;
 public class Main {
 	
 	//I am a potato This is an edit.
+	//THIS IS A NEW COMMENT
 	static TrayIcon trayIcon;
 	static Taskbarwin mainWin;
 	static ArrayList<Timer> timerList = new ArrayList<Timer>();

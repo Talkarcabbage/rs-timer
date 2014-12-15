@@ -1,0 +1,40 @@
+ackage com.minepop.talkar.timer.gui;
+
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.SystemColor;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+public class TimerPanel extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3010424617518693233L;
+
+	public TimerPanel() {
+		setOpaque(true);
+		//setBounds(new Rectangle(150,50,0,0));
+		Dimension d = new Dimension(300,50);
+		setPreferredSize(d);
+		setMaximumSize(d);
+		setMinimumSize(d);
+		setBackground(SystemColor.inactiveCaption);
+		setLayout(null);
+		
+		
+		JLabel lblName = new JLabel("Name");
+		lblName.setBounds(10, 5, 130, 14);
+		lblName.setHorizontalAlignment(SwingConstants.CENTER);
+		lblName.setFont(new Font("Arial", Font.BOLD, 18));
+		add(lblName);
+		
+		JLabel lblTimeLeft = new JLabel("Time Left");
+		lblTimeLeft.setBounds(10, 25, 130, 14);
+		lblTimeLeft.setFont(new Font("Arial", Font.PLAIN, 14));
+		lblTimeLeft.setHorizontalAlignment(SwingConstants.CENTER);
+		add(lblTimeLeft);
+	}
+}

@@ -25,7 +25,7 @@ import com.minepop.talkar.util.FileManager;
 
 public class Main {
 	
-	
+	//I am a potato This is an edit.
 	static TrayIcon trayIcon;
 	static Taskbarwin mainWin;
 	static ArrayList<Timer> timerList = new ArrayList<Timer>();

@@ -90,8 +90,7 @@ public class Main {
 				progressBarList.get(i).setForeground(Color.black);
 			}
 		}
-		mainWin.revalidate();
-		mainWin.repaint();
+
 	}
 	
 	private static void loadTimers() {
@@ -107,9 +106,12 @@ public class Main {
 				cfgList.add(s);
 				if (timerInfo[1].equals("mainTabName")) {
 					mainWin.getTabbedPane().setTitleAt(0, timerInfo[2]);
-				} else if (timerInfo[1].equals("gridColumns") || timerInfo[1].equals("gridRows")) {
+				} else if (timerInfo[1].equals("gridColumns")) {
+					mainWin.setGridColumns(Integer.parseInt(timerInfo[2]));
+				} else if( timerInfo[1].equals("gridRows")) {
 					mainWin.setGridRows(Integer.parseInt(timerInfo[2]));
-				} else if (timerInfo[1].equals("winSize")) {
+				}
+				else if (timerInfo[1].equals("winSize")) {
 					mainWin.setBounds(Toolkit.getDefaultToolkit().getScreenSize().width-Integer.parseInt(timerInfo[2]), Toolkit.getDefaultToolkit().getScreenSize().height-(Integer.parseInt(timerInfo[3])+40), Integer.parseInt(timerInfo[2]) , Integer.parseInt(timerInfo[3]));
 				}
 				

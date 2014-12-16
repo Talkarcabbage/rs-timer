@@ -38,6 +38,7 @@ public class Taskbarwin extends JFrame {
 	private JSlider slider;
 	ArrayList<JPanel> tabList = new ArrayList<JPanel>();
 	int gridRows = 3;
+	int gridColumns = 0;
 	
 	public ArrayList<JPanel> getTabList() {
 		return tabList;
@@ -245,7 +246,7 @@ try {
 		tabbedPane.addTab("Main", null, mainPanel, null);
 		mainPanel.setBorder(null);
 		tabList.add(mainPanel);
-		mainPanel.setLayout(new GridLayout(gridRows, 0, 2, 2));
+		mainPanel.setLayout(new GridLayout(gridRows, gridColumns, 2, 2));
 		
 		
 		
@@ -288,19 +289,40 @@ try {
 	}
 
 	public void setGridRows(int gridRows) {
+		this.gridRows = gridRows;
+		if (gridColumns == 0 && gridRows == 0) {
+			setGridColumns(2);
+		}
+		resetGridLayout();
+	}
+	
+	public void setGridColumns(int gridColumns) {
+		this.gridColumns = gridColumns;
+		if (gridRows == 0 && gridColumns == 0) {
+			setGridRows(3);
+		}
+		resetGridLayout();
+	}
+	
+	public void resetGridLayout() {
 		for (JPanel p : this.getTabList()) {
 			GridLayout panelLayout = (GridLayout)(p.getLayout());
+			if (gridRows == 0) {
+				panelLayout.setColumns(gridColumns);
+			}
 			panelLayout.setRows(gridRows);
+			panelLayout.setColumns(gridColumns);
 		}
-		this.gridRows = gridRows;
 		this.revalidate();
 		this.repaint();
+		System.out.println("Rows: " + gridRows + " | " + "Columns: " + gridColumns);
+		
 	}
 	
 	public void addNewTab(String name) {
 		JPanel newPanel = new JPanel();
 		newPanel.setBorder(null);
-		newPanel.setLayout(new GridLayout(gridRows, 0, 2, 2));
+		newPanel.setLayout(new GridLayout(gridRows, gridColumns, 2, 2));
 		newPanel.setName(name);
 		tabList.add(newPanel);
 		tabbedPane.addTab(name, newPanel);

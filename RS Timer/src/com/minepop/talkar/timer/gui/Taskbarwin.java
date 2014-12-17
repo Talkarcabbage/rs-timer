@@ -2,7 +2,6 @@ package com.minepop.talkar.timer.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
@@ -22,8 +21,6 @@ import javax.swing.JProgressBar;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
 
 import com.minepop.talkar.timer.Main;
 import com.minepop.talkar.timer.Timer;
@@ -51,29 +48,29 @@ public class Taskbarwin extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-
-try {
-    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-        if ("Nimbus".equals(info.getName())) {
-            UIManager.setLookAndFeel(info.getClassName());
-            break;
-        }
-    }
-} catch (Exception e) {
-    // If Nimbus is not available, you can set the GUI to another look and feel.
-}
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Taskbarwin frame = new Taskbarwin();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//
+//try {
+//    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+//        if ("Nimbus".equals(info.getName())) {
+//            UIManager.setLookAndFeel(info.getClassName());
+//            break;
+//        }
+//    }
+//} catch (Exception e) {
+//    // If Nimbus is not available, you can set the GUI to another look and feel.
+//}
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					Taskbarwin frame = new Taskbarwin();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the frame.
@@ -143,15 +140,20 @@ try {
 				String name = JOptionPane.showInputDialog(null, "Input a name for the timer.");	
 				boolean isNormal = true;
 				
-				int dur;
+				long dur;
 				long startTime;
 				
 				if (name.startsWith("!")) {
 					isNormal = false;
 					name = name.substring(1);
-					startTime = (long)(Math.floor(System.currentTimeMillis()/86400000)*86400000);
-					dur = 86400000;
+					startTime = (long)(Math.floor(System.currentTimeMillis()/Main.DAY_LENGTH)*Main.DAY_LENGTH);
+					dur = Main.DAY_LENGTH;
 					
+				} else if (name.startsWith("#")) {
+					isNormal = false;
+					name = name.substring(1);
+					startTime = (long)(((Math.floor((System.currentTimeMillis()+Main.DAY_LENGTH)/Main.WEEK_LENGTH))*Main.WEEK_LENGTH)-Main.DAY_LENGTH);
+					dur = Main.WEEK_LENGTH;
 				} else {
 					dur = 1000 * Integer.parseInt( JOptionPane.showInputDialog(null,"Input the timer's duration in seconds."));
 					startTime = System.currentTimeMillis();

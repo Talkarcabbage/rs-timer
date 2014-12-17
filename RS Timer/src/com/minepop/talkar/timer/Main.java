@@ -25,6 +25,9 @@ import com.minepop.talkar.util.FileManager;
 
 public class Main {
 	
+	public static final long DAY_LENGTH = 86400000;
+	public static final long WEEK_LENGTH = 604800000;
+	
 	//I am a potato This is an edit.
 	//THIS IS A NEW COMMENT
 	static TrayIcon trayIcon;
@@ -194,10 +197,11 @@ public class Main {
 				if (t.isNormalTimer()){
 					t.setStartingTime(System.currentTimeMillis());				
 					bar.setForeground(Color.black);
-				} else {
-					t.setStartingTime(Math.floor(System.currentTimeMillis()/86400000)*86400000);
-					t.setDurationTotal(86400000);
-				}
+				} else if (t.getDurationTotal() == DAY_LENGTH){
+					t.setStartingTime(Math.floor(System.currentTimeMillis()/DAY_LENGTH)*DAY_LENGTH);
+				} else if (t.getDurationTotal() == WEEK_LENGTH){
+					t.setStartingTime((((Math.floor((System.currentTimeMillis()+DAY_LENGTH)/WEEK_LENGTH))*WEEK_LENGTH)-DAY_LENGTH));	
+					}
 				saveTimers();
 				break;
 			}

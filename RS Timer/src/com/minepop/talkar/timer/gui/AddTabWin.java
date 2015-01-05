@@ -5,8 +5,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import java.awt.BorderLayout;
 
-public class AddWin extends JFrame {
+public class AddTabWin extends JFrame {
 
 	/**
 	 * 
@@ -21,7 +22,7 @@ public class AddWin extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AddWin frame = new AddWin();
+					AddTabWin frame = new AddTabWin();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -33,12 +34,15 @@ public class AddWin extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public AddWin() {
+	public AddTabWin() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
+		contentPane.setLayout(new BorderLayout(0, 0));
+		
+		JPanel addMainPanel = new JPanel();
+		contentPane.add(addMainPanel, BorderLayout.CENTER);
 	}
 }

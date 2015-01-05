@@ -3,6 +3,7 @@ package com.minepop.talkar.timer;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
@@ -64,7 +65,7 @@ public class Main {
 		}
 		
 		
-		
+		//TODO why?
 		saveTimers();
 		while (true) {
 			tickTimers();
@@ -119,7 +120,11 @@ public class Main {
 				}
 				
 			} else if (timerInfo[0].equals("tab")) {
-				mainWin.addNewTab(timerInfo[1]);
+				if (timerInfo.length < 4) {
+					mainWin.addNewTab(mainWin.getGridRows(), mainWin.getGridColumns(), timerInfo[1]);
+				} else {
+					mainWin.addNewTab(Integer.parseInt(timerInfo[1]), Integer.parseInt(timerInfo[2]), timerInfo[3]);
+				}
 				
 			} else if (timerInfo[0].equals("timer")) {
 				addTimer(Double.parseDouble(timerInfo[1]), Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), Boolean.parseBoolean(timerInfo[4]), timerInfo[5]);
@@ -178,7 +183,7 @@ public class Main {
 		
 		if (mainWin.getTabList().size() > 1) {
 			for (int i = 1; i < mainWin.getTabList().size(); i++) {
-				toSave += "tab," + mainWin.getTabList().get(i).getName() + "\n";
+				toSave += "tab," + ((GridLayout)(mainWin.getTabList().get(i).getLayout())).getRows() + "," + ((GridLayout)(mainWin.getTabList().get(i).getLayout())).getColumns() + "," + mainWin.getTabList().get(i).getName() + "\n";
 			}
 		}
 		

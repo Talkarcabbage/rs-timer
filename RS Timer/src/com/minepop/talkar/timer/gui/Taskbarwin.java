@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -188,7 +189,10 @@ public class Taskbarwin extends JFrame {
 		addTabButton.setToolTipText("Adds a new tab.");
 		addTabButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				addNewTab(JOptionPane.showInputDialog(null, "Input a name for the tab."));
+				String tabName = JOptionPane.showInputDialog(null, "Input a name for the tab.");
+				int tabRows = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of rows for the tab."));
+				int tabColumns = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of rows for the tab."));
+				addNewTab(tabRows, tabColumns, tabName);
 			}
 		});
 		addTabButton.setForeground(Color.GREEN);
@@ -289,6 +293,10 @@ public class Taskbarwin extends JFrame {
 	public int getGridRows() {
 		return gridRows;
 	}
+	
+	public int getGridColumns() {
+		return gridColumns;
+	}
 
 	public void setGridRows(int gridRows) {
 		this.gridRows = gridRows;
@@ -321,7 +329,7 @@ public class Taskbarwin extends JFrame {
 		
 	}
 	
-	public void addNewTab(String name) {
+	public void addNewTab(int gridRows, int gridColumns, String name) {
 		JPanel newPanel = new JPanel();
 		newPanel.setBorder(null);
 		newPanel.setLayout(new GridLayout(gridRows, gridColumns, 2, 2));

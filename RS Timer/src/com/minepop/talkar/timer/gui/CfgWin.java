@@ -7,15 +7,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-/*
- * 	TODO this.
- */
-public class AddBarwin extends JFrame {
+public class CfgWin extends JFrame {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7047886515230003423L;
+	private static final long serialVersionUID = -3143804141136629554L;
 	private JPanel contentPane;
 
 	/**
@@ -25,7 +22,7 @@ public class AddBarwin extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AddBarwin frame = new AddBarwin();
+					CfgWin frame = new CfgWin();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -37,7 +34,7 @@ public class AddBarwin extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public AddBarwin() {
+	public CfgWin() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();

@@ -11,17 +11,16 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import com.minepop.talkar.timer.gui.Taskbarwin;
+import com.minepop.talkar.timer.gui.MainWin;
 import com.minepop.talkar.util.FileManager;
 
 public class Main {
@@ -32,7 +31,7 @@ public class Main {
 	//I am a potato This is an edit.
 	//THIS IS A NEW COMMENT
 	static TrayIcon trayIcon;
-	static Taskbarwin mainWin;
+	static MainWin mainWin;
 	static ArrayList<Timer> timerList = new ArrayList<Timer>();
 	static ArrayList<JProgressBar> progressBarList = new ArrayList<JProgressBar>();
 	
@@ -40,7 +39,7 @@ public class Main {
 	//static ArrayList<String> commentList = new ArrayList<String>();
 	
 	public static void main(String[] args) throws InterruptedException {
-		System.out.println();
+		System.out.println("Initializing GUI and tray...");
 		try {
 		    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 		        if ("Nimbus".equals(info.getName())) {
@@ -50,23 +49,30 @@ public class Main {
 		    }
 		} catch (Exception e) {}
 		
-		mainWin = new Taskbarwin();
+		mainWin = new MainWin();
 		prepareSystemTray();
 		mainWin.setVisible(true);
 		FileManager.ensureExists("timers.cfg");
-		loadTimers();
-
 		
+		System.out.println("Loading timers...");
+		try {
+		loadTimers();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "An exception occured while loading timer information. Run the jar using the console for more information.", "Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+		}
+		System.out.println("Timers loaded.");
 		
 		if (timerList.isEmpty()) {
-			addTimer(System.currentTimeMillis(),120000, 0, true, "Two Minutes");
-			addTimer(System.currentTimeMillis(),3600000, 0, true,  "Sixty Minutes");
+			addTimer(System.currentTimeMillis(),120000, 0, true, "Sample: Two Minutes");
+			addTimer(System.currentTimeMillis(),3600000, 0, true,  "Sample: Sixty Minutes");
 			
 		}
 		
 		
 		//TODO why?
-		saveTimers();
+		//saveTimers();
+		System.out.println("Initializion complete.");
 		while (true) {
 			tickTimers();
 			Thread.sleep(1000);
@@ -98,6 +104,7 @@ public class Main {
 	}
 	
 	private static void loadTimers() {
+		boolean importResave = false;
 		String[] timersStringArray = FileManager.readFileSplit("timers.cfg");
 		
 		for (String s : timersStringArray) {
@@ -108,6 +115,7 @@ public class Main {
 			String[] timerInfo = s.split(",");
 			if (timerInfo[0].equals("cfg")) {
 				cfgList.add(s);
+				System.out.println("cfg: " + timerInfo[1]);
 				if (timerInfo[1].equals("mainTabName")) {
 					mainWin.getTabbedPane().setTitleAt(0, timerInfo[2]);
 				} else if (timerInfo[1].equals("gridColumns")) {
@@ -121,7 +129,9 @@ public class Main {
 				
 			} else if (timerInfo[0].equals("tab")) {
 				if (timerInfo.length < 4) {
+					System.out.println("Imported old tab data!");
 					mainWin.addNewTab(mainWin.getGridRows(), mainWin.getGridColumns(), timerInfo[1]);
+					importResave = true;
 				} else {
 					mainWin.addNewTab(Integer.parseInt(timerInfo[1]), Integer.parseInt(timerInfo[2]), timerInfo[3]);
 				}
@@ -130,10 +140,13 @@ public class Main {
 				addTimer(Double.parseDouble(timerInfo[1]), Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), Boolean.parseBoolean(timerInfo[4]), timerInfo[5]);
 
 			} else {
-				System.out.println("Old Data");
+				System.out.println("Imported old timer data!");
+				importResave=true;
 				addTimer(Double.parseDouble(timerInfo[0]), Double.parseDouble(timerInfo[1]), 0, true, timerInfo[2]);
 			}
-			
+			if (importResave) {
+				Main.saveTimers();
+			}
 		}
 	}
 	
@@ -146,12 +159,8 @@ public class Main {
 		newBar.setStringPainted(true);
 		newBar.setString(name);
 		newBar.setName(name);
-		newBar.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				resetTimer(((JProgressBar)(e.getSource())).getName(), (JProgressBar)e.getSource());
-			}
-		});
+		
+		newBar.addMouseListener(mainWin);
 		mainWin.addTimerBar(newBar, newTimer.getTab());
 		mainWin.revalidate();
 		mainWin.repaint();
@@ -165,9 +174,9 @@ public class Main {
 				timerList.remove(i);
 				mainWin.removeTimerBar(progressBarList.get(i));
 				progressBarList.remove(i);
+				
 				mainWin.revalidate();
 				mainWin.repaint();
-				saveTimers();
 			}
 			
 		}
@@ -195,7 +204,7 @@ public class Main {
 
 	}
 
-	private static void resetTimer(String timerName, JProgressBar bar) {
+	public static void resetTimer(String timerName, JProgressBar bar) {
 		for (Timer t : timerList) {
 			if (t.getName().equals(timerName)) {
 				

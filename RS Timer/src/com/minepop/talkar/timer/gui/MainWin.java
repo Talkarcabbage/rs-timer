@@ -337,7 +337,7 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 			} else if (((JButton) o).getName().equals("addTabButton")) {
 				String tabName = JOptionPane.showInputDialog(null, "Input a name for the tab.");
 				int tabRows = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of rows for the tab.", this.getGridRows()));
-				int tabColumns = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of rows for the tab."), this.getGridColumns());
+				int tabColumns = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of columns for the tab.", this.getGridColumns()));
 				addNewTab(tabRows, tabColumns, tabName);
 				Main.saveTimers();
 			}

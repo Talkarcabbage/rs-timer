@@ -5,7 +5,7 @@ RuneScape Timer
 
 For version 0.8.2
 
-A simple timer program originally intended for, but not limited to, use for timing RuneScape dailies and farm runs. Displays a window with customizable timers shown with progress bars. Includes "duration from starting point" timers and daily/weekly timers, that reset at UTC 0:00 / RS daily and weekly reset times. Timers can be clicked to reset their time remaining to the length of the timer (or to the next tick for dailies/weeklies). Clicking the green + adds a new tab, the green T a new timer, and displays input boxes for necessary information. Click the - button, then click a timer, to remove the timer. Click the red T to remove the current tab.
+A simple timer program originally intended for, but not limited to, use for timing RuneScape dailies and farm runs. Displays a window with customizable timers shown with progress bars. Includes "duration from starting point" timers and daily/weekly timers, that reset at UTC 0:00 / RS daily and weekly reset times. Timers can be clicked to reset their time remaining to the length of the timer (or to the next tick for dailies/weeklies). Clicking the green + adds a new tab, the green T a new timer, and displays input boxes for necessary information. Click the - button, then click a timer, to remove the timer. Click the red T to remove the current tab. To define a new timer as a daily or weekly countdown, precede the name of the timer with a `!` or `#`, respectively.
 
 
 Please note that features may be added, changed, or removed at any time. Also, no guarantee is given on the lack of existence of bugs. Information here is based on the listed version and may not match newer or older versions.

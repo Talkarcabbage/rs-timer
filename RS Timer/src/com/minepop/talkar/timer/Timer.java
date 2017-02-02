@@ -1,11 +1,14 @@
 package com.minepop.talkar.timer;
 
+import javax.swing.JProgressBar;
+
 public class Timer {
 	double startingTime;
 	double duration;
 	String name;
 	int tab;
 	boolean isNormalTimer;
+	JProgressBar progressBar;
 	
 
 
@@ -15,12 +18,21 @@ public class Timer {
 	 * @param durationTotal - The total time the timer should run for. This is used to reset the timer and check for completion.
 	 * @param name - A name for the timer. This is used as a label in the GUI.
 	 */
-	public Timer(double targetTime, double durationTotal, String name, int tab, boolean isNormalTimer) {
+	public Timer(double targetTime, double durationTotal, String name, int tab, boolean isNormalTimer, JProgressBar bar) {
 		this.startingTime = targetTime;
 		this.duration = durationTotal;
 		this.name = name;
 		this.tab = tab;
 		this.isNormalTimer = isNormalTimer;
+		progressBar = bar;
+	}
+	
+	public void SetProgressBar(JProgressBar bar) {
+		progressBar = bar;
+	}
+	
+	public JProgressBar getProgressBar() {
+		return progressBar;
 	}
 
 	public double getStartingTime() {
@@ -111,6 +123,9 @@ public class Timer {
 			return false;
 		if (tab != other.tab)
 			return false;
+		if (progressBar != other.progressBar) {
+			return false;
+		}
 		return true;
 	}
 

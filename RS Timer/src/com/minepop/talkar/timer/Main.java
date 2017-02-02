@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -20,6 +21,7 @@ import javax.swing.JProgressBar;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import com.minepop.talkar.timer.Logger.LEVEL;
 import com.minepop.talkar.timer.gui.MainWin;
 import com.minepop.talkar.util.FileManager;
 
@@ -28,17 +30,16 @@ public class Main {
 	public static final long DAY_LENGTH = 86400000;
 	public static final long WEEK_LENGTH = 604800000;
 	
-	//I am a potato This is an edit.
-	//THIS IS A NEW COMMENT
 	static TrayIcon trayIcon;
 	static MainWin mainWin;
 	static ArrayList<Timer> timerList = new ArrayList<Timer>();
 	static ArrayList<JProgressBar> progressBarList = new ArrayList<JProgressBar>();
+	static HashMap<JProgressBar, Timer> barToTimerMap = new HashMap<JProgressBar, Timer>();
 	
 	static ArrayList<String> cfgList = new ArrayList<String>();
 	//static ArrayList<String> commentList = new ArrayList<String>();
 	
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException { //TODO
 		System.out.println("Initializing GUI and tray...");
 		try {
 		    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -46,8 +47,11 @@ public class Main {
 		            UIManager.setLookAndFeel(info.getClassName());
 		            break;
 		        }
+		    	
 		    }
 		} catch (Exception e) {}
+		
+		UIManager.put("nimbusOrange", new Color(87, 168, 57));
 		
 		mainWin = new MainWin();
 		prepareSystemTray();
@@ -94,7 +98,7 @@ public class Main {
 			
 			progressBarList.get(i).setValue(Math.round(Math.round((100*(currentTime-startTime)/(duration)))));
 			if (currentTime > endTime) {
-				progressBarList.get(i).setForeground(Color.green);
+				progressBarList.get(i).setForeground(new Color(160, 215, 140));
 				progressBarList.get(i).setToolTipText("Timer Complete!");
 			} else {
 				progressBarList.get(i).setForeground(Color.black);
@@ -152,39 +156,50 @@ public class Main {
 	
 	
 	public static void addTimer(double startingTime, double duration, int tab, boolean normalTimer, String name) {
-		Timer newTimer = new Timer(startingTime, duration, name, tab, normalTimer);
+		Timer newTimer = new Timer(startingTime, duration, name, tab, normalTimer, null);
 		timerList.add(newTimer);
 		JProgressBar newBar = new JProgressBar();
 		newBar.setFont(new Font("SansSerif", Font.BOLD, 12));
 		newBar.setStringPainted(true);
 		newBar.setString(name);
 		newBar.setName(name);
+		newBar.setForeground(Color.blue);
 		
 		newBar.addMouseListener(mainWin);
-		mainWin.addTimerBar(newBar, newTimer.getTab());
+		
+		newTimer.SetProgressBar(newBar);
+		
+		mainWin.addTimerBar(newBar, newTimer.getTab()); //TODO
 		mainWin.revalidate();
 		mainWin.repaint();
 		progressBarList.add(newBar);
 		
+		barToTimerMap.put(newBar, newTimer);
+		
 	}
 	
-	public static void removeTimer(String timerName) {
-		for (int i = 0; i < timerList.size(); i++) {
-			if (timerList.get(i).getName().equals(timerName)) {
-				timerList.remove(i);
-				mainWin.removeTimerBar(progressBarList.get(i));
-				progressBarList.remove(i);
-				
-				mainWin.revalidate();
-				mainWin.repaint();
-			}
-			
+	public static void removeTimer(JProgressBar bar) {
+		Logger.log(LEVEL.DEBUG, "Removing a timer with bar named " + bar.getName());
+		Timer timer = barToTimerMap.get(bar);
+		if (timer == null) {
+			Logger.log(LEVEL.ERROR, "Found null when attempting to delete timer. This is a serious error.");
+			return;
 		}
+		timerList.remove(timer);
+		mainWin.removeTimerBar(bar);
+		progressBarList.remove(bar);
+		barToTimerMap.remove(bar);
+		
+		mainWin.revalidate();
+		mainWin.repaint();
+		
 	}
 	
 	public static void saveTimers() {
 		
 		String toSave = "";
+		
+		Logger.log(LEVEL.DEBUG, "Saving timers");
 		
 		for (String s : cfgList){
 			toSave = toSave + s + "\n";
@@ -205,22 +220,30 @@ public class Main {
 	}
 
 	public static void resetTimer(String timerName, JProgressBar bar) {
-		for (Timer t : timerList) {
-			if (t.getName().equals(timerName)) {
-				
-				if (t.isNormalTimer()){
-					t.setStartingTime(System.currentTimeMillis());				
-					bar.setForeground(Color.black);
-				} else if (t.getDurationTotal() == DAY_LENGTH){
-					t.setStartingTime(Math.floor(System.currentTimeMillis()/DAY_LENGTH)*DAY_LENGTH);
-				} else if (t.getDurationTotal() == WEEK_LENGTH){
-					t.setStartingTime((((Math.floor((System.currentTimeMillis()+DAY_LENGTH)/WEEK_LENGTH))*WEEK_LENGTH)-DAY_LENGTH));	
-					}
-				saveTimers();
-				break;
-			}
+		Logger.log("Attempting timer reset for " + timerName);
+		Timer t = barToTimerMap.get(bar);
+		if (t == null) {
+			Logger.log(LEVEL.ERROR, "Found null when attempting to reset timer");
 		}
+		if (t.isNormalTimer()){
+			t.setStartingTime(System.currentTimeMillis());				
+			bar.setForeground(Color.black);
+			Logger.log(LEVEL.DEBUG, "Set normal timer with data: " + timerName + " | Starting time:" + t.getStartingTime() + " | Duration:" + t.getDurationTotal() + " | Tab: " + t.getTab());
+		} else if (t.getDurationTotal() == DAY_LENGTH){
+			t.setStartingTime(Math.floor(System.currentTimeMillis()/DAY_LENGTH)*DAY_LENGTH);
+			Logger.log(LEVEL.DEBUG, "Set daily timer timer with data: " + timerName + " | Starting time:" + t.getStartingTime() + " | Duration:" + t.getDurationTotal() + " | Tab: " + t.getTab());
+		} else if (t.getDurationTotal() == WEEK_LENGTH){
+			t.setStartingTime((((Math.floor((System.currentTimeMillis()+DAY_LENGTH)/WEEK_LENGTH))*WEEK_LENGTH)-DAY_LENGTH));
+			Logger.log(LEVEL.DEBUG, "Set weekly timer with data: " + timerName + " | Starting time:" + t.getStartingTime() + " | Duration:" + t.getDurationTotal() + " | Tab: " + t.getTab());
+
+			}
+		else {
+			System.out.println("Failed to match timer type " + t.getName() + " with time:" + t.getDurationTotal() + " | Tab: " + t.getTab());
+		}
+		saveTimers();
 	}
+		
+	
 
 	static boolean isMainWinVisible = true;
 	private static void prepareSystemTray() {

@@ -322,7 +322,7 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 						
 						for (int i = 0; i < timerList.size(); i++) {
 							if (timerList.get(i).getTab() == toRemove) {
-								Main.removeTimer(timerList.get(i).getName());
+								Main.removeTimer(timerList.get(i).getProgressBar());
 								i--;
 							} else if (timerList.get(i).getTab() > toRemove) {
 								timerList.get(i).setTab(timerList.get(i).getTab()-1);
@@ -349,7 +349,7 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 	public void onClickTimerBar(JProgressBar b) {
 		System.out.println("Event: onClickTimerBar");
 		if (removeModeTimers == true) {
-			Main.removeTimer(b.getName());
+			Main.removeTimer(b);
 			this.disableRemoveBar();
 			Main.saveTimers();
 		} else {

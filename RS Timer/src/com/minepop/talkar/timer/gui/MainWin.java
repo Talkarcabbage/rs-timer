@@ -23,7 +23,10 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
+import com.minepop.talkar.timer.Logger;
+import com.minepop.talkar.timer.Logger.LEVEL;
 import com.minepop.talkar.timer.Main;
 import com.minepop.talkar.timer.Timer;
 
@@ -349,14 +352,18 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 		
 	}
 	
-	public void onClickTimerBar(JProgressBar b) {
+	public void onClickTimerBar(JProgressBar b, boolean setComplete) {
 		System.out.println("Event: onClickTimerBar");
 		if (removeModeTimers == true) {
 			Main.removeTimer(b);
 			this.disableRemoveBar();
 			Main.saveTimers();
 		} else {
-			Main.resetTimer(b.getName(), b);
+			if (!setComplete) {
+				Main.resetTimer(b.getName(), b);
+			} else {
+				Main.resetTimerComplete(b.getName(), b);
+			}
 		}
 	}
 	
@@ -379,7 +386,13 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		if (arg0.getSource() instanceof JProgressBar) {
-			onClickTimerBar((JProgressBar)arg0.getSource());
+			if (SwingUtilities.isRightMouseButton(arg0)) {
+				Logger.log(LEVEL.INFO, "Resetting a timer to complete status.");
+				onClickTimerBar((JProgressBar)arg0.getSource(), true);
+			} else {
+				Logger.log(LEVEL.INFO, "Resetting a timer to incomplete status.");
+				onClickTimerBar((JProgressBar)arg0.getSource(), false);
+			}
 		}
 		
 	}

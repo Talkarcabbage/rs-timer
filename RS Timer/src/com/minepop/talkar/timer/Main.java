@@ -225,6 +225,11 @@ public class Main {
 
 	}
 
+	/**
+	 * Resets a timer, setting it to incomplete. For normal timers, this means 0% the way to complete; for daily/weekly, the next daily/weekly reset is applied.
+	 * @param timerName
+	 * @param bar
+	 */
 	public static void resetTimer(String timerName, JProgressBar bar) {
 		Logger.log("Attempting timer reset for " + timerName);
 		Timer t = barToTimerMap.get(bar);
@@ -241,6 +246,35 @@ public class Main {
 		} else if (t.getDurationTotal() == WEEK_LENGTH){
 			t.setStartingTime((((Math.floor((System.currentTimeMillis()+DAY_LENGTH)/WEEK_LENGTH))*WEEK_LENGTH)-DAY_LENGTH));
 			Logger.log(LEVEL.DEBUG, "Set weekly timer with data: " + timerName + " | Starting time:" + t.getStartingTime() + " | Duration:" + t.getDurationTotal() + " | Tab: " + t.getTab());
+
+			}
+		else {
+			System.out.println("Failed to match timer type " + t.getName() + " with time:" + t.getDurationTotal() + " | Tab: " + t.getTab());
+		}
+		saveTimers();
+	}
+	
+	/**
+	 * Resets a timer and sets its time to 0, making it appear complete.
+	 * @param timerName
+	 * @param bar
+	 */
+	public static void resetTimerComplete(String timerName, JProgressBar bar) {
+		Logger.log("Attempting timer completion for " + timerName);
+		Timer t = barToTimerMap.get(bar);
+		if (t == null) {
+			Logger.log(LEVEL.ERROR, "Found null when attempting to reset-complete timer");
+		}
+		if (t.isNormalTimer()){
+			t.setStartingTime(0);				
+			bar.setForeground(Color.black);
+			Logger.log(LEVEL.DEBUG, "Set-complete normal timer with data: " + timerName + " | Starting time:" + t.getStartingTime() + " | Duration:" + t.getDurationTotal() + " | Tab: " + t.getTab());
+		} else if (t.getDurationTotal() == DAY_LENGTH){
+			t.setStartingTime(0);
+			Logger.log(LEVEL.DEBUG, "Set-complete daily timer timer with data: " + timerName + " | Starting time:" + t.getStartingTime() + " | Duration:" + t.getDurationTotal() + " | Tab: " + t.getTab());
+		} else if (t.getDurationTotal() == WEEK_LENGTH){
+			t.setStartingTime(0);
+			Logger.log(LEVEL.DEBUG, "Set-complete weekly timer with data: " + timerName + " | Starting time:" + t.getStartingTime() + " | Duration:" + t.getDurationTotal() + " | Tab: " + t.getTab());
 
 			}
 		else {

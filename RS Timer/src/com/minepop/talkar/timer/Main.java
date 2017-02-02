@@ -79,7 +79,7 @@ public class Main {
 		System.out.println("Initializion complete.");
 		while (true) {
 			tickTimers();
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		}
 	}
 	
@@ -103,6 +103,12 @@ public class Main {
 			} else {
 				progressBarList.get(i).setForeground(Color.black);
 			}
+		}
+		
+		if (mainWin.isAlwaysOnTop() && !mainWin.isFocused()) {
+			mainWin.configPanel.setVisible(false);
+		} else {
+			mainWin.configPanel.setVisible(true);
 		}
 
 	}

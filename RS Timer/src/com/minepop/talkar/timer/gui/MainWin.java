@@ -71,6 +71,7 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 	private JPanel mainPanel;
 	private JButton addTabButton;
 	private JButton removeTabButton;
+	public JPanel configPanel;
 	public MainWin() {
 		this.setUndecorated(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -84,12 +85,13 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
 		
-		JPanel configPanel = new JPanel();
+		configPanel = new JPanel();
 		configPanel.setBackground(Color.GRAY);
 		contentPane.add(configPanel, BorderLayout.EAST);
 		
 		JCheckBox chckbxAot = new JCheckBox("AOT");
 		chckbxAot.addActionListener(this);
+		chckbxAot.setToolTipText("Makes the timer window always visible, and causes the configuration bar to hide when the window is not focused.");
 		configPanel.setLayout(new BorderLayout(0, 0));
 		
 		configPanel.add(chckbxAot, BorderLayout.NORTH);
@@ -97,6 +99,7 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 		slider = new JSlider();
 		slider.setValue(100);
 		slider.setMinimum(5);
+		slider.setToolTipText("Sets the transparency of the window.");
 		
 		slider.addMouseListener(new MouseAdapter() {
 			@Override

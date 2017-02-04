@@ -98,7 +98,7 @@ public class Main {
 			
 			progressBarList.get(i).setValue(Math.round(Math.round((100*(currentTime-startTime)/(duration)))));
 			if (currentTime > endTime) {
-				progressBarList.get(i).setForeground(new Color(160, 215, 140));
+				progressBarList.get(i).setForeground(new Color(20, 80, 20)); //TODO color
 				progressBarList.get(i).setToolTipText("Timer Complete!");
 			} else {
 				progressBarList.get(i).setForeground(Color.black);

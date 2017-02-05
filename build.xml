@@ -1,11 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="create_run_jar" name="Create Runnable Jar for Project RS Timer with Jar-in-Jar Loader">
-    <!--this file was created by Eclipse Runnable JAR file Export Wizard-->
-    <!--ANT 1.7 is required-->
-    <!--define folder properties-->
+<project default="dist" name="RS Timer">
+
     <property name="dir.buildfile" value="."/>
     <property name="dir.jarfile" value="dist"/>
-    <target name="create_run_jar">
+	<property name="dir.src" value="src"/>
+    <property name="dir.bin" value="bin"/>
+	<property name="dir.lib" value="lib"/>
+
+    <path id="classpath">
+        <fileset dir="${dir.lib}" includes="**/*.jar"/>
+    </path>
+	
+	<target name="clean">
+        <delete dir="${dir.bin}"/>
+    </target>
+	
+	<target name="compile">
+        <mkdir dir="${dir.bin}"/>
+        <javac srcdir="${dir.src}" destdir="${dir.bin}" classpathref="classpath"/>
+    </target>
+	
+    <target name="dist" depends="compile">
         <jar destfile="${dir.jarfile}/RS Timer 0.10.5.jar">
             <manifest>
                 <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
@@ -19,4 +34,5 @@
         	<zipfileset dir="./lib" includes="guava-20.0.jar"/>
         </jar>
     </target>
+	
 </project>

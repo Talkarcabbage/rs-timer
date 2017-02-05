@@ -3,39 +3,39 @@
 
 	<property name="version" value="0.10"/>
 
-    <property name="dir.buildfile" value="."/>
-    <property name="dir.jarfile" value="dist"/>
+	<property name="dir.buildfile" value="."/>
+	<property name="dir.jarfile" value="dist"/>
 	<property name="dir.src" value="src"/>
-    <property name="dir.bin" value="bin"/>
+	<property name="dir.bin" value="bin"/>
 	<property name="dir.lib" value="lib"/>
 
-    <path id="classpath">
-        <fileset dir="${dir.lib}" includes="**/*.jar"/>
-    </path>
-	
+	<path id="classpath">
+		<fileset dir="${dir.lib}" includes="**/*.jar"/>
+	</path>
+
 	<target name="clean">
-        <delete dir="${dir.bin}"/>
-    </target>
-	
+		<delete dir="${dir.bin}"/>
+	</target>
+
 	<target name="compile">
-        <mkdir dir="${dir.bin}"/>
-        <javac srcdir="${dir.src}" destdir="${dir.bin}" classpathref="classpath"/>
-    </target>
+		<mkdir dir="${dir.bin}"/>
+		<javac srcdir="${dir.src}" destdir="${dir.bin}" classpathref="classpath"/>
+	</target>
 	
-    <target name="dist" depends="compile">
+	<target name="dist" depends="compile">
 		<buildnumber/>
-        <jar destfile="${dir.jarfile}/RS-Timer-${version}.${build.number}.jar">
-            <manifest>
-                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
-                <attribute name="Rsrc-Main-Class" value="com.minepop.talkar.timer.Main"/>
-                <attribute name="Class-Path" value="."/>
-                <attribute name="Rsrc-Class-Path" value="./ guava-20.0.jar"/>
-            </manifest>
-            <zipfileset src="jar-in-jar-loader.zip"/>
-            <fileset dir="${dir.buildfile}/bin"/>
-		    <fileset dir="." includes="LICENSE" />
-        	<zipfileset dir="./lib" includes="guava-20.0.jar"/>
-        </jar>
-    </target>
+		<jar destfile="${dir.jarfile}/RS-Timer-${version}.${build.number}.jar">
+			<manifest>
+				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+				<attribute name="Rsrc-Main-Class" value="com.minepop.talkar.timer.Main"/>
+				<attribute name="Class-Path" value="."/>
+				<attribute name="Rsrc-Class-Path" value="./ guava-20.0.jar"/>
+			</manifest>
+			<zipfileset src="jar-in-jar-loader.zip"/>
+			<fileset dir="${dir.buildfile}/bin"/>
+			<fileset dir="." includes="LICENSE" />
+			<zipfileset dir="./lib" includes="guava-20.0.jar"/>
+		</jar>
+	</target>
 	
 </project>

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="dist" name="RS Timer">
 
+	<property name="version" value="0.10"/>
+
     <property name="dir.buildfile" value="."/>
     <property name="dir.jarfile" value="dist"/>
 	<property name="dir.src" value="src"/>
@@ -21,7 +23,8 @@
     </target>
 	
     <target name="dist" depends="compile">
-        <jar destfile="${dir.jarfile}/RS Timer 0.10.5.jar">
+		<buildnumber/>
+        <jar destfile="${dir.jarfile}/RS-Timer-${version}.${build.number}.jar">
             <manifest>
                 <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
                 <attribute name="Rsrc-Main-Class" value="com.minepop.talkar.timer.Main"/>

@@ -1,5 +1,7 @@
 package com.minepop.talkar.timer;
 
+import java.awt.Color;
+
 import javax.swing.JProgressBar;
 
 public class Timer {
@@ -7,10 +9,10 @@ public class Timer {
 	double duration;
 	String name;
 	int tab;
-	boolean isNormalTimer;
 	JProgressBar progressBar;
 	
-
+	public static final long DAY_LENGTH = 86400000;
+	public static final long WEEK_LENGTH = 604800000;
 
 	/**
 	 * 
@@ -18,14 +20,15 @@ public class Timer {
 	 * @param durationTotal - The total time the timer should run for. This is used to reset the timer and check for completion.
 	 * @param name - A name for the timer. This is used as a label in the GUI.
 	 */
-	public Timer(double targetTime, double durationTotal, String name, int tab, boolean isNormalTimer, JProgressBar bar) {
+	public Timer(double targetTime, double durationTotal, String name, int tab, JProgressBar bar) {
 		this.startingTime = targetTime;
 		this.duration = durationTotal;
 		this.name = name;
 		this.tab = tab;
-		this.isNormalTimer = isNormalTimer;
 		progressBar = bar;
 	}
+	
+	// Standard getters and setters
 	
 	public void setProgressBar(JProgressBar bar) {
 		progressBar = bar;
@@ -73,16 +76,8 @@ public class Timer {
 	public void setTab(int tab) {
 		this.tab = tab;
 	}
-
-
-	public boolean isNormalTimer() {
-		return isNormalTimer;
-	}
-
-
-	public void setNormalTimer(boolean isNormalTimer) {
-		this.isNormalTimer = isNormalTimer;
-	}
+	
+	//End standard getters and setters
 
 	@Override
 	public int hashCode() {
@@ -91,7 +86,6 @@ public class Timer {
 		long temp;
 		temp = Double.doubleToLongBits(duration);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + (isNormalTimer ? 1231 : 1237);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		temp = Double.doubleToLongBits(startingTime);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -110,8 +104,6 @@ public class Timer {
 		Timer other = (Timer) obj;
 		if (Double.doubleToLongBits(duration) != Double
 				.doubleToLongBits(other.duration))
-			return false;
-		if (isNormalTimer != other.isNormalTimer)
 			return false;
 		if (name == null) {
 			if (other.name != null)
@@ -132,8 +124,7 @@ public class Timer {
 	@Override
 	public String toString() {
 		return "Timer [startingTime=" + startingTime + ", duration=" + duration
-				+ ", name=" + name + ", tab=" + tab + ", isNormalTimer="
-				+ isNormalTimer + "]";
+				+ ", name=" + name + ", tab=" + tab + "]";
 	}
 	
 	
@@ -141,10 +132,7 @@ public class Timer {
 	 * Returns the percentage of this timer's progress toward completion, for setting progress bars.
 	 * @return
 	 */
-	public int getPercentageComplete() {
-		
-		
-		
+	public int getPercentageComplete() {	
 		return (Math.round(Math.round((100*(System.currentTimeMillis() - startingTime)/(duration)))));
 	}
 	
@@ -155,6 +143,35 @@ public class Timer {
 	public double getTimeRemaining() {
 		return (startingTime + duration) - System.currentTimeMillis();
 	}
+	
+	/**
+	 * Resets the timer to a status of incomplete. For normal timers, this should be 0% complete.
+	 * For abnormal timers, this should set their next completion to the next applicable reset.
+	 * This should be overridden.
+	 */
+	public void resetTimer() {
+		setStartingTime(System.currentTimeMillis());	
+		this.progressBar.setForeground(Color.black);
+		Logger.DEBUG("Set normal timer with data: " + this.toString());
 
+	}
+	
+	/**
+	 * Resets the timer to a status of complete. This is typically/most easily done by setting the start-time to 0.
+	 * This may be overridden.
+	 */
+	public void resetTimerComplete() {
+		setStartingTime(0);
+	}
+
+	/**
+	 * Returns the type of the timer. THIS MUST BE OVERRIDEN BY ANY SUBCLASS FOR PROPER BEHAVIOR.
+	 * @return
+	 */
+	public String getTimerType() {
+		return Main.STANDARDTIMER;
+	}
+	
+	
 	
 }

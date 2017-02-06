@@ -30,11 +30,11 @@ public class Logger {
 	}
 	
 	public static void DEBUG(String toLog) {
-		
+		log(LEVEL.DEBUG, toLog);
 	}
 	
 	public static void ERROR(String toLog) {
-		
+		log(LEVEL.ERROR, toLog);
 	}
 	
 }

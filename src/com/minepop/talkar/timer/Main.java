@@ -2,6 +2,7 @@ package com.minepop.talkar.timer;
 
 import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.MenuItem;
@@ -12,6 +13,7 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
@@ -23,7 +25,7 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import com.google.common.collect.HashBiMap;
-import com.minepop.talkar.timer.Logger.LEVEL;
+import com.minepop.talkar.timer.gui.AddBarwin;
 import com.minepop.talkar.timer.gui.MainWin;
 import com.minepop.talkar.util.FileManager;
 
@@ -32,8 +34,15 @@ public class Main {
 	public static final long DAY_LENGTH = 86400000;
 	public static final long WEEK_LENGTH = 604800000;
 	
+	public static final String STANDARDTIMER = "standard";
+	public static final String PERIODICTIMER = "periodic";
+	public static final String MONTHLYTIMER = "monthly";
+
+
+	
 	static TrayIcon trayIcon;
-	static MainWin mainWin;
+	public static MainWin mainWin;
+	public static AddBarwin addBarWin;
 	//static ArrayList<Timer> timerList = new ArrayList<Timer>();
 	//static ArrayList<JProgressBar> progressBarList = new ArrayList<JProgressBar>();
 	//static HashMap<JProgressBar, Timer> barToTimerMap = new HashMap<JProgressBar, Timer>();
@@ -45,8 +54,8 @@ public class Main {
 	
 	static protected long currentTime;
 	
-	public static void main(String[] args) throws InterruptedException { //TODO
-		System.out.println("Initializing GUI and tray...");
+	public static void main(String[] args) throws InterruptedException, InvocationTargetException { //TODO
+		Logger.INFO("Initializing GUI and tray...");
 		try {
 		    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 		        if ("Nimbus".equals(info.getName())) {
@@ -61,30 +70,40 @@ public class Main {
 		
 		UIManager.put("nimbusOrange", new Color(87, 168, 57));
 		
-		mainWin = new MainWin();
+		EventQueue.invokeAndWait(new Runnable() {
+			public void run() {
+				try {
+					addBarWin = new AddBarwin();
+					mainWin = new MainWin();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
 		prepareSystemTray();
 		mainWin.setVisible(true);
 		FileManager.ensureExists("timers.cfg");
 		
-		System.out.println("Loading timers...");
+		Logger.INFO("Loading timers...");
 		try {
 		loadTimers();
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "An exception occured while loading timer information. Run the jar using the console for more information.", "Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
-		System.out.println("Timers loaded.");
+		Logger.INFO("Timers loaded.");
 		
 		if (timerMap.isEmpty()) {
-			addTimer(System.currentTimeMillis(),120000, 0, true, "Sample: Two Minutes");
-			addTimer(System.currentTimeMillis(),3600000, 0, true,  "Sample: Sixty Minutes");
+			addTimer(System.currentTimeMillis(),120000, 0, STANDARDTIMER, "Sample: Two Minutes");
+			addTimer(System.currentTimeMillis(),3600000, 0, STANDARDTIMER,  "Sample: Sixty Minutes");
 			
 		}
 		
 		
 		//TODO why?
 		//saveTimers();
-		System.out.println("Initializion complete.");
+		Logger.INFO("Initializion complete.");
 		while (true) {
 			tickTimers();
 			Thread.sleep(500);
@@ -127,7 +146,7 @@ public class Main {
 			String[] timerInfo = s.split(",");
 			if (timerInfo[0].equals("cfg")) {
 				cfgList.add(s);
-				System.out.println("cfg: " + timerInfo[1]);
+				Logger.INFO("cfg: " + timerInfo[1]);
 				if (timerInfo[1].equals("mainTabName")) {
 					mainWin.getTabbedPane().setTitleAt(0, timerInfo[2]);
 				} else if (timerInfo[1].equals("gridColumns")) {
@@ -141,7 +160,7 @@ public class Main {
 				
 			} else if (timerInfo[0].equals("tab")) {
 				if (timerInfo.length < 4) {
-					System.out.println("Imported old tab data!");
+					Logger.INFO("Imported old tab data!");
 					mainWin.addNewTab(mainWin.getGridRows(), mainWin.getGridColumns(), timerInfo[1]);
 					importResave = true;
 				} else {
@@ -149,12 +168,22 @@ public class Main {
 				}
 				
 			} else if (timerInfo[0].equals("timer")) {
-				addTimer(Double.parseDouble(timerInfo[1]), Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), Boolean.parseBoolean(timerInfo[4]), timerInfo[5]);
-
+				Logger.DEBUG("Found a timer");
+				if (timerInfo[4].toLowerCase().equals("true")) {
+					Logger.INFO("Imported old timer data for standard timer.");
+					addTimer(Double.parseDouble(timerInfo[1]), Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), Main.STANDARDTIMER, timerInfo[5]);
+				} else if (timerInfo[4].toLowerCase().equals("false")) {
+					Logger.INFO("Imported old timer data for periodic timer.");
+					addTimer(Double.parseDouble(timerInfo[1]), Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), Main.PERIODICTIMER, timerInfo[5]);
+				} else {
+					Logger.DEBUG("Up to date timer loaded.");
+					addTimer(Double.parseDouble(timerInfo[1]), Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), (timerInfo[4]), timerInfo[5]);
+				}
+				
 			} else {
-				System.out.println("Imported old timer data!");
+				Logger.INFO("Imported old timer data!");
 				importResave=true;
-				addTimer(Double.parseDouble(timerInfo[0]), Double.parseDouble(timerInfo[1]), 0, true, timerInfo[2]);
+				addTimer(Double.parseDouble(timerInfo[0]), Double.parseDouble(timerInfo[1]), 0, "standard", timerInfo[2]);
 			}
 			if (importResave) {
 				Main.saveTimers();
@@ -163,8 +192,24 @@ public class Main {
 	}
 	
 	
-	public static void addTimer(double startingTime, double duration, int tab, boolean normalTimer, String name) {
-		Timer newTimer = new Timer(startingTime, duration, name, tab, normalTimer, null);
+	public static Timer addTimer(double startingTime, double duration, int tab, String timerType, String name) {
+		Timer newTimer = null;
+		switch (timerType) {
+		case STANDARDTIMER:
+			newTimer = new Timer(startingTime, duration, name, tab, null);
+			break;
+		case PERIODICTIMER:
+			newTimer = new PeriodicTimer(startingTime, duration, name, tab, null);
+			break;
+		case MONTHLYTIMER:
+			Logger.DEBUG("Added a monthly timer");
+			newTimer = new MonthlyTimer(startingTime, duration, name, tab, null);
+			break;
+		default:
+			Logger.ERROR("Severe error occured trying to add a timer: the specified timer type was invalid: " + timerType);
+			newTimer = new Timer(startingTime, duration, ((name == null ? "ERROR" : name)), ((tab >= 0 && tab < mainWin.getTabList().size()) ? tab : 0), null);
+			break;
+		}
 		JProgressBar newBar = new JProgressBar();
 		newBar.setFont(new Font("SansSerif", Font.BOLD, 12));
 		newBar.setStringPainted(true);
@@ -176,19 +221,21 @@ public class Main {
 		
 		newTimer.setProgressBar(newBar);
 		
-		mainWin.addTimerBar(newBar, newTimer.getTab()); //TODO
+		mainWin.addTimerBar(newBar, newTimer.getTab()); //TODO what is this todo for?
 		mainWin.revalidate();
 		mainWin.repaint();
 		
 		timerMap.put(newBar, newTimer);
 		
+		return newTimer;
+		
 	}
 	
 	public static void removeTimer(JProgressBar bar) {
-		Logger.log(LEVEL.DEBUG, "Removing a timer with bar named " + bar.getName());
+		Logger.DEBUG("Removing a timer with bar named " + bar.getName());
 		Timer timer = timerMap.get(bar);
 		if (timer == null) {
-			Logger.log(LEVEL.ERROR, "Found null when attempting to delete timer. This is a serious error.");
+			Logger.ERROR("Found null when attempting to delete timer. This is a serious error.");
 			return;
 		}
 		
@@ -205,7 +252,7 @@ public class Main {
 		
 		String toSave = "";
 		
-		Logger.log(LEVEL.DEBUG, "Saving timers");
+		Logger.DEBUG("Saving timers");
 		
 		for (String s : cfgList){
 			toSave = toSave + s + "\n";
@@ -221,7 +268,7 @@ public class Main {
 		Timer t;
 		while (it.hasNext()) {
 			t = it.next();
-			toSave = toSave + "timer," + t.startingTime + "," + t.duration + "," + t.tab + "," + t.isNormalTimer + "," + t.name + "\n";
+			toSave = toSave + "timer," + t.startingTime + "," + t.duration + "," + t.tab + "," + t.getTimerType() + "," + t.name + "\n";
 		}
 		
 		FileManager.writeFile("timers.cfg", toSave);
@@ -229,31 +276,21 @@ public class Main {
 	}
 
 	/**
-	 * Resets a timer, setting it to incomplete. For normal timers, this means 0% the way to complete; for daily/weekly, the next daily/weekly reset is applied.
+	 * Resets a timer, setting it to incomplete. For normal timers, this means 0% the way to complete; for daily/weekly/monthly, the next daily/weekly/monthly reset is applied.
 	 * @param timerName
 	 * @param bar
 	 */
 	public static void resetTimer(String timerName, JProgressBar bar) {
-		Logger.log("Attempting timer reset for " + timerName);
+		Logger.INFO("Attempting timer reset for " + timerName);
 		Timer t = timerMap.get(bar);
+		
 		if (t == null) {
-			Logger.log(LEVEL.ERROR, "Found null when attempting to reset timer");
+			Logger.ERROR("Found null when attempting to reset timer: " + timerName);
+			return;
 		}
-		if (t.isNormalTimer()){
-			t.setStartingTime(System.currentTimeMillis());				
-			bar.setForeground(Color.black);
-			Logger.log(LEVEL.DEBUG, "Set normal timer with data: " + timerName + " | Starting time:" + t.getStartingTime() + " | Duration:" + t.getDurationTotal() + " | Tab: " + t.getTab());
-		} else if (t.getDurationTotal() == DAY_LENGTH){
-			t.setStartingTime(Math.floor(System.currentTimeMillis()/DAY_LENGTH)*DAY_LENGTH);
-			Logger.log(LEVEL.DEBUG, "Set daily timer timer with data: " + timerName + " | Starting time:" + t.getStartingTime() + " | Duration:" + t.getDurationTotal() + " | Tab: " + t.getTab());
-		} else if (t.getDurationTotal() == WEEK_LENGTH){
-			t.setStartingTime((((Math.floor((System.currentTimeMillis()+DAY_LENGTH)/WEEK_LENGTH))*WEEK_LENGTH)-DAY_LENGTH));
-			Logger.log(LEVEL.DEBUG, "Set weekly timer with data: " + timerName + " | Starting time:" + t.getStartingTime() + " | Duration:" + t.getDurationTotal() + " | Tab: " + t.getTab());
-
-			}
-		else {
-			System.out.println("Failed to match timer type " + t.getName() + " with time:" + t.getDurationTotal() + " | Tab: " + t.getTab());
-		}
+		
+		t.resetTimer();
+		
 		saveTimers();
 	}
 	
@@ -263,26 +300,13 @@ public class Main {
 	 * @param bar
 	 */
 	public static void resetTimerComplete(String timerName, JProgressBar bar) {
-		Logger.log("Attempting timer completion for " + timerName);
+		Logger.INFO("Attempting timer completion for " + timerName);
 		Timer t = timerMap.get(bar);
 		if (t == null) {
-			Logger.log(LEVEL.ERROR, "Found null when attempting to reset-complete timer");
+			Logger.ERROR("Found null when attempting to reset-complete timer");
+			return;
 		}
-		if (t.isNormalTimer()){
-			t.setStartingTime(0);				
-			bar.setForeground(Color.black);
-			Logger.log(LEVEL.DEBUG, "Set-complete normal timer with data: " + timerName + " | Starting time:" + t.getStartingTime() + " | Duration:" + t.getDurationTotal() + " | Tab: " + t.getTab());
-		} else if (t.getDurationTotal() == DAY_LENGTH){
-			t.setStartingTime(0);
-			Logger.log(LEVEL.DEBUG, "Set-complete daily timer timer with data: " + timerName + " | Starting time:" + t.getStartingTime() + " | Duration:" + t.getDurationTotal() + " | Tab: " + t.getTab());
-		} else if (t.getDurationTotal() == WEEK_LENGTH){
-			t.setStartingTime(0);
-			Logger.log(LEVEL.DEBUG, "Set-complete weekly timer with data: " + timerName + " | Starting time:" + t.getStartingTime() + " | Duration:" + t.getDurationTotal() + " | Tab: " + t.getTab());
-
-			}
-		else {
-			System.out.println("Failed to match timer type " + t.getName() + " with time:" + t.getDurationTotal() + " | Tab: " + t.getTab());
-		}
+		t.resetTimerComplete();
 		saveTimers();
 	}
 		
@@ -292,6 +316,7 @@ public class Main {
 	private static void prepareSystemTray() {
 		File f = new File("taskBarIcon.png");
 		if (!f.exists()) {
+			Logger.INFO("Retrieving assets");
 			FileManager.downloadFile("taskBarIcon.png", "https://www.dropbox.com/s/th13a1fsf5kj4st/Cabbage.png?dl=1");
 		}
 		ImageIcon taskBarIcon = new ImageIcon("taskBarIcon.png");
@@ -300,7 +325,7 @@ public class Main {
 		try {
 			SystemTray.getSystemTray().add(trayIcon);
 		} catch (AWTException e) {
-			System.err.println("Error creating system tray icon:");
+			Logger.ERROR("Error creating system tray icon:");
 			e.printStackTrace();
 		}
 		

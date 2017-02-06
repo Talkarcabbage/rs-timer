@@ -249,7 +249,7 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 		}
 		this.revalidate();
 		this.repaint();
-		System.out.println("Rows/Columns cfg modified :: Rows: " + gridRows + " | " + "Columns: " + gridColumns);
+		Logger.INFO("Rows/Columns cfg modified :: Rows: " + gridRows + " | " + "Columns: " + gridColumns);
 		
 	}
 	
@@ -269,7 +269,7 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("Event: Generic Action Performed/Main Event Listener");
+		Logger.INFO("Event: Generic Action Performed/Main Event Listener");
 		Object o = e.getSource();
 		
 		if (o instanceof JProgressBar) {
@@ -282,39 +282,8 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 			
 		} else if (o instanceof JButton) {
 			if (((JButton) o).getName().equals("addTimerButton")) {
-				try{
-					
-					String name = JOptionPane.showInputDialog(null, "Input a name for the timer.");	
-					boolean isNormal = true;
-					
-					long dur;
-					long startTime;
-					
-					if (name.startsWith("!")) {
-						isNormal = false;
-						name = name.substring(1);
-						startTime = (long)(Math.floor(System.currentTimeMillis()/Main.DAY_LENGTH)*Main.DAY_LENGTH);
-						dur = Main.DAY_LENGTH;
-						
-					} else if (name.startsWith("#")) {
-						isNormal = false;
-						name = name.substring(1);
-						startTime = (long)(((Math.floor((System.currentTimeMillis()+Main.DAY_LENGTH)/Main.WEEK_LENGTH))*Main.WEEK_LENGTH)-Main.DAY_LENGTH);
-						dur = Main.WEEK_LENGTH;
-					} else {
-						dur = 1000 * Integer.parseInt( JOptionPane.showInputDialog(null,"Input the timer's duration in seconds."));
-						startTime = System.currentTimeMillis();
-					}
-					
-					Main.addTimer(startTime, dur, getCurrentTimerTab(), isNormal, name);
-					
-					Main.saveTimers();
-					
-					} catch (NumberFormatException err) {
-						err.printStackTrace();
-						JOptionPane.showMessageDialog(null, "Could not add timer: Input not a number.");
-					}
 				
+				Main.addBarWin.resetAndDisplayWindow();				
 			
 			} else if(((JButton) o).getName().equals("removeTabButton")) {
 				
@@ -357,7 +326,7 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 	}
 	
 	public void onClickTimerBar(JProgressBar b, boolean setComplete) {
-		System.out.println("Event: onClickTimerBar");
+		Logger.INFO("Event: onClickTimerBar");
 		if (removeModeTimers == true) {
 			Main.removeTimer(b);
 			this.disableRemoveBar();
@@ -372,7 +341,7 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 	}
 	
 	public void onToggleRemove() {
-		System.out.println("onToggleRemove: " + removeTimerButton.isSelected());
+		Logger.INFO("onToggleRemove: " + removeTimerButton.isSelected());
 		this.removeModeTimers = this.removeTimerButton.isSelected();
 	}
 	

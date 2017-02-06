@@ -1,0 +1,59 @@
+package com.minepop.talkar.timer;
+
+import java.awt.Color;
+import java.util.Calendar;
+import java.util.TimeZone;
+
+import javax.swing.JProgressBar;
+
+public class MonthlyTimer extends Timer {
+
+	public MonthlyTimer(double targetTime, double durationTotal, String name, int tab, JProgressBar bar) {
+		super(targetTime, durationTotal, name, tab,  bar);
+		// TODO Auto-generated constructor stub
+	}
+	
+	@Override
+	public void resetTimer() {
+		this.progressBar.setForeground(Color.black);
+		Calendar startC = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		startC.set(Calendar.DATE, 1);
+		startC.set(Calendar.HOUR, 0);
+		startC.set(Calendar.AM_PM, Calendar.AM);
+		startC.set(Calendar.MINUTE, 0);
+		startC.set(Calendar.SECOND, 0);
+		startC.set(Calendar.MILLISECOND, 0);
+		Logger.DEBUG(startC.getTime().toString());
+		
+		
+		Calendar endC = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		endC.set(Calendar.DATE, 1);
+		endC.set(Calendar.HOUR, 0);
+		endC.set(Calendar.AM_PM, Calendar.AM);
+		endC.set(Calendar.MINUTE, 0);
+		endC.set(Calendar.SECOND, 0);
+		endC.set(Calendar.MILLISECOND, 0);;
+		endC.set(Calendar.MONTH, endC.get(Calendar.MONTH)+1);
+		Logger.DEBUG(endC.getTime().toString());
+		
+		this.startingTime = startC.getTimeInMillis();
+		this.duration = endC.getTimeInMillis() - startC.getTimeInMillis();
+		
+	}
+	
+	@Override
+	public void resetTimerComplete() {
+		this.startingTime = 0;
+	}
+	
+	@Override
+	public String getTimerType() {
+		return Main.MONTHLYTIMER;
+	}
+
+//	@Override
+//	public double getTimeRemaining() {
+//		
+//	}
+	
+}

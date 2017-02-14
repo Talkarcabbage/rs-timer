@@ -290,7 +290,7 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 				int toRemove = this.getCurrentTimerTab();
 				if (toRemove > 0 && toRemove < tabList.size()) {
 					int doRemove = JOptionPane.showConfirmDialog(this, "Are you sure you want to remove the current tab?", "Confirm", JOptionPane.OK_CANCEL_OPTION);
-					System.out.println(doRemove);
+					Logger.INFO("JOptionpane result: " + doRemove);
 					
 					if (doRemove == JOptionPane.OK_OPTION) {
 						removeTimerTab(toRemove);

@@ -19,7 +19,7 @@
 
 	<target name="compile">
 		<mkdir dir="${dir.bin}"/>
-		<javac srcdir="${dir.src}" destdir="${dir.bin}" classpathref="classpath"/>
+		<javac srcdir="${dir.src}" destdir="${dir.bin}" classpathref="classpath" fork="yes"/>
 	</target>
 	
 	<target name="dist" depends="compile">

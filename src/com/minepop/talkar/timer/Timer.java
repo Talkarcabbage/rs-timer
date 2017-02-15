@@ -133,7 +133,7 @@ public class Timer {
 	 * @return
 	 */
 	public int getPercentageComplete() {	
-		return (Math.round(Math.round((100*(System.currentTimeMillis() - startingTime)/(duration)))));
+		return (int) (Math.round(Math.floor((100*(System.currentTimeMillis() - startingTime)/(duration)))));
 	}
 	
 	/**
@@ -141,6 +141,7 @@ public class Timer {
 	 * @return
 	 */
 	public double getTimeRemaining() {
+		System.out.println(startingTime + " " + duration + " " + System.currentTimeMillis());
 		return (startingTime + duration) - System.currentTimeMillis();
 	}
 	

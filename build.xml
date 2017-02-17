@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="dist" name="RS Timer">
+<project default="current-number" name="RS Timer">
 
-	<property name="version" value="0.11"/>
+	<property file="build_info.properties"/>
+	<property name="build.number" value="${build.major.number}.${build.minor.number}.${build.revision.number}"/>
 
 	<property name="dir.buildfile" value="."/>
 	<property name="dir.jarfile" value="dist"/>
@@ -13,18 +14,43 @@
 		<fileset dir="${dir.lib}" includes="**/*.jar"/>
 	</path>
 
+	<target name="current-number">
+		<echo>Current build number: ${build.number}</echo>
+	</target>
+
+	<target name="major">
+		<propertyfile file="build_info.properties">
+				<entry key="build.major.number" type="int" operation="+" value="1"/>
+				<entry key="build.minor.number" type="int" value="0"/>
+				<entry key="build.revision.number" type="int" value="0"/>
+		</propertyfile>
+	</target>
+
+	<target name="minor">
+		<propertyfile file="build_info.properties">
+				<entry key="build.minor.number" type="int" operation="+" value="1"/>
+				<entry key="build.revision.number" type="int" value="0"/>
+		</propertyfile>
+	</target>
+
+	<target name="revision">
+		<propertyfile file="build_info.properties">
+				<entry key="build.revision.number" type="int" operation="+" value="1"/>
+		</propertyfile>
+	</target>
+
 	<target name="clean">
 		<delete dir="${dir.bin}"/>
 	</target>
 
 	<target name="compile">
 		<mkdir dir="${dir.bin}"/>
-		<javac srcdir="${dir.src}" destdir="${dir.bin}" classpathref="classpath" fork="yes"/>
+		<javac srcdir="${dir.src}" destdir="${dir.bin}" classpathref="classpath" fork="yes" includeantruntime="false"/>
 	</target>
 	
 	<target name="dist" depends="compile">
-		<buildnumber/>
-		<jar destfile="${dir.jarfile}/RS-Timer-${version}.${build.number}.jar">
+		<antcall target="current-number"></antcall>
+		<jar destfile="${dir.jarfile}/RS Timer ${build.number}.jar">
 			<manifest>
 				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
 				<attribute name="Rsrc-Main-Class" value="com.minepop.talkar.timer.Main"/>
@@ -37,5 +63,5 @@
 			<zipfileset dir="./lib" includes="guava-20.0.jar"/>
 		</jar>
 	</target>
-	
+
 </project>

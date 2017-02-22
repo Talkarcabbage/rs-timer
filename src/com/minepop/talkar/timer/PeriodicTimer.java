@@ -6,8 +6,6 @@ import javax.swing.JProgressBar;
 
 public class PeriodicTimer extends Timer {
 	
-	static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Periodic-Timer"); 
-
 
 	public PeriodicTimer(double targetTime, double durationTotal, String name, int tab, JProgressBar bar) {
 		super(targetTime, durationTotal, name, tab,  bar);

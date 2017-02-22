@@ -11,12 +11,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
-import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.SimpleFormatter;
-import java.util.logging.StreamHandler;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -32,10 +29,11 @@ import javax.swing.SwingUtilities;
 
 import com.minepop.talkar.timer.Main;
 import com.minepop.talkar.timer.Timer;
+import com.minepop.talkar.util.logging.LoggerConstructor;
 
 public class MainWin extends JFrame implements ActionListener, MouseListener { //NOSONAR
 
-	static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Timer");
+	static final Logger logger = LoggerConstructor.getLogger("MainWin");
 
 	
 	private static final long serialVersionUID = -2445104311740312791L;

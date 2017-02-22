@@ -10,10 +10,12 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Scanner;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
 
 import com.google.common.base.Throwables;
+import com.minepop.talkar.util.logging.LoggerConstructor;
 
 /**
  * 
@@ -22,7 +24,7 @@ import com.google.common.base.Throwables;
  * The class handles FileNotFoundExceptions itself.
  */
 public class FileManager {
-	static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Timer");
+	static final Logger logger = LoggerConstructor.getLogger("FileManager");
 
 	FileManager() {}
 	

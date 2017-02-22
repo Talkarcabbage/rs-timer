@@ -1,4 +1,4 @@
-package com.minepop.talkar.timer;
+package com.minepop.talkar.util.logging;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

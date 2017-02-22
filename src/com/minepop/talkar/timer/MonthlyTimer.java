@@ -7,9 +7,6 @@ import java.util.TimeZone;
 import javax.swing.JProgressBar;
 
 public class MonthlyTimer extends Timer {
-	
-	static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Monthly-Timer"); //NOSONAR
-
 
 	public MonthlyTimer(double targetTime, double durationTotal, String name, int tab, JProgressBar bar) {
 		super(targetTime, durationTotal, name, tab,  bar);

@@ -1,4 +1,4 @@
-package com.minepop.talkar.timer;
+package com.minepop.talkar.util.logging;
 
 import java.io.PrintStream;
 import java.util.logging.Level;

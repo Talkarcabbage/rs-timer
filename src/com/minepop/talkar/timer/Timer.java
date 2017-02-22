@@ -1,10 +1,17 @@
 package com.minepop.talkar.timer;
 
 import java.awt.Color;
+import java.util.logging.Logger;
 
 import javax.swing.JProgressBar;
 
+import com.minepop.talkar.util.logging.LoggerConstructor;
+
 public class Timer {
+	
+	static final Logger logger = LoggerConstructor.getLogger("Timer");
+
+	
 	double startingTime;
 	double duration;
 	String name;
@@ -133,7 +140,7 @@ public class Timer {
 	 * @return
 	 */
 	public int getPercentageComplete() {	
-		return (int) (Math.round(Math.floor((100*(System.currentTimeMillis() - startingTime)/(duration)))));
+		return (int) (Math.round(Math.floor(100*(System.currentTimeMillis() - startingTime)/(duration))));
 	}
 	
 	/**
@@ -141,7 +148,6 @@ public class Timer {
 	 * @return
 	 */
 	public double getTimeRemaining() {
-		System.out.println(startingTime + " " + duration + " " + System.currentTimeMillis());
 		return (startingTime + duration) - System.currentTimeMillis();
 	}
 	
@@ -153,7 +159,7 @@ public class Timer {
 	public void resetTimer() {
 		setStartingTime(System.currentTimeMillis());	
 		this.progressBar.setForeground(Color.black);
-		Logger.DEBUG("Set normal timer with data: " + this.toString());
+		logger.fine("Set normal timer with data: " + this.toString());
 
 	}
 	

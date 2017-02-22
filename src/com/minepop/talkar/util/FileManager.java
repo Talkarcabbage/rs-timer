@@ -9,6 +9,11 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
+
+import com.google.common.base.Throwables;
 
 /**
  * 
@@ -17,7 +22,9 @@ import java.util.Scanner;
  * The class handles FileNotFoundExceptions itself.
  */
 public class FileManager {
+	static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Timer");
 
+	FileManager() {}
 	
 	/**
 	 * 
@@ -28,15 +35,13 @@ public class FileManager {
 		
 		File toRead = new File(fileName);
 		if (!toRead.exists()) {
-			System.err.println("FileManager: Error reading file " + fileName + " -- The file does not exist or is inaccessible.");
+			logger.info("FileManager: Error reading file " + fileName + " -- The file does not exist or is inaccessible.");
 			return null;
 		}
 		
-		Scanner scanIn = null;
 		StringBuilder stringB = new StringBuilder();
 		
-		try {
-			scanIn = new Scanner(toRead);
+		try (Scanner scanIn = new Scanner(toRead)) {
 			
 			while (scanIn.hasNext()) {
 				stringB.append(scanIn.nextLine() + "\n");
@@ -47,11 +52,9 @@ public class FileManager {
 			return stringB.toString();
 			
 		} catch (FileNotFoundException e) {
-			System.err.println("Somehow we made it past the fileExists check!");
-			e.printStackTrace();
-		} finally {
-			scanIn.close();
-		}
+			logger.severe("Somehow we made it past the fileExists check!");
+			logger.severe(Throwables.getStackTraceAsString(e));
+		} 
 		
 		
 		
@@ -68,7 +71,7 @@ public class FileManager {
 	public static String[] readFileSplit(String fileName) {
 		String toSplit = readFile(fileName);
 
-		return (toSplit == null ? null : toSplit.split("\n"));
+		return toSplit == null ? null : toSplit.split("\n");
 	}
 	
 	public static boolean writeFile(String fileName, String text, boolean append) {

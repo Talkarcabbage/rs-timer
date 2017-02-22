@@ -2,7 +2,7 @@
  * 
  */
 /**
- * @author rrose3
+ * @author Talkarcabbage
  *
  */
 package com.minepop.talkar.timer;

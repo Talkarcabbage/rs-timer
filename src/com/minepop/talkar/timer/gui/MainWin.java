@@ -11,8 +11,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -26,16 +30,14 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import com.minepop.talkar.timer.Logger;
-import com.minepop.talkar.timer.Logger.LEVEL;
 import com.minepop.talkar.timer.Main;
 import com.minepop.talkar.timer.Timer;
 
-public class MainWin extends JFrame implements ActionListener, MouseListener {
+public class MainWin extends JFrame implements ActionListener, MouseListener { //NOSONAR
 
-	/**
-	 * 
-	 */
+	static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Timer");
+
+	
 	private static final long serialVersionUID = -2445104311740312791L;
 	
 	/*
@@ -47,17 +49,11 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 
 	private JPanel contentPane;
 	private JSlider slider;
-	ArrayList<JPanel> tabList = new ArrayList<JPanel>();
+	ArrayList<JPanel> tabList = new ArrayList<>();
 	int gridRows = 3;
 	int gridColumns = 0;
 	
-	public ArrayList<JPanel> getTabList() {
-		return tabList;
-	}
 
-	public void setTabList(ArrayList<JPanel> tabList) {
-		this.tabList = tabList;
-	}
 
 	/**
 	 * Launch the application.
@@ -67,7 +63,8 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 	/**
 	 * Create the frame.
 	 */
-	int moveXinit, moveYinit;
+	int moveXinit;
+	int moveYinit;
 	private JButton addTimerButton;
 	private JPanel buttonPanel;
 	private JToggleButton removeTimerButton;
@@ -76,6 +73,9 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 	private JButton addTabButton;
 	private JButton removeTabButton;
 	public JPanel configPanel;
+	
+	static final String SAN_SERIF = "SansSerif";
+
 	public MainWin() {
 		this.setUndecorated(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -125,7 +125,7 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 		addTimerButton.setName("addTimerButton");
 		buttonPanel.add(addTimerButton, BorderLayout.NORTH);
 		addTimerButton.addActionListener(this);
-		addTimerButton.setFont(new Font("SansSerif", Font.BOLD, 12));
+		addTimerButton.setFont(new Font(SAN_SERIF, Font.BOLD, 12));
 		addTimerButton.setForeground(Color.GREEN);
 		addTimerButton.setBackground(Color.GRAY);
 		
@@ -138,12 +138,12 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 		addTabButton.setToolTipText("Adds a new tab.");
 		addTabButton.addActionListener(this);
 		addTabButton.setForeground(Color.GREEN);
-		addTabButton.setFont(new Font("SansSerif", Font.BOLD, 12));
+		addTabButton.setFont(new Font(SAN_SERIF, Font.BOLD, 12));
 		addTabButton.setBackground(Color.GRAY);
 		addTabButton.setName("addTabButton");
 		buttonPanel.add(addTabButton, BorderLayout.WEST);
 		removeTimerButton.setForeground(Color.RED);
-		removeTimerButton.setFont(new Font("SansSerif", Font.BOLD, 12));
+		removeTimerButton.setFont(new Font(SAN_SERIF, Font.BOLD, 12));
 		removeTimerButton.setBackground(Color.GRAY);
 		buttonPanel.add(removeTimerButton, BorderLayout.SOUTH);
 		
@@ -182,6 +182,15 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 		
 	}
 	
+	public ArrayList<JPanel> getTabList() {
+		return tabList;
+	}
+
+	
+	public void setTabList(ArrayList<JPanel> tabList) {
+		this.tabList = tabList;
+	}
+	
 	public void toggleAOT(boolean isOnTop) {
 		this.setAlwaysOnTop(isOnTop);
 	}
@@ -197,10 +206,6 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 	public int getCurrentTimerTab() {
 		return this.tabbedPane.getSelectedIndex();
 	}
-	
-//	protected JPanel getTimerPanel() {
-//		return timerPanel;
-//	}
 	
 	public void setTrans(int transparency) {
 		this.setOpacity(((float)transparency)/100.0f);
@@ -249,7 +254,7 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 		}
 		this.revalidate();
 		this.repaint();
-		Logger.INFO("Rows/Columns cfg modified :: Rows: " + gridRows + " | " + "Columns: " + gridColumns);
+		logger.fine("Rows/Columns cfg modified :: Rows: " + gridRows + " | " + "Columns: " + gridColumns);
 		
 	}
 	
@@ -269,7 +274,7 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Logger.INFO("Event: Generic Action Performed/Main Event Listener");
+		logger.fine("Event: Generic Action Performed/Main Event Listener");
 		Object o = e.getSource();
 		
 		if (o instanceof JProgressBar) {
@@ -281,23 +286,23 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 			return;
 			
 		} else if (o instanceof JButton) {
-			if (((JButton) o).getName().equals("addTimerButton")) {
+			if ("addTimerButton".equals(((JButton) o).getName())) {
 				
 				Main.addBarWin.resetAndDisplayWindow();				
 			
-			} else if(((JButton) o).getName().equals("removeTabButton")) {
+			} else if("removeTabButton".equals(((JButton) o).getName())) {
 				
 				int toRemove = this.getCurrentTimerTab();
 				if (toRemove > 0 && toRemove < tabList.size()) {
 					int doRemove = JOptionPane.showConfirmDialog(this, "Are you sure you want to remove the current tab?", "Confirm", JOptionPane.OK_CANCEL_OPTION);
-					Logger.INFO("JOptionpane result: " + doRemove);
+					logger.fine("JOptionpane result: " + doRemove);
 					
 					if (doRemove == JOptionPane.OK_OPTION) {
 						removeTimerTab(toRemove);
 						Main.saveTimers();
 					}
 				}
-			} else if (((JButton) o).getName().equals("addTabButton")) {
+			} else if ("addTabButton".equals(((JButton) o).getName())) {
 				String tabName = JOptionPane.showInputDialog(null, "Input a name for the tab.");
 				int tabRows = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of rows for the tab.", this.getGridRows()));
 				int tabColumns = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of columns for the tab.", this.getGridColumns()));
@@ -326,8 +331,8 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 	}
 	
 	public void onClickTimerBar(JProgressBar b, boolean setComplete) {
-		Logger.INFO("Event: onClickTimerBar");
-		if (removeModeTimers == true) {
+		logger.fine("Event: onClickTimerBar");
+		if (removeModeTimers) {
 			Main.removeTimer(b);
 			this.disableRemoveBar();
 			Main.saveTimers();
@@ -341,7 +346,7 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 	}
 	
 	public void onToggleRemove() {
-		Logger.INFO("onToggleRemove: " + removeTimerButton.isSelected());
+		logger.fine("onToggleRemove: " + removeTimerButton.isSelected());
 		this.removeModeTimers = this.removeTimerButton.isSelected();
 	}
 	
@@ -360,10 +365,10 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 	public void mouseClicked(MouseEvent arg0) {
 		if (arg0.getSource() instanceof JProgressBar) {
 			if (SwingUtilities.isRightMouseButton(arg0)) {
-				Logger.log(LEVEL.INFO, "Resetting a timer to complete status.");
+				logger.fine("Resetting a timer to complete status:" + ((JProgressBar)arg0.getSource()).getString());
 				onClickTimerBar((JProgressBar)arg0.getSource(), true);
 			} else {
-				Logger.log(LEVEL.INFO, "Resetting a timer to incomplete status.");
+				logger.fine("Resetting a timer to incomplete status:" + ((JProgressBar)arg0.getSource()).getString());
 				onClickTimerBar((JProgressBar)arg0.getSource(), false);
 			}
 		}
@@ -371,11 +376,20 @@ public class MainWin extends JFrame implements ActionListener, MouseListener {
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent arg0) {}
+	public void mouseEntered(MouseEvent arg0) {
+		//Unnecessary
+	
+	}
 	@Override
-	public void mouseExited(MouseEvent arg0) {}
+	public void mouseExited(MouseEvent arg0) {
+		//Unnecessary
+	}
 	@Override
-	public void mousePressed(MouseEvent arg0) {}
+	public void mousePressed(MouseEvent arg0) {
+		//Unnecessary
+	}
 	@Override
-	public void mouseReleased(MouseEvent arg0) {}
+	public void mouseReleased(MouseEvent arg0) {
+		//Unnecessary
+	}
 }

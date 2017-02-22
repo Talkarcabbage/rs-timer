@@ -6,7 +6,14 @@ import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.text.NumberFormat;
+import java.util.logging.Level;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -15,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -22,23 +30,17 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.NumberFormatter;
 
-import com.minepop.talkar.timer.Logger;
+import com.google.common.base.Throwables;
 import com.minepop.talkar.timer.Main;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JTextField;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 
 /*
  * 	TODO this.
  */
 public class AddBarwin extends JFrame {
 
-	/**
-	 * 
-	 */
+	static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Timer");
+
+	
 	private static final long serialVersionUID = -7047886515230003423L;
 	private JPanel contentPane;
 	private JFormattedTextField dayInput;
@@ -67,17 +69,21 @@ public class AddBarwin extends JFrame {
 		        }
 		    	
 		    }
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			logger.warning("Exception occured trying to set the look and feel.");
+			logger.warning(Throwables.getStackTraceAsString(e));
+		}
 		
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
+		EventQueue.invokeLater( () -> {
 				try {
 					AddBarwin frame = new AddBarwin();
 					frame.resetAndDisplayWindow();
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.severe("Error while creating add timer GUI");
+					logger.severe(Throwables.getStackTraceAsString(e));
+					
 				}
-			}
+			
 		});
 	}
 
@@ -184,7 +190,7 @@ public class AddBarwin extends JFrame {
 					time += (3600 * (Integer)(hourInput.getValue()))*1000;
 					time += (60 * (Integer)minuteInput.getValue())*1000;
 					time += (Integer)(secondInput.getValue())*1000;
-					Logger.INFO("Timer duration: " + time);
+					logger.fine("Timer duration: " + time);
 					if (time == 0) {
 						return;
 					}
@@ -196,9 +202,10 @@ public class AddBarwin extends JFrame {
 				} else if (monthlyButton.isSelected()) {
 					Main.addTimer(0, 1, Main.mainWin.getCurrentTimerTab(), Main.MONTHLYTIMER, name).resetTimer(); //TODO is this safe?
 				} else {
-					Logger.ERROR("Could not identify the selected radiobox to add a timer.");
+					logger.severe("Could not identify the selected radiobox to add a timer.");
 					return;
 				}
+				Main.saveTimers();
 				Main.addBarWin.setVisible(false);
 			}
 		});
@@ -284,12 +291,8 @@ public class AddBarwin extends JFrame {
 		hourInput.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						hourInput.selectAll();
-					}
-				});
+				SwingUtilities.invokeLater(hourInput::selectAll);
+					
 			}
 		});
 		GridBagConstraints gbc_hourInput = new GridBagConstraints();
@@ -304,12 +307,8 @@ public class AddBarwin extends JFrame {
 		minuteInput.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						minuteInput.selectAll();
-					}
-				});
+				SwingUtilities.invokeLater( minuteInput::selectAll);
+
 			}
 		});
 		GridBagConstraints gbc_minuteInput = new GridBagConstraints();
@@ -324,12 +323,7 @@ public class AddBarwin extends JFrame {
 		secondInput.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						secondInput.selectAll();
-					}
-				});
+				SwingUtilities.invokeLater(secondInput::selectAll);
 			}
 		});
 		GridBagConstraints gbc_secondInput = new GridBagConstraints();
@@ -383,7 +377,6 @@ public class AddBarwin extends JFrame {
 		formatter.setValueClass(Integer.class);
 		formatter.setMinimum(0);
 		formatter.setMaximum(Integer.MAX_VALUE);
-		//formatter.setAllowsInvalid(false);
 		formatter.setCommitsOnValidEdit(true);
 		return formatter;
 	}

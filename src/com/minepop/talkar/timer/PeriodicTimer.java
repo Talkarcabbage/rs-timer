@@ -5,24 +5,28 @@ import java.awt.Color;
 import javax.swing.JProgressBar;
 
 public class PeriodicTimer extends Timer {
+	
+	static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Periodic-Timer"); 
+
 
 	public PeriodicTimer(double targetTime, double durationTotal, String name, int tab, JProgressBar bar) {
 		super(targetTime, durationTotal, name, tab,  bar);
-		// TODO Auto-generated constructor stub
+		
 	}
+	
 	
 	@Override
 	public void resetTimer(){ 
 		this.progressBar.setForeground(Color.black);
 
-		if (getDurationTotal() == WEEK_LENGTH) {
-			setStartingTime((((Math.floor((System.currentTimeMillis()+DAY_LENGTH)/WEEK_LENGTH))*WEEK_LENGTH)-DAY_LENGTH));
-			Logger.DEBUG("Set weekly timer timer with data: " + this.toString());
-		} else if (getDurationTotal() == DAY_LENGTH){
-			setStartingTime(Math.floor(System.currentTimeMillis()/DAY_LENGTH)*DAY_LENGTH);
-			Logger.DEBUG("Set daily timer timer with data: " + this.toString());
+		if ((long)getDurationTotal() == WEEK_LENGTH) {
+			setStartingTime(((double)((System.currentTimeMillis()+DAY_LENGTH)/WEEK_LENGTH)*WEEK_LENGTH)-DAY_LENGTH);
+			logger.fine("Set weekly timer timer with data: " + this.toString());
+		} else if ((long)getDurationTotal() == DAY_LENGTH){
+			setStartingTime((double)(System.currentTimeMillis()/DAY_LENGTH)*DAY_LENGTH);
+			logger.fine("Set daily timer timer with data: " + this.toString());
 		} else {
-			Logger.ERROR("Failed to match timer type for periodic timer: " + this.toString());
+			logger.severe("Failed to match timer type for periodic timer: " + this.toString());
 		}
 
 	}

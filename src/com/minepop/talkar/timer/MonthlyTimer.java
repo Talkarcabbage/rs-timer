@@ -7,10 +7,12 @@ import java.util.TimeZone;
 import javax.swing.JProgressBar;
 
 public class MonthlyTimer extends Timer {
+	
+	static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Monthly-Timer"); //NOSONAR
+
 
 	public MonthlyTimer(double targetTime, double durationTotal, String name, int tab, JProgressBar bar) {
 		super(targetTime, durationTotal, name, tab,  bar);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -23,7 +25,7 @@ public class MonthlyTimer extends Timer {
 		startC.set(Calendar.MINUTE, 0);
 		startC.set(Calendar.SECOND, 0);
 		startC.set(Calendar.MILLISECOND, 0);
-		Logger.DEBUG(startC.getTime().toString());
+		logger.info(startC.getTime().toString());
 		
 		
 		Calendar endC = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -32,12 +34,12 @@ public class MonthlyTimer extends Timer {
 		endC.set(Calendar.AM_PM, Calendar.AM);
 		endC.set(Calendar.MINUTE, 0);
 		endC.set(Calendar.SECOND, 0);
-		endC.set(Calendar.MILLISECOND, 0);;
+		endC.set(Calendar.MILLISECOND, 0);
 		endC.set(Calendar.MONTH, endC.get(Calendar.MONTH)+1);
-		Logger.DEBUG(endC.getTime().toString());
+		logger.fine(endC.getTime().toString());
 		
 		this.startingTime = startC.getTimeInMillis();
-		this.duration = endC.getTimeInMillis() - startC.getTimeInMillis();
+		this.duration = (double)endC.getTimeInMillis() - startC.getTimeInMillis();
 		
 	}
 	
@@ -51,9 +53,6 @@ public class MonthlyTimer extends Timer {
 		return Main.MONTHLYTIMER;
 	}
 
-//	@Override
-//	public double getTimeRemaining() {
-//		
-//	}
+
 	
 }

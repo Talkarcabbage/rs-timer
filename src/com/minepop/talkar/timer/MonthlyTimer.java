@@ -8,7 +8,7 @@ import javax.swing.JProgressBar;
 
 public class MonthlyTimer extends Timer {
 
-	public MonthlyTimer(double targetTime, double durationTotal, String name, int tab, JProgressBar bar) {
+	public MonthlyTimer(long targetTime, long durationTotal, String name, int tab, JProgressBar bar) {
 		super(targetTime, durationTotal, name, tab,  bar);
 	}
 	
@@ -36,7 +36,7 @@ public class MonthlyTimer extends Timer {
 		logger.fine(endC.getTime().toString());
 		
 		this.startingTime = startC.getTimeInMillis();
-		this.duration = (double)endC.getTimeInMillis() - startC.getTimeInMillis();
+		this.duration = endC.getTimeInMillis() - startC.getTimeInMillis();
 		
 	}
 	

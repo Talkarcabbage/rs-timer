@@ -7,7 +7,7 @@ import javax.swing.JProgressBar;
 public class PeriodicTimer extends Timer {
 	
 
-	public PeriodicTimer(double targetTime, double durationTotal, String name, int tab, JProgressBar bar) {
+	public PeriodicTimer(long targetTime, long durationTotal, String name, int tab, JProgressBar bar) {
 		super(targetTime, durationTotal, name, tab,  bar);
 		
 	}
@@ -18,10 +18,10 @@ public class PeriodicTimer extends Timer {
 		this.progressBar.setForeground(Color.black);
 
 		if ((long)getDurationTotal() == WEEK_LENGTH) {
-			setStartingTime(((double)((System.currentTimeMillis()+DAY_LENGTH)/WEEK_LENGTH)*WEEK_LENGTH)-DAY_LENGTH);
+			setStartingTime((((System.currentTimeMillis()+DAY_LENGTH)/WEEK_LENGTH)*WEEK_LENGTH)-DAY_LENGTH);
 			logger.fine("Set weekly timer timer with data: " + this.toString());
 		} else if ((long)getDurationTotal() == DAY_LENGTH){
-			setStartingTime((double)(System.currentTimeMillis()/DAY_LENGTH)*DAY_LENGTH);
+			setStartingTime((System.currentTimeMillis()/DAY_LENGTH)*DAY_LENGTH);
 			logger.fine("Set daily timer timer with data: " + this.toString());
 		} else {
 			logger.severe("Failed to match timer type for periodic timer: " + this.toString());

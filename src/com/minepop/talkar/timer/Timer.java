@@ -12,8 +12,8 @@ public class Timer {
 	static final Logger logger = LoggerConstructor.getLogger("Timer");
 
 	
-	double startingTime;
-	double duration;
+	long startingTime;
+	long duration;
 	String name;
 	int tab;
 	JProgressBar progressBar;
@@ -27,7 +27,7 @@ public class Timer {
 	 * @param durationTotal - The total time the timer should run for. This is used to reset the timer and check for completion.
 	 * @param name - A name for the timer. This is used as a label in the GUI.
 	 */
-	public Timer(double targetTime, double durationTotal, String name, int tab, JProgressBar bar) {
+	public Timer(long targetTime, long durationTotal, String name, int tab, JProgressBar bar) {
 		this.startingTime = targetTime;
 		this.duration = durationTotal;
 		this.name = name;
@@ -50,7 +50,7 @@ public class Timer {
 	}
 
 
-	public void setStartingTime(double startingTime) {
+	public void setStartingTime(long startingTime) {
 		this.startingTime = startingTime;
 	}
 
@@ -60,7 +60,7 @@ public class Timer {
 	}
 
 
-	public void setDurationTotal(double durationTotal) {
+	public void setDurationTotal(long durationTotal) {
 		this.duration = durationTotal;
 	}
 
@@ -140,7 +140,7 @@ public class Timer {
 	 * @return
 	 */
 	public int getPercentageComplete() {
-		long rawPercentage = (Math.round(Math.floor((100*(System.currentTimeMillis() - startingTime)/(duration)))));
+		long rawPercentage = (100*(System.currentTimeMillis() - startingTime))/(duration);
 		return rawPercentage >= 100 ? 100 : (int) rawPercentage;
 	}
 	

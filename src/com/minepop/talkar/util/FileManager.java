@@ -5,14 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Scanner;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-import java.util.logging.StreamHandler;
 
 import com.google.common.base.Throwables;
 import com.minepop.talkar.util.logging.LoggerConstructor;
@@ -79,11 +77,8 @@ public class FileManager {
 	public static boolean writeFile(String fileName, String text, boolean append) {
 		
 		File toWrite = new File(fileName);
-		
-		PrintWriter pw = null;
-		
-		try {
-			pw = new PrintWriter(toWrite);
+				
+		try (PrintWriter pw = new PrintWriter(toWrite)) {
 			if (append) {
 				pw.append(text);
 			} else {
@@ -93,10 +88,9 @@ public class FileManager {
 			return true;
 			
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			pw.close();
-		}
+			logger.severe("Could not write file: ");
+			logger.severe(Throwables.getStackTraceAsString(e));
+		} 
 		
 		return false;
 	}
@@ -110,26 +104,17 @@ public class FileManager {
 	 * @param url
 	 * @param fileName
 	 * @return
+	 * @throws MalformedURLException If the url is invalid
 	 */
-	public static boolean downloadFile(String fileName, String url) {
+	public static boolean downloadFile(String fileName, String url) throws MalformedURLException {
 		URL website;
-		FileOutputStream fos = null;
-		ReadableByteChannel rbc;
-		try {
-			website = new URL(url);
-			rbc = Channels.newChannel(website.openStream());
-			fos = new FileOutputStream(fileName);
+		website = new URL(url);
+		try (ReadableByteChannel rbc = Channels.newChannel(website.openStream()); FileOutputStream fos = new FileOutputStream(fileName)) {
 			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				fos.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+			logger.severe("Error downloading assets");
+			logger.severe(Throwables.getStackTraceAsString(e));
+		} 
 		
 		return false;
 	}
@@ -142,10 +127,10 @@ public class FileManager {
 		File f = new File(string);
 		
 		try {
-			f.createNewFile();
+			f.createNewFile(); //NOSONAR
 		} catch (IOException e) {
-			System.err.println("Error creating file: " + string);
-			e.printStackTrace();
+			logger.severe("Error creating file: " + string);
+			logger.severe(Throwables.getStackTraceAsString(e));
 		}
 		
 	}

@@ -12,6 +12,9 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
@@ -49,6 +52,8 @@ public class Main {
 	static TrayIcon trayIcon;
 	public static MainWin mainWin;
 	public static AddBarwin addBarWin;
+	
+	static final String NUMBERFORMATCONSTANT = "numberformat=long";
 		
 	static HashBiMap<JProgressBar, Timer> timerMap = HashBiMap.create(50);
 	
@@ -60,9 +65,6 @@ public class Main {
 		logger.info("Loading configuration file");
 		ConfigManager.load();
 		LoggerConstructor.setGlobalLoggingLevel(ConfigManager.logLevel);
-		//TODO window width and height
-		//TODO reuse or remove gridRows and gridColumns
-		//TODO name of mainWin first tab
 		logger.info("Initializing GUI and tray...");
 		try {
 			logger.fine("Setting look and feel");
@@ -119,7 +121,7 @@ public class Main {
 		if (timerMap.isEmpty()) {
 			addTimer(System.currentTimeMillis(),120000, 0, STANDARDTIMER, "Sample: Two Minutes");
 			addTimer(System.currentTimeMillis(),3600000, 0, STANDARDTIMER,  "Sample: Sixty Minutes");
-			
+			saveTimers();
 		}
 		
 		logger.info("Initializion complete.");
@@ -158,17 +160,23 @@ public class Main {
 	private static void loadTimers() {
 		boolean importResave = false;
 		boolean importResaveConfig = false;
+		boolean processDoubles = true; //Initialize to true for backwards compat 
+		
 		String[] timersStringArray = FileManager.readFileSplit(TIMERFILE);
 		
 		for (String s : timersStringArray) {
 			if (s.isEmpty() || s.startsWith("/")) {
-				
 				continue;
 			}
+			if (NUMBERFORMATCONSTANT.equalsIgnoreCase(s)) {
+				processDoubles = false; //Verify that our format of number storage is long. 
+				continue;
+			}
+			
 			String[] timerInfo = s.split(",");
 			if ("cfg".equals(timerInfo[0])) {
 				importResaveConfig = true;
-				importResave = true; //To amke sure our timer file doesn't overwrite our configuration repeatedly
+				importResave = true; //To make sure our timer file doesn't overwrite our configuration repeatedly
 				logger.config("Importing configuration from timers file: " + timerInfo[1]);
 				if ("mainTabName".equals(timerInfo[1])) {
 					ConfigManager.mainTabName = timerInfo[2];
@@ -198,25 +206,16 @@ public class Main {
 				}
 				
 			} else if ("timer".equals(timerInfo[0])) {
-				logger.fine("Found a timer");
-				if ("true".equalsIgnoreCase(timerInfo[4])) {
-					logger.info("Imported old timer data for standard timer.");
-					addTimer(Double.parseDouble(timerInfo[1]), Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), Main.STANDARDTIMER, timerInfo[5]);
-				} else if ("false".equalsIgnoreCase(timerInfo[4])) {
-					logger.info("Imported old timer data for periodic timer.");
-					addTimer(Double.parseDouble(timerInfo[1]), Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), Main.PERIODICTIMER, timerInfo[5]);
-				} else {
-					logger.fine("Up to date timer loaded.");
-					addTimer(Double.parseDouble(timerInfo[1]), Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), timerInfo[4], timerInfo[5]);
-				}
+				logger.finer("Found a timer entry with size: " + timerInfo.length);
+				loadTimerFromArray(timerInfo, processDoubles); //Actually load the timer.
 				
 			} else {
-				logger.info("Imported old timer data!");
+				logger.info("Imported really old timer data!");
 				importResave=true;
-				addTimer(Double.parseDouble(timerInfo[0]), Double.parseDouble(timerInfo[1]), 0, "standard", timerInfo[2]);
+				addTimer((long)Double.parseDouble(timerInfo[0]), (long)Double.parseDouble(timerInfo[1]), 0, "standard", timerInfo[2]); //If it's super old data
 			}
 		}
-		if (importResave) {
+		if (importResave || processDoubles) {
 			Main.saveTimers();
 		}
 		if (importResaveConfig) {
@@ -226,8 +225,34 @@ public class Main {
 		
 	}
 	
+	/**
+	 * Loads a timer via the addTimer method given an array with timer data. 
+	 * @param timerInfo An array containing file-loaded timer data.
+	 * @param processAsDouble Whether or not to process as a double. This is for backwards compatibility.
+	 */
+	static void loadTimerFromArray(String[] timerInfo, boolean processAsDouble) {
+		
+		if (!processAsDouble) { //Importing up to date data type (long)
+			logger.finer("Up to date timer loaded: " + timerInfo[1] + " | " + timerInfo[2] + " | " + timerInfo[3] + " | " + timerInfo[4] + " | "+ timerInfo[5] + " | ");
+			addTimer(Long.parseLong(timerInfo[1]), Long.parseLong(timerInfo[2]), Integer.parseInt(timerInfo[3]), timerInfo[4], timerInfo[5]);
+			
+		} else { //Importing old (double) data type
+			logger.info("Importing old timer data to long format: " + timerInfo[5]);
+			if ("true".equalsIgnoreCase(timerInfo[4])) {
+				logger.info("Imported old timer data for standard timer with double type.");
+				addTimer((long)Double.parseDouble(timerInfo[1]), (long)Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), Main.STANDARDTIMER, timerInfo[5]);
+			} else if ("false".equalsIgnoreCase(timerInfo[4])) {
+				logger.info("Imported old timer data for periodic timer.");
+				addTimer((long)Double.parseDouble(timerInfo[1]), (long)Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), Main.PERIODICTIMER, timerInfo[5]);
+			} else {
+				logger.info("Converting double timer: " + timerInfo[1] + " | " + timerInfo[2] + " | " + timerInfo[3] + " | " + timerInfo[4] + " | "+ timerInfo[5] + " | ");
+				addTimer((long)Double.parseDouble(timerInfo[1]), (long)Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), timerInfo[4], timerInfo[5]);
+			}
+		}
+	}
 	
-	public static Timer addTimer(double startingTime, double duration, int tab, String timerType, String name) {
+	
+	public static Timer addTimer(long startingTime, long duration, int tab, String timerType, String name) {
 		Timer newTimer;
 		switch (timerType) {
 		case STANDARDTIMER:
@@ -289,6 +314,8 @@ public class Main {
 		
 		logger.fine("Saving timers");
 		
+		toSave.append(NUMBERFORMATCONSTANT + "\n");
+		
 		if (mainWin.getTabList().size() > 1) {
 			for (int i = 1; i < mainWin.getTabList().size(); i++) {
 				toSave.append("tab," + ((GridLayout)(mainWin.getTabList().get(i).getLayout())).getRows() + "," + ((GridLayout)(mainWin.getTabList().get(i).getLayout())).getColumns() + "," + mainWin.getTabList().get(i).getName() + "\n");
@@ -347,7 +374,12 @@ public class Main {
 		File f = new File(TASKBARICONFILE);
 		if (!f.exists()) {
 			logger.info("Retrieving assets");
-			FileManager.downloadFile(TASKBARICONFILE, "https://www.dropbox.com/s/th13a1fsf5kj4st/Cabbage.png?dl=1");
+			try {
+				FileManager.downloadFile(TASKBARICONFILE, "https://www.dropbox.com/s/th13a1fsf5kj4st/Cabbage.png?dl=1");
+			} catch (MalformedURLException e) {
+				logger.severe("URL of the icno was invalid");
+				logger.severe(Throwables.getStackTraceAsString(e));
+			}
 		}
 		ImageIcon taskBarIcon = new ImageIcon(TASKBARICONFILE);
 		
@@ -391,6 +423,7 @@ public class Main {
 
 	}
 	
+	static DateFormat df = new SimpleDateFormat("");
 	public static String formatTime(double timeDuration) {
 		
 		double timeSeconds = Math.ceil(timeDuration/1000);

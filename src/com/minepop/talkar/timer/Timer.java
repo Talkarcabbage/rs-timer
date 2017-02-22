@@ -132,8 +132,9 @@ public class Timer {
 	 * Returns the percentage of this timer's progress toward completion, for setting progress bars.
 	 * @return
 	 */
-	public int getPercentageComplete() {	
-		return (int) (Math.round(Math.floor((100*(System.currentTimeMillis() - startingTime)/(duration)))));
+	public int getPercentageComplete() {
+		long rawPercentage = (Math.round(Math.floor((100*(System.currentTimeMillis() - startingTime)/(duration)))));
+		return rawPercentage >= 100 ? 100 : (int) rawPercentage;
 	}
 	
 	/**

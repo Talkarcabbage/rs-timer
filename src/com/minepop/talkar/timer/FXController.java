@@ -53,9 +53,7 @@ public class FXController {
 
 	static final String FXBASEDCONSTANT = "gui,fx";
 	
-	FXController() {
-		
-	}
+	FXController() {}
 
 	public static void main(String[] args) {
 		logger.info("Program starting...");
@@ -65,7 +63,6 @@ public class FXController {
 		ConfigManager.save();
 		logger.fine("Attempting tray initialization");
 		instance.prepareSystemTray();
-		
 		
 		MainWindow.launchWrap(args);
 	}
@@ -88,7 +85,6 @@ public class FXController {
 			logger.severe("A thread-related exception occured while setting up the tray");
 			logger.severe(Throwables.getStackTraceAsString(e1));
 		}
-		
 	}
 	
 	private static void applyWindowIcon(ImageIcon taskBarIcon) {
@@ -120,7 +116,6 @@ public class FXController {
 			logger.severe("Error creating tray icon");
 			logger.severe(Throwables.getStackTraceAsString(e));
 		}
-
 	}
 
 	/**
@@ -184,8 +179,6 @@ public class FXController {
 			}
 			String[] timerInfo = s.split(",");
 			
-			// *********BEGIN COPY PASTA
-			
 			if ("cfg".equals(timerInfo[0])) {
 				importResaveConfig = true;
 				importResave = true; //To make sure our timer file doesn't overwrite our configuration repeatedly
@@ -203,7 +196,6 @@ public class FXController {
 					ConfigManager.logLevel = Level.parse(timerInfo[2]);
 					LoggerConstructor.setGlobalLoggingLevel(ConfigManager.logLevel);
 				}
-				
 			} 
 			if (!isFXBased) { //Add a new tab and set isFXBased and importResave to true
 				logger.info("Creating a new first-tab based on imported swing data");
@@ -219,7 +211,6 @@ public class FXController {
 				} else {
 					MainWindow.instance.addTab(Integer.parseInt(timerInfo[1]), Integer.parseInt(timerInfo[2]), timerInfo[3]);
 				}
-				
 			} else if ("timer".equals(timerInfo[0])) {
 				logger.finer("Found a timer entry with size: " + timerInfo.length);
 				loadTimerFromArray(timerInfo, processDoubles); //Actually load the timer.
@@ -245,9 +236,6 @@ public class FXController {
 			addTimer(System.currentTimeMillis(),3600000, 0, TimerType.STANDARD,  "Sample: Sixty Minutes");
 			saveTimers();
 		}
-			
-			//**********END COPY SALAD
-			
 	}
 	
 	public void updateProgressPaneTitle(Timer timer) {
@@ -262,7 +250,6 @@ public class FXController {
 		if (!processAsDouble) { //Importing up to date data type (long)
 			logger.finer("Up to date timer loaded: " + timerInfo[1] + " | " + timerInfo[2] + " | " + timerInfo[3] + " | " + timerInfo[4] + " | "+ timerInfo[5] + " | ");
 			addTimer(Long.parseLong(timerInfo[1]), Long.parseLong(timerInfo[2]), Integer.parseInt(timerInfo[3]), TimerType.valueOf(timerInfo[4].toUpperCase()), timerInfo[5]);
-			
 		} else { //Importing old (double) data type
 			logger.info("Importing old timer data to long format: " + timerInfo[5]);
 			if ("true".equalsIgnoreCase(timerInfo[4])) {
@@ -276,7 +263,6 @@ public class FXController {
 				addTimer((long)Double.parseDouble(timerInfo[1]), (long)Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), TimerType.valueOf(timerInfo[4].toUpperCase()), timerInfo[5]);
 			}
 		}
-		
 	}
 
 	public void saveTimers() {
@@ -348,7 +334,7 @@ public class FXController {
 	}
 	
 	/**
-	 * Formats the time for display in a tooltip. Returns "complete!" if the value is negative
+	 * Formats the time for display in a tooltip. Returns "Complete!" if the value is negative
 	 * @param timeDuration
 	 * @return
 	 */
@@ -356,7 +342,7 @@ public class FXController {
 		if (timeDuration < 0) {
 			return "Complete!";
 		}
-		double timeSeconds = timeDuration/1000;
+		double timeSeconds = timeDuration/1000D;
 		return Math.round(Math.floor(timeSeconds/3600)) + ":" + Math.round((long)Math.floor((timeSeconds%3600)/60)) + ":" + Math.round(timeSeconds%60); //NOSONAR
 	}
 	

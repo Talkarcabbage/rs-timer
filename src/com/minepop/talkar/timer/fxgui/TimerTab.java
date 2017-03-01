@@ -3,6 +3,11 @@ package com.minepop.talkar.timer.fxgui;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 
+/**
+ * 
+ * @author Talkarcabbage
+ *
+ */
 public class TimerTab extends Tab {
 
 	/**
@@ -24,5 +29,4 @@ public class TimerTab extends Tab {
 		super(arg0, arg1);
 		// TODO Auto-generated constructor stub
 	}
-
 }

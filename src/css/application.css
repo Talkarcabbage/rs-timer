@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
 .root {
 	-fx-border-color: #152229, #222D35;
 	-fx-border-width: 3px, 1px;
@@ -22,7 +24,7 @@
 
 .tab .tab-label {
 	-fx-text-fill: #d5d5d5;
-	-fx-font-family: Segoe UI;
+	-fx-font-family: 'Open Sans', sans-serif;
 	-fx-font-size: 14px;
 }
 
@@ -43,7 +45,6 @@
 }
 
 *.tab-header-background {
-
 	-fx-border-color: #2e3a41, #2e3a41 #2e3a41 #152229 #2e3a41;
 	-fx-border-width: 0 1 3 1, 1 0 2 0;
 }
@@ -53,10 +54,10 @@
 }
 
 .progressPane Label {
-	-fx-font-family: "Segoe UI";
+	-fx-font-family: 'Open Sans', sans-serif;
 	-fx-font-size: 14px;
 	-fx-text-fill: #d5d5d5;
-	-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 2, 1, 0, 0);
+	-fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.6), 3, 3, 0, 0);
 }
 
 .progress-bar .track {
@@ -165,9 +166,9 @@
 
 #transSlider .track {
 	-fx-border-image-source: url("/images/transSliderTrack.png");
-	-fx-border-image-slice: 2px 1px fill;
-	-fx-border-image-width: 3px 1px 2px 1px;
+	-fx-border-image-slice: 3px 4px fill;
+	-fx-border-image-width: 3px 4px;
 	-fx-border-image-repeat: stretch stretch;
-	-fx-min-height: 5px;
-	-fx-pref-height: 5px;
+	-fx-min-height: 11px;
+	-fx-pref-height: 11px;
 }

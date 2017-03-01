@@ -6,18 +6,21 @@ import com.minepop.talkar.util.logging.LoggerConstructor;
 
 import javafx.scene.control.ProgressBar;
 
+/**
+ * 
+ * @author Talkarcabbage
+ *
+ */
 public class ColorProgressBar extends ProgressBar {
 	
 	static final Logger logger = LoggerConstructor.getLogger("FXColorProgressBar");
 
-	
 	public ColorProgressBar() {
 		super();
 	}
 
 	public ColorProgressBar(double arg0) {
 		super(arg0);
-		
 	}
 	
 	/**
@@ -30,5 +33,4 @@ public class ColorProgressBar extends ProgressBar {
 		this.getStyleClass().add(styleClass);
 		this.applyCss();
 	}
-
 }

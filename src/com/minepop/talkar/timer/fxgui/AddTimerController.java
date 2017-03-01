@@ -23,6 +23,11 @@ import javafx.scene.control.TextFormatter;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 
+/**
+ * 
+ * @author Talkarcabbage
+ *
+ */
 public class AddTimerController {
 	
 	static final Logger logger = LoggerConstructor.getLogger("AddTimerController");
@@ -59,7 +64,6 @@ public class AddTimerController {
 		} catch (IOException e) {
 			logger.log(Level.SEVERE, "An error occured making the add-gui: ", e);
 		}
-
 	}
 	
 	public AddTimerController() {
@@ -134,7 +138,6 @@ public class AddTimerController {
 			}
 			FXController.instance.updateProgressPaneTitle(editedTimer);
 			FXController.instance.saveTimers();
-
 		}
 	}
 	
@@ -311,5 +314,4 @@ public class AddTimerController {
 		this.minutesTextField.setText(Long.toString(minutesDur));
 		this.secondsTextField.setText(Long.toString(secondsDur));
 	}
-
 }

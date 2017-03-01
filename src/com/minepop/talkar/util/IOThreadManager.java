@@ -5,6 +5,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+/**
+ * 
+ * @author Talkarcabbage
+ *
+ */
 public class IOThreadManager {
 
 	public static final IOThreadManager instance = new IOThreadManager();
@@ -44,7 +49,6 @@ public class IOThreadManager {
 		public String call() throws Exception {
 			return FileManager.readFile(fileName);
 		}
-		
 	}
 	
 	/**
@@ -53,9 +57,6 @@ public class IOThreadManager {
 	 * @param r
 	 */
 	public void invokeLater(Runnable r) {
-		exc.execute(r);
-		
+		exc.execute(r);	
 	}
-	
 }
-

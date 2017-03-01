@@ -7,6 +7,11 @@ import com.minepop.talkar.util.ConfigManager;
 
 import javafx.animation.AnimationTimer;
 
+/**
+ * 
+ * @author Talkarcabbage
+ *
+ */
 public class ProgressAnimTimer extends AnimationTimer {
 
 	final BiMap<ProgressPane, Timer> map;
@@ -27,7 +32,5 @@ public class ProgressAnimTimer extends AnimationTimer {
 				pane.label.getTooltip().setText(FXController.formatTime(timer.getTimeRemaining()));
 			});	
 		}
-			
 	}
-
 }

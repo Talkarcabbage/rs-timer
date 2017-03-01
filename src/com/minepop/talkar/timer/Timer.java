@@ -5,6 +5,11 @@ import java.util.logging.Logger;
 
 import com.minepop.talkar.util.logging.LoggerConstructor;
 
+/**
+ * 
+ * @author Talkarcabbage
+ *
+ */
 public class Timer {
 	
 	private static final Logger logger = LoggerConstructor.getLogger("Timer");
@@ -41,21 +46,17 @@ public class Timer {
 	
 	// Standard getters and setters
 	
-
 	public double getStartingTime() {
 		return startingTime;
 	}
-
 
 	public synchronized void setStartingTime(long startingTime) {
 		this.startingTime = startingTime;
 	}
 
-
 	public long getDuration() {
 		return duration;
 	}
-
 
 	public synchronized void setDuration(long durationTotal) {
 		this.duration = durationTotal;
@@ -69,29 +70,23 @@ public class Timer {
 		return Duration.ofMillis(this.duration);
 	}
 
-
 	public String getName() {
 		return name;
 	}
-
 
 	public synchronized void setName(String name) {
 		this.name = name;
 	}
 
-	
 	public int getTab() {
 		return tab;
 	}
-
 
 	public void setTab(int tab) {
 		this.tab = tab;
 	}
 	
 	//End standard getters and setters
-
-
 
 	@Override
 	public boolean equals(Object obj) { //NOSONAR
@@ -124,7 +119,6 @@ public class Timer {
 				+ ", name=" + name + ", tab=" + tab + "]";
 	}
 	
-	
 	/**
 	 * Returns the percentage of this timer's progress toward completion, for setting progress bars.
 	 * @return
@@ -150,7 +144,6 @@ public class Timer {
 	public void resetTimer() {
 		setStartingTime(System.currentTimeMillis());	
 		logger.fine("Set normal timer with data: " + this.toString());
-
 	}
 	
 	/**
@@ -172,7 +165,4 @@ public class Timer {
 	public TimerType getTimerType() {
 		return timerType;
 	}
-	
-	
-	
 }

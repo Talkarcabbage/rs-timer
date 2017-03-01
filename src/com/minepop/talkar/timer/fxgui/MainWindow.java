@@ -40,9 +40,13 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.converter.IntegerStringConverter;
 
-
+/**
+ * 
+ * @author Talkarcabbage
+ *
+ */
 public class MainWindow extends Application {
-		
+
 	static final Logger logger = LoggerConstructor.getLogger("FXWin");
 	
 	TabPane tabPane;
@@ -172,7 +176,6 @@ public class MainWindow extends Application {
 			logger.log(Level.SEVERE, "An exception occured while initializing the FXGUI: ", e);
 		}
 	}
-	
 
 	/**
 	 * Adds a tab to the GUI with the specified gridpane information and title.
@@ -260,7 +263,6 @@ public class MainWindow extends Application {
 				addTimerBar(key, tabNum);
 			}
 		});
-
 	}
 	
 	public void toggleAOT(boolean isOnTop) {
@@ -323,7 +325,6 @@ public class MainWindow extends Application {
 			FXController.instance.resetTimer(pane); 
 		}
 		minusButton.setSelected(false);
-
 	}
 	
 	public void prepareTimerAnimation(BiMap<ProgressPane, Timer> map) {
@@ -427,5 +428,4 @@ public class MainWindow extends Application {
 			.filter(response -> response.getButtonData() == ButtonType.OK.getButtonData())
 			.ifPresent( response -> FXController.instance.removeTimerTab(this.getCurrentTab()));
 	}
-	
 }

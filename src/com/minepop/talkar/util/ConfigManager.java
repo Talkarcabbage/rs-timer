@@ -11,6 +11,11 @@ import java.util.logging.Logger;
 import com.google.common.base.Throwables;
 import com.minepop.talkar.util.logging.LoggerConstructor;
 
+/**
+ * 
+ * @author Talkarcabbage
+ *
+ */
 public class ConfigManager {
 	
 	static final Logger logger = LoggerConstructor.getLogger("ConfigManager");
@@ -54,7 +59,6 @@ public class ConfigManager {
 		winWidth = getPropsInt(prop, "winWidth", winWidth);
 		framesPerUpdate = getPropsInt(prop, "framesPerUpdate", framesPerUpdate);
 		transparency = getPropsDouble(prop, "transparency", transparency);
-
 	}
 	
 	public static void save() {
@@ -68,7 +72,6 @@ public class ConfigManager {
 		prop.setProperty("logLevel", logLevel.toString());
 		prop.setProperty("framesPerUpdate", Integer.toString(framesPerUpdate));
 		prop.setProperty("transparency", Double.toString(transparency));
-
 		
 		try (FileOutputStream fos = new FileOutputStream(configFileName)) {
 			prop.store(fos, "This file stores configuration options for the RS Timer");
@@ -99,7 +102,6 @@ public class ConfigManager {
 			logger.config("An acceptable Exception was caught while loading config " + id + ":" + e.getMessage());
 			return def;
 		}
-		
 	}
 	static double getPropsDouble(Properties props, String id, double def) {
 		try {
@@ -110,5 +112,4 @@ public class ConfigManager {
 			return def;
 		}
 	}
-	
 }

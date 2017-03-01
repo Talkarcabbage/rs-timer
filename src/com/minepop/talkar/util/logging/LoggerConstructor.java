@@ -6,6 +6,11 @@ import java.util.logging.Logger;
 
 import com.minepop.talkar.util.ConfigManager;
 
+/**
+ * 
+ * @author Talkarcabbage
+ *
+ */
 public class LoggerConstructor {
 
 	static final HashMap<String, Logger> hm = new HashMap<>();
@@ -26,7 +31,6 @@ public class LoggerConstructor {
 		} else {
 			return hm.get(name);
 		}
-
 	}
 	
 	public static void setGlobalLoggingLevel(Level level) {
@@ -34,5 +38,4 @@ public class LoggerConstructor {
 			value.setLevel(level);
 		}
 	}
-
 }

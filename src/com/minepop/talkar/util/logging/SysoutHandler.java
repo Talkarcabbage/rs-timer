@@ -5,6 +5,11 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.StreamHandler;
 
+/**
+ * 
+ * @author Talkarcabbage
+ *
+ */
 public class SysoutHandler extends StreamHandler {
 
 	Level minLevel;
@@ -24,7 +29,6 @@ public class SysoutHandler extends StreamHandler {
 		setFilter( logRecord -> {//NOSONAR
 			return logRecord.getLevel().intValue() >= this.minLevel.intValue() && logRecord.getLevel().intValue() <= this.maxLevel.intValue();
 		});
-		
 	}
 	
 	@Override
@@ -37,5 +41,4 @@ public class SysoutHandler extends StreamHandler {
 	public void close() {
 		flush();
 	}
-
 }

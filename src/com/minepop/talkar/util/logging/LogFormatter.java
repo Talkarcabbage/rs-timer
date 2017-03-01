@@ -9,6 +9,11 @@ import java.util.logging.LogRecord;
 import com.google.common.base.Throwables;
 import com.minepop.talkar.util.ConfigManager;
 
+/**
+ * 
+ * @author Talkarcabbage
+ *
+ */
 public class LogFormatter extends Formatter {
 
 	protected final DateFormat format = new SimpleDateFormat("MMM dd yyyy HH:mm:ss");
@@ -55,5 +60,4 @@ public class LogFormatter extends Formatter {
 	public static LogFormatter getInstance() {
 		return instance;
 	}
-
 }

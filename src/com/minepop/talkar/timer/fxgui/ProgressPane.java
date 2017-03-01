@@ -12,10 +12,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 
+/**
+ * 
+ * @author Talkarcabbage
+ *
+ */
 public class ProgressPane extends StackPane { //NOSONAR
 	
 	static final Logger logger = LoggerConstructor.getLogger("FXWinPPane");
-
 
 	ColorProgressBar bar;
 	Label label;
@@ -45,10 +49,8 @@ public class ProgressPane extends StackPane { //NOSONAR
 		this.getChildren().addAll(bar, label);
 		initBarStyle();
 		
-
 		bar.setTooltip(new Tooltip(""));
 		label.setTooltip(new Tooltip(""));
-		
 	}
 
 	public ColorProgressBar getBar() {

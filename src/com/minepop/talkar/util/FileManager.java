@@ -54,10 +54,7 @@ public class FileManager {
 		} catch (FileNotFoundException e) {
 			logger.severe("Somehow we made it past the fileExists check!");
 			logger.severe(Throwables.getStackTraceAsString(e));
-		} 
-		
-		
-		
+		}
 		
 		return null;
 	}
@@ -132,7 +129,5 @@ public class FileManager {
 			logger.severe("Error creating file: " + string);
 			logger.severe(Throwables.getStackTraceAsString(e));
 		}
-		
 	}
-	
 }

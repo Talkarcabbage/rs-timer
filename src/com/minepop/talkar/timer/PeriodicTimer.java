@@ -1,19 +1,21 @@
 package com.minepop.talkar.timer;
 
 import java.util.logging.Logger;
-
 import com.minepop.talkar.util.logging.LoggerConstructor;
 
+/**
+ * 
+ * @author Talkarcabbage
+ *
+ */
 public class PeriodicTimer extends Timer {
 	
 	private static final Logger logger = LoggerConstructor.getLogger("PeriodicTimer");
-
 
 	public PeriodicTimer(long targetTime, long durationTotal, String name, int tab) {
 		super(targetTime, durationTotal, name, tab);
 		timerType = TimerType.PERIODIC;
 	}
-	
 	
 	@Override
 	public void resetTimer(){ 
@@ -27,12 +29,10 @@ public class PeriodicTimer extends Timer {
 		} else {
 			logger.severe("Failed to match timer type for periodic timer: " + this.toString());
 		}
-
 	}
 	
 	@Override
 	public void resetTimerComplete() {
 		setStartingTime(0);
 	}
-
 }

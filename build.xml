@@ -50,7 +50,7 @@
 	
 	<target name="dist" depends="compile">
 		<antcall target="current-number"></antcall>
-		<jar destfile="${dir.jarfile}/RS Timer ${build.number}.jar">
+		<jar destfile="${dir.jarfile}/RS-Timer-${build.number}.jar">
 			<manifest>
 				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
 				<attribute name="Rsrc-Main-Class" value="com.minepop.talkar.timer.FXController"/>

@@ -6,6 +6,11 @@ import java.util.logging.Logger;
 
 import com.minepop.talkar.util.logging.LoggerConstructor;
 
+/**
+ * 
+ * @author Talkarcabbage
+ *
+ */
 public class MonthlyTimer extends Timer {
 
 	
@@ -28,7 +33,6 @@ public class MonthlyTimer extends Timer {
 		startC.set(Calendar.SECOND, 0);
 		startC.set(Calendar.MILLISECOND, 0);
 		
-		
 		Calendar endC = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 		endC.set(Calendar.DATE, 1);
 		endC.set(Calendar.HOUR, 0);
@@ -40,14 +44,10 @@ public class MonthlyTimer extends Timer {
 		
 		this.startingTime = startC.getTimeInMillis();
 		this.duration = endC.getTimeInMillis() - startC.getTimeInMillis();
-		
 	}
 	
 	@Override
 	public void resetTimerComplete() {
 		this.startingTime = 0;
 	}
-
-
-	
 }

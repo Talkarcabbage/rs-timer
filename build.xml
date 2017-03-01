@@ -60,6 +60,9 @@
 			<zipfileset src="jar-in-jar-loader.zip"/>
 			<fileset dir="${dir.buildfile}/bin"/>
 			<fileset dir="." includes="LICENSE" />
+			<zipfileset dir="./src/com/minepop/talkar/timer/fxgui/" includes="AddTimerFXML.fxml" prefix="com/minepop/talkar/timer/fxgui/"/>
+			<zipfileset dir="./src/images" includes="*" prefix="images"/>
+			<zipfileset dir="./src/css" includes="*" prefix="css"/>
 			<zipfileset dir="./lib" includes="guava-20.0.jar"/>
 		</jar>
 	</target>

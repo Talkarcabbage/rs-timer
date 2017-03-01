@@ -159,11 +159,11 @@ public class MainWindow extends Application {
 					
 				}
 			});
-			tabPane.setOnMouseReleased( event -> {
-				if (!(event.getSource() instanceof ProgressBar || event.getSource() instanceof ProgressPane || event.getSource() instanceof Label)) {
-					minusButton.setSelected(false);
-				}
-			});
+//			tabPane.setOnMouseReleased( event -> {
+//				if (!(event.getSource() instanceof ProgressBar || event.getSource() instanceof ProgressPane || event.getSource() instanceof Label)) {
+//					minusButton.setSelected(false);
+//				}
+//			});
 						
 			primaryStage.show();
 			

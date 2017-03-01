@@ -1,4 +1,4 @@
-RuneScape Timer
+RuneScape Timer [![Build Status](https://travis-ci.org/Talkarcabbage/rs-timer.svg?branch=master)](https://travis-ci.org/Talkarcabbage/rs-timer)
 ========
 
 ![image](https://cloud.githubusercontent.com/assets/2666891/8512872/436d4bbc-230b-11e5-9900-aa71b9c9465f.png)

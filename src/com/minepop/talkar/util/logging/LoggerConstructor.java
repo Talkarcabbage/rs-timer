@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.minepop.talkar.util.ConfigManager;
+
 public class LoggerConstructor {
 
 	static final HashMap<String, Logger> hm = new HashMap<>();
@@ -14,7 +16,7 @@ public class LoggerConstructor {
 		if (hm.get(name) == null) {
 			Logger logger = Logger.getLogger(name);
 			logger.setUseParentHandlers(false);
-			logger.setLevel(Level.FINE);
+			logger.setLevel(ConfigManager.logLevel);
 			SysoutHandler errPrint = new SysoutHandler(System.err, Level.WARNING, Level.OFF);//NOSONAR
 			SysoutHandler outPrint = new SysoutHandler(System.out, Level.ALL, Level.INFO);//NOSONAR
 			logger.addHandler(errPrint);

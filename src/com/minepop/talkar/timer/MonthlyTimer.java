@@ -1,20 +1,25 @@
 package com.minepop.talkar.timer;
 
-import java.awt.Color;
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 
-import javax.swing.JProgressBar;
+import com.minepop.talkar.util.logging.LoggerConstructor;
 
 public class MonthlyTimer extends Timer {
 
-	public MonthlyTimer(long targetTime, long durationTotal, String name, int tab, JProgressBar bar) {
-		super(targetTime, durationTotal, name, tab,  bar);
+	
+	@SuppressWarnings("unused")
+	private static final Logger logger = LoggerConstructor.getLogger("MonthlyTimer");
+	
+	public MonthlyTimer(long targetTime, long durationTotal, String name, int tab) {
+		super(targetTime, durationTotal, name, tab);
+		timerType = TimerType.MONTHLY;
+		resetTimer();
 	}
 	
 	@Override
 	public void resetTimer() {
-		this.progressBar.setForeground(Color.black);
 		Calendar startC = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 		startC.set(Calendar.DATE, 1);
 		startC.set(Calendar.HOUR, 0);
@@ -22,7 +27,6 @@ public class MonthlyTimer extends Timer {
 		startC.set(Calendar.MINUTE, 0);
 		startC.set(Calendar.SECOND, 0);
 		startC.set(Calendar.MILLISECOND, 0);
-		logger.info(startC.getTime().toString());
 		
 		
 		Calendar endC = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -33,7 +37,6 @@ public class MonthlyTimer extends Timer {
 		endC.set(Calendar.SECOND, 0);
 		endC.set(Calendar.MILLISECOND, 0);
 		endC.set(Calendar.MONTH, endC.get(Calendar.MONTH)+1);
-		logger.fine(endC.getTime().toString());
 		
 		this.startingTime = startC.getTimeInMillis();
 		this.duration = endC.getTimeInMillis() - startC.getTimeInMillis();
@@ -43,11 +46,6 @@ public class MonthlyTimer extends Timer {
 	@Override
 	public void resetTimerComplete() {
 		this.startingTime = 0;
-	}
-	
-	@Override
-	public String getTimerType() {
-		return Main.MONTHLYTIMER;
 	}
 
 

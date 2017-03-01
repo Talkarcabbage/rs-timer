@@ -1,5 +1,8 @@
 /dist
 /bin
+/.sonar
+/.settings
+/sonar-project.properties
 
 # OS generated files #
 ######################

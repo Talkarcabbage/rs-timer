@@ -1,22 +1,26 @@
 package com.minepop.talkar.timer;
 
-import java.awt.Color;
+import java.time.Duration;
 import java.util.logging.Logger;
-
-import javax.swing.JProgressBar;
 
 import com.minepop.talkar.util.logging.LoggerConstructor;
 
 public class Timer {
 	
-	static final Logger logger = LoggerConstructor.getLogger("Timer");
+	private static final Logger logger = LoggerConstructor.getLogger("Timer");
 
+	public enum TimerType {
+		STANDARD,
+		PERIODIC,
+		MONTHLY
+	}
+	
+	TimerType timerType;
 	
 	long startingTime;
 	long duration;
 	String name;
 	int tab;
-	JProgressBar progressBar;
 	
 	public static final long DAY_LENGTH = 86400000;
 	public static final long WEEK_LENGTH = 604800000;
@@ -27,41 +31,42 @@ public class Timer {
 	 * @param durationTotal - The total time the timer should run for. This is used to reset the timer and check for completion.
 	 * @param name - A name for the timer. This is used as a label in the GUI.
 	 */
-	public Timer(long targetTime, long durationTotal, String name, int tab, JProgressBar bar) {
+	public Timer(long targetTime, long durationTotal, String name, int tab) {
 		this.startingTime = targetTime;
 		this.duration = durationTotal;
 		this.name = name;
 		this.tab = tab;
-		progressBar = bar;
+		timerType = TimerType.STANDARD;
 	}
 	
 	// Standard getters and setters
 	
-	public void setProgressBar(JProgressBar bar) {
-		progressBar = bar;
-	}
-	
-	public JProgressBar getProgressBar() {
-		return progressBar;
-	}
 
 	public double getStartingTime() {
 		return startingTime;
 	}
 
 
-	public void setStartingTime(long startingTime) {
+	public synchronized void setStartingTime(long startingTime) {
 		this.startingTime = startingTime;
 	}
 
 
-	public double getDurationTotal() {
+	public long getDuration() {
 		return duration;
 	}
 
 
-	public void setDurationTotal(long durationTotal) {
+	public synchronized void setDuration(long durationTotal) {
 		this.duration = durationTotal;
+	}
+	
+	/**
+	 * Returns a new Duration object that represents this timer's duration
+	 * @return
+	 */
+	public Duration getDurationObject() {
+		return Duration.ofMillis(this.duration);
 	}
 
 
@@ -70,7 +75,7 @@ public class Timer {
 	}
 
 
-	public void setName(String name) {
+	public synchronized void setName(String name) {
 		this.name = name;
 	}
 
@@ -86,22 +91,10 @@ public class Timer {
 	
 	//End standard getters and setters
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		long temp;
-		temp = Double.doubleToLongBits(duration);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		temp = Double.doubleToLongBits(startingTime);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + tab;
-		return result;
-	}
+
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj) { //NOSONAR
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -122,9 +115,6 @@ public class Timer {
 			return false;
 		if (tab != other.tab)
 			return false;
-		if (progressBar != other.progressBar) {
-			return false;
-		}
 		return true;
 	}
 
@@ -148,7 +138,7 @@ public class Timer {
 	 * Returns the amount of time in millis until the timer is complete.
 	 * @return
 	 */
-	public double getTimeRemaining() {
+	public long getTimeRemaining() {
 		return (startingTime + duration) - System.currentTimeMillis();
 	}
 	
@@ -159,7 +149,6 @@ public class Timer {
 	 */
 	public void resetTimer() {
 		setStartingTime(System.currentTimeMillis());	
-		this.progressBar.setForeground(Color.black);
 		logger.fine("Set normal timer with data: " + this.toString());
 
 	}
@@ -173,11 +162,15 @@ public class Timer {
 	}
 
 	/**
-	 * Returns the type of the timer. THIS MUST BE OVERRIDEN BY ANY SUBCLASS FOR PROPER BEHAVIOR.
+	 * Returns the type of the timer. 
 	 * @return
 	 */
-	public String getTimerType() {
-		return Main.STANDARDTIMER;
+	public String getTimerTypeString() {
+		return timerType.toString().toLowerCase();
+	}
+	
+	public TimerType getTimerType() {
+		return timerType;
 	}
 	
 	

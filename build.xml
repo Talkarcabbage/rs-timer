@@ -53,7 +53,7 @@
 		<jar destfile="${dir.jarfile}/RS Timer ${build.number}.jar">
 			<manifest>
 				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
-				<attribute name="Rsrc-Main-Class" value="com.minepop.talkar.timer.Main"/>
+				<attribute name="Rsrc-Main-Class" value="com.minepop.talkar.timer.FXController"/>
 				<attribute name="Class-Path" value="."/>
 				<attribute name="Rsrc-Class-Path" value="./ guava-20.0.jar"/>
 			</manifest>

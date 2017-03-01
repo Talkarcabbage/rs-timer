@@ -1,26 +1,27 @@
 package com.minepop.talkar.timer;
 
-import java.awt.Color;
+import java.util.logging.Logger;
 
-import javax.swing.JProgressBar;
+import com.minepop.talkar.util.logging.LoggerConstructor;
 
 public class PeriodicTimer extends Timer {
 	
+	private static final Logger logger = LoggerConstructor.getLogger("PeriodicTimer");
 
-	public PeriodicTimer(long targetTime, long durationTotal, String name, int tab, JProgressBar bar) {
-		super(targetTime, durationTotal, name, tab,  bar);
-		
+
+	public PeriodicTimer(long targetTime, long durationTotal, String name, int tab) {
+		super(targetTime, durationTotal, name, tab);
+		timerType = TimerType.PERIODIC;
 	}
 	
 	
 	@Override
 	public void resetTimer(){ 
-		this.progressBar.setForeground(Color.black);
 
-		if ((long)getDurationTotal() == WEEK_LENGTH) {
+		if ((long)getDuration() == WEEK_LENGTH) {
 			setStartingTime((((System.currentTimeMillis()+DAY_LENGTH)/WEEK_LENGTH)*WEEK_LENGTH)-DAY_LENGTH);
 			logger.fine("Set weekly timer timer with data: " + this.toString());
-		} else if ((long)getDurationTotal() == DAY_LENGTH){
+		} else if ((long)getDuration() == DAY_LENGTH){
 			setStartingTime((System.currentTimeMillis()/DAY_LENGTH)*DAY_LENGTH);
 			logger.fine("Set daily timer timer with data: " + this.toString());
 		} else {
@@ -32,11 +33,6 @@ public class PeriodicTimer extends Timer {
 	@Override
 	public void resetTimerComplete() {
 		setStartingTime(0);
-	}
-	
-	@Override
-	public String getTimerType() {
-		return Main.PERIODICTIMER;
 	}
 
 }

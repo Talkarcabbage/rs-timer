@@ -17,7 +17,7 @@ import com.minepop.talkar.util.logging.LoggerConstructor;
 
 /**
  * 
- * @author Talkar
+ * @author Talkarcabbage <br>
  * I wrote those in case I ended up with a use for simplified file reading and writing.
  * The class handles FileNotFoundExceptions itself.
  */

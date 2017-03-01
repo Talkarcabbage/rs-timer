@@ -1,0 +1,8 @@
+language: java
+jdk: oraclejdk8
+script: ant clean dist
+sudo: false
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer

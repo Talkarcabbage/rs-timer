@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+.main-root {
+	-fx-border-color: #152229, #222D35;
+	-fx-border-width: 3px, 1px;
+	-fx-background-color: #070f14;
+	-fx-padding: 0px;
+}
+
+.tab {
+	-fx-background-color: #101A1F;
+	-fx-border-image-slice: 0 9px 0 9px fill;
+	-fx-border-image-width: 0px 9px 0px 9px;
+	-fx-border-image-repeat: stretch stretch;
+	-fx-border-width: 0px;
+	-fx-padding: 0px;
+	-fx-focus-color: transparent;
+	-fx-faint-focus-color: transparent;
+	-fx-background-color: transparent;
+	-fx-border-image-source: url("/images/inactiveTabBackground.png");
+	-fx-min-height: 21px;
+	-fx-pref-height: 21px;
+}
+
+.tab .tab-label {
+	-fx-text-fill: #d5d5d5;
+	-fx-font-family: 'Open Sans', sans-serif;
+	-fx-font-size: 14px;
+}
+
+.tab:selected {
+	-fx-border-image-source: url("/images/activeTabBackground.png");
+	-fx-min-height: 22px;
+	-fx-pref-height: 22px;
+}
+
+.tab-pane {
+	-fx-tab-max-height: 20px;
+}
+
+*.tab-header-area {
+	-fx-border-width: 1px;
+	-fx-border-color: transparent;
+	-fx-border-insets: -1px 0px 1px 0px;
+}
+
+*.tab-header-background {
+	-fx-border-color: #2e3a41, #2e3a41 #2e3a41 #152229 #2e3a41;
+	-fx-border-width: 0 1 3 1, 1 0 2 0;
+}
+
+.tab-pane *.tab-header-area *.tab-header-background {
+	-fx-background-color: #070f14;
+}
+
+.progressPane Label {
+	-fx-font-family: 'Open Sans', sans-serif;
+	-fx-font-size: 14px;
+	-fx-text-fill: #d5d5d5;
+	-fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.6), 3, 3, 0, 0);
+}
+
+.progress-bar .track {
+	-fx-border-image-slice: 4 5 fill;
+	-fx-border-image-width: 4px 5px;
+	-fx-border-image-repeat: repeat stretch;
+	-fx-border-image-source: url("/images/progressBarBackground.png");
+}
+
+.progress-bar-incomplete .bar, .progress-bar-complete .bar {
+	-fx-background-color: transparent;
+	-fx-border-image-slice: 4px 7px fill;
+	-fx-border-image-width: 4px 7px;
+	-fx-border-image-repeat: repeat stretch;
+}
+
+.progress-bar-incomplete .bar {
+	-fx-border-image-source: url("/images/progressBarGreen.png");
+}
+
+.progress-bar-complete .bar {
+	-fx-border-image-source: url("/images/progressBarOrange.png");
+}
+
+.gridPane {
+	-fx-border-color: #2E3A41 #2E3A41 #585858 #2E3A41;
+	-fx-border-width: 1px;
+	-fx-padding: 5px;	
+	-fx-background-color: #070f14;
+}
+
+.configPane {
+	-fx-border-color: #6B6C6C #2E3A41 #2E3A41 #2E3A41;
+	-fx-border-width: 1px;
+	-fx-padding: 1px 4px;
+}
+
+#plusButton, #minusButton, #aotButton {
+	-fx-min-height: 3px;
+	-fx-min-width: 3px;
+	-fx-pref-height: 15px;
+	-fx-pref-width: 15px;
+	-fx-border-width: 0px;
+	-fx-padding: 0px;
+	-fx-focus-color: transparent;
+	-fx-faint-focus-color: transparent;
+	-fx-background-color: transparent;
+	-fx-opacity: 1;
+}
+
+#plusButton {
+	-fx-background-image: url("/images/plusButton.png");
+}
+
+#minusButton {
+	-fx-background-image: url("/images/minusButton.png");
+}
+
+#aotButton {
+	-fx-background-image: url("/images/aotButton.png");
+}
+
+#plusButton:hover, #minusButton:hover, #aotButton:hover {
+	-fx-opacity: 0.8;
+}
+
+#plusButton:pressed {
+	-fx-background-image: url("/images/plusButtonPressed.png");
+}
+
+#minusButton:pressed {
+	-fx-background-image: url("/images/minusButtonPressed.png");
+}
+
+#aotButton:pressed {
+	-fx-background-image: url("/images/aotButtonPressed.png");
+}
+
+#minusButton:selected {
+	-fx-background-image: url("/images/minusButtonPressed.png");	
+}
+
+#aotButton:selected {
+	-fx-background-image: url("/images/aotButtonPressed.png");
+}
+
+#transSlider .thumb, #transSlider .track {
+	-fx-border-width: 0px;
+	-fx-padding: 0px;
+	-fx-focus-color: transparent;
+	-fx-faint-focus-color: transparent;
+	-fx-background-color: transparent;
+}
+
+#transSlider .thumb {
+	-fx-background-image: url("/images/transSliderThumb.png");
+	-fx-min-height: 21px;
+	-fx-min-width: 12px;
+	-fx-pref-height: 21px;
+	-fx-pref-width: 12px;
+}
+
+#transSlider .thumb:hover {
+	-fx-background-image: url("/images/transSliderThumbHover.png");
+}
+
+#transSlider .track {
+	-fx-border-image-source: url("/images/transSliderTrack.png");
+	-fx-border-image-slice: 3px 4px fill;
+	-fx-border-image-width: 3px 4px;
+	-fx-border-image-repeat: stretch stretch;
+	-fx-min-height: 11px;
+	-fx-pref-height: 11px;
+}
+
+.tooltip {
+	-fx-border-image-source: url("/images/tooltipBorder.png");
+	-fx-border-image-slice: 5px fill;
+	-fx-border-image-width: 5px;
+	-fx-border-image-repeat: stretch stretch;
+	-fx-background-color: #090f12;
+	-fx-padding: 5px;
+}

@@ -5,4 +5,4 @@
  * @author Talkarcabbage
  *
  */
-package com.minepop.talkar.timer.gui;
+package com.minepop.talkar.timer.fxgui;

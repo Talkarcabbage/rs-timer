@@ -1,5 +1,11 @@
 /dist
 /bin
+/.sonar
+/.settings
+/sonar-project.properties
+rs-timer-config.cfg
+timers.cfg
+taskBarIcon.png
 
 # OS generated files #
 ######################

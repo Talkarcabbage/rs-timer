@@ -50,18 +50,25 @@
 	
 	<target name="dist" depends="compile">
 		<antcall target="current-number"></antcall>
-		<jar destfile="${dir.jarfile}/RS Timer ${build.number}.jar">
+		<jar destfile="${dir.jarfile}/RS-Timer-${build.number}.jar">
 			<manifest>
 				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
-				<attribute name="Rsrc-Main-Class" value="com.minepop.talkar.timer.Main"/>
+				<attribute name="Rsrc-Main-Class" value="com.minepop.talkar.timer.FXController"/>
 				<attribute name="Class-Path" value="."/>
 				<attribute name="Rsrc-Class-Path" value="./ guava-20.0.jar"/>
 			</manifest>
 			<zipfileset src="jar-in-jar-loader.zip"/>
 			<fileset dir="${dir.buildfile}/bin"/>
 			<fileset dir="." includes="LICENSE" />
+			<zipfileset dir="./src/com/minepop/talkar/timer/fxgui/" includes="AddTimerFXML.fxml" prefix="com/minepop/talkar/timer/fxgui/"/>
+			<zipfileset dir="./src/images" includes="*" prefix="images"/>
+			<zipfileset dir="./src/css" includes="*" prefix="css"/>
 			<zipfileset dir="./lib" includes="guava-20.0.jar"/>
 		</jar>
+	</target>
+	
+	<target name="run" depends="dist">
+		<java jar="${dir.jarfile}/RS-Timer-${build.number}.jar" dir="${dir.bin}" fork="true" />
 	</target>
 
 </project>

@@ -1,0 +1,20 @@
+language: java
+jdk: oraclejdk8
+script: ant dist
+deploy:
+  provider: releases
+  api_key:
+    secure: XTxUm5YMQIqLxG2ZeinkRnz92tQkpiGS2x3AfDaXurtKw3SCq9JcZLyXCEByieUhbuXge9OoDaH8hG1YQHr3tjcWl/fX1ZvkNvCjX6bRp2KaOBvbW5PUupjB3+PXJHwZ1b/veUeewe5mgfJ1zPWyGqktb1m2eHiuZ/FuyZE4AeSk3c8EDKZpCTe6pZjbI3PmAyxTSA2BZgCAuRHxPZqQ8/lI10c8LZlDz8tZrGxF8cGAZBmw5IMdr5MmnTPHAPV+prKm2p1SsKf8TPjh8Bep8VHpDottsgzhajcmfvA0Jp9OLPKjXpdNJAUM6Wy0+8hMzL8E8P6q6rdYyH5lvzfV4h3SbJJ54kYEKzWQtFPNglmj6omo13RMjr/5h6SUTh3M8xwVmcR+xr28gyxJcvvdo/Ugtq1yuQMrVEWkQ9qxA5BB7aNqwcJpb3emGLoexmqJyXSBfomFjBjSetD5RYohUPnnTKHqK4pyBEfH4590Rr9U0VaAQlPlHmYaYLb6Uh5lyHr+mJz/WhMkIN7KbKcmJ8K5AvBDrdSGguAFXwOGy9Xid63lW92qsSuPDleGijEYn0cYJx8QYtuGxRuAOnyYL5Y84nQBb/JjrseYpA2YKz/ExhLHS+R4jPjYK67hiVQwSny4M0PkMYh5ktxcyWU+kExClofMLyNsSspm5lh3mZo=
+  file_glob: true
+  file: dist/*
+  skip_cleanup: true
+  draft: true
+  on:
+    tags: true
+    all_branches: true
+#The following is required to compile JavaFX	
+sudo: false
+addons:
+  apt:
+    packages:
+    - oracle-java8-installer

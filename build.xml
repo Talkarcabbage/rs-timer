@@ -66,5 +66,9 @@
 			<zipfileset dir="./lib" includes="guava-20.0.jar"/>
 		</jar>
 	</target>
+	
+	<target name="run" depends="dist">
+		<java jar="${dir.jarfile}/RS-Timer-${build.number}.jar" dir="${dir.bin}" fork="true" />
+	</target>
 
 </project>

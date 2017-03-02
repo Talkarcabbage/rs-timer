@@ -87,6 +87,7 @@ public class MainWindow extends Application {
 					minusButton.setSelected(false);
 				}
 			});
+			scene.getRoot().getStyleClass().add("main-root");
 			
 			GridPane configPane = new GridPane();
 			configPane.setHgap(3);

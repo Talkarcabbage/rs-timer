@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
-.root {
+.main-root {
 	-fx-border-color: #152229, #222D35;
 	-fx-border-width: 3px, 1px;
 	-fx-background-color: #070f14;
@@ -171,4 +171,13 @@
 	-fx-border-image-repeat: stretch stretch;
 	-fx-min-height: 11px;
 	-fx-pref-height: 11px;
+}
+
+.tooltip {
+	-fx-border-image-source: url("/images/tooltipBorder.png");
+	-fx-border-image-slice: 5px fill;
+	-fx-border-image-width: 5px;
+	-fx-border-image-repeat: stretch stretch;
+	-fx-background-color: #090f12;
+	-fx-padding: 5px;
 }

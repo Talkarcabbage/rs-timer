@@ -1,8 +1,18 @@
 language: java
 jdk: oraclejdk8
-script: ant clean dist
+script: ant dist
+deploy:
+  provider: releases
+  api_key:
+    secure: uN+y7wtrNj1BkVvD92V07knJ+K3Qyx4yS7GN7camckPK/S1Gqhl5FhosK0M49GXAFsEhX5hlQbEHWy6/NwgPuVl/HNFRbCOPWXwh6+6/XMHRZN3FiBuIO78osUrbnUgwxBm4IG612k7g+Fhh81T4cMEu+m5TvQzbmv2PAIMs/DateBz+8IjckQx9Oqiv+8fxuu7+TO9nZzcusQrEg6xz6ZX4FAZiqJDagyoRwjzfVP4ial1A00xPYr9eP847W90LZNX6SOr4SADW4IA1dqroBDtAGgYRVvZVCmm4R+YnMnzTKj2YpZH1Jp1Wb1j/3bRQS/NFbsAZ4gKX1TgdZIBG8h7OjVOyunfAsDx/bJgtOoi7jNew98UKCAG/f5iQrmqNl96ZyhOWOkUCxI8fQtDebVXW9iTvmo/Kj9o9zX0ScKN/DrXwk0b4EyNcWpQqqNEtC1vUanXsS1NVe6OfDiVvjTskUDqq7eFN+GB9o47pq+S91ErTYWtreMjZ0KCuEJebfMKxtAamhJje7YfCzFshsUUgp2VbHmaf8lw50b3M/C4NolVGmc3I983QSLsYRHE/IsrE+yOPGGgPyAhJU84LCL+EdNR0eBL0KTVn+xSLUOrjAYuWAQDAz7HE/VMvv0+TP0nfPNpTrk7foHKUH/HQz/q0ikyceuKfOndCrnpR2rQ=
+  file: dist/RS-Timer-*.jar
+  skip_cleanup: true
+  on:
+    tags: true
+    all_branches: true
+#The following is required to compile JavaFX	
 sudo: false
 addons:
   apt:
     packages:
-      - oracle-java8-installer
+    - oracle-java8-installer

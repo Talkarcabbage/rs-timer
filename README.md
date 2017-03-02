@@ -58,7 +58,13 @@ ant dist
 
 **To change the version and package the current version into a jar:**
 ```
-ant revision (or ant major or ant minor)
+ant revision #or ant major or ant minor
 ant dist
 ```
 Note that changing the version and packaging the jar must occur as two separate ANT operations.
+
+**To automatically draft a new release using Travis CI:**
+```
+git tag v0.0.1 #make sure to include a 'v' before all tags
+git push v0.0.1
+``` 

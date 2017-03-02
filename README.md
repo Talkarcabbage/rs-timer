@@ -28,15 +28,15 @@ Please note that features may be added, changed, or removed at any time. Also, n
 Several settings can be configured via the properties file. The settings file can be refreshed to defaults by deleting it. The order these appear in may not be maintained/consistent.
 
 ```
-setting=default value | possible values... [Explanation]
-logLevel=INFO | ALL|FINEST,FINER,FINE,CONFIG,INFO,WARNING,SEVERE,NONE [Values closer to ALL generate more information in the console]
-transparency=1.0	| 0.0 to 1.0 		[Transparency value of the gui as a double decimal]
-winWidth=400		| 0 to 2.1 billion	[Window width]
-winHeight=205		| 0 to 2.1 billion	[Window height]
-defaultTabColumns=0	| 0 to 2.1 billion	[number of default tab rows if no tabs exist. Imports from cfg,gridRows]
-defaultTabRows=5	| 0 to 2.1 billion	[number of default tab rows if no tabs exist. Imports from cfg,gridRows]
-defaultTabName=Main	| non-empty-string	[Name of the first tab if it is imported or does not exist yet. Imports from cfg,mainTabName]
-framesPerUpdate=15	| 1-2.1 billion [number of frames per update of the gui. Lower values make the timer gui more fluid, higher values decrease cpu usage. Recommended maximum is 60, ie once per second]
+setting=default value # Possible values   [Explanation]
+logLevel=INFO         # ALL|FINEST,FINER,FINE,CONFIG,INFO,WARNING,SEVERE,NONE [Values closer to ALL generate more information in the console]
+transparency=1.0      # 0.0 to 1.0        [Transparency value of the GUI as a double decimal]
+winWidth=400          # 0 to 2.1 billion  [Window width]
+winHeight=205         # 0 to 2.1 billion  [Window height]
+defaultTabColumns=0   # 0 to 2.1 billion  [Number of default tab columns if no tabs exist. Imports from cfg,gridRows]
+defaultTabRows=5      # 0 to 2.1 billion  [Number of default tab rows if no tabs exist. Imports from cfg,gridRows]
+defaultTabName=Main   # Non-empty-string  [Name of the first tab if it is imported or does not exist yet. Imports from cfg,mainTabName]
+framesPerUpdate=15    # 1 to 2.1 billion  [Number of frames per update of the GUI. Lower values make the timer GUI more fluid, higher values decrease CPU usage. Recommended maximum is 60, i.e. once per second]
 ```
 
 #Disclaimer
@@ -58,13 +58,16 @@ ant dist
 
 **To change the version and package the current version into a jar:**
 ```
-ant revision #or ant major or ant minor
+ant revision
 ant dist
 ```
+Use `ant major`, `ant minor`, or `ant revision` to increment the respective parts of the version number.
+
 Note that changing the version and packaging the jar must occur as two separate ANT operations.
 
 **To automatically draft a new release using Travis CI:**
 ```
-git tag v0.0.1 #make sure to include a 'v' before all tags
-git push v0.0.1
-``` 
+git tag v0.0.1
+git push origin v0.0.1
+```
+Make sure to include a 'v' before all tags

@@ -4,7 +4,7 @@ RuneScape Timer
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Talkarcabbage/rs-timer/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/Talkarcabbage/rs-timer.svg?branch=master)](https://travis-ci.org/Talkarcabbage/rs-timer)
 
-![image](https://cloud.githubusercontent.com/assets/2666891/23511889/9571a5bc-ff13-11e6-90a3-591b1b23aefa.png)
+![image](https://cloud.githubusercontent.com/assets/2666891/23511922/b9b51dc8-ff13-11e6-9891-c54818ec5c79.png)
 
 # Summary
 A simple timer program intended for, but not limited to, use for timing RuneScape repeatables (_e.g._ dailies) and farm runs. Displays a window with customizable timers shown with progress bars. Includes "duration from starting point" timers and daily/weekly/monthly timers, that reset at UTC 0:00 / RS daily, weekly, and monthly reset times. Timers can be left-clicked to reset their time remaining to the length of the timer (or to the next tick for dailies/weeklies/monthlies).

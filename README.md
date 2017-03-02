@@ -1,5 +1,8 @@
-RuneScape Timer [![Build Status](https://travis-ci.org/Talkarcabbage/rs-timer.svg?branch=master)](https://travis-ci.org/Talkarcabbage/rs-timer)
+RuneScape Timer
 ========
+
+[![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Talkarcabbage/rs-timer/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/Talkarcabbage/rs-timer.svg?branch=master)](https://travis-ci.org/Talkarcabbage/rs-timer)
 
 ![image](https://cloud.githubusercontent.com/assets/2666891/8512872/436d4bbc-230b-11e5-9900-aa71b9c9465f.png)
 (image currently out of date)

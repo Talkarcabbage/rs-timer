@@ -21,7 +21,7 @@ public class LoggerConstructor {
 		if (hm.get(name) == null) {
 			Logger logger = Logger.getLogger(name);
 			logger.setUseParentHandlers(false);
-			logger.setLevel(ConfigManager.logLevel);
+			logger.setLevel(ConfigManager.getInstance().getLogLevel());
 			SysoutHandler errPrint = new SysoutHandler(System.err, Level.WARNING, Level.OFF);//NOSONAR
 			SysoutHandler outPrint = new SysoutHandler(System.out, Level.ALL, Level.INFO);//NOSONAR
 			logger.addHandler(errPrint);

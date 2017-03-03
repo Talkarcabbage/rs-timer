@@ -40,7 +40,7 @@ public class FXController {
 
 	static final Logger logger = LoggerConstructor.getLogger("FX Controller");
 
-	public static TrayIcon trayIcon;
+	static TrayIcon trayIcon;
 	
 	public final HashBiMap<ProgressPane, Timer> timerMap = HashBiMap.create(50);
 	
@@ -58,9 +58,9 @@ public class FXController {
 	public static void main(String[] args) {
 		logger.info("Program starting...");
 		logger.config("Loading configuration file");
-		ConfigManager.load();
+		ConfigManager.getInstance().load();
 		logger.config("Updating config file");
-		ConfigManager.save();
+		ConfigManager.getInstance().save();
 		logger.fine("Attempting tray initialization");
 		instance.prepareSystemTray();
 		
@@ -150,9 +150,7 @@ public class FXController {
 		ProgressPane progPane = new ProgressPane();
 		progPane.setLabelText(newTimer.getName());
 		this.timerMap.put(progPane, newTimer);
-		progPane.setOnMouseClicked( event -> {
-			MainWindow.instance.onClickTimerBar(progPane, event);
-		});
+		progPane.setOnMouseClicked( event -> MainWindow.instance.onClickTimerBar(progPane, event));
 		MainWindow.instance.addTimerBar(progPane, tab);	
 		return newTimer;
 	}
@@ -184,22 +182,21 @@ public class FXController {
 				importResave = true; //To make sure our timer file doesn't overwrite our configuration repeatedly
 				logger.config("Importing configuration from timers file: " + timerInfo[1]);
 				if ("mainTabName".equals(timerInfo[1])) {
-					ConfigManager.defaultTabName = timerInfo[2]; //Deprecated
+					ConfigManager.getInstance().setDefaultTabName(timerInfo[2]); //Deprecated
 				} else if ("gridColumns".equals(timerInfo[1])) { //Deprecated
-					ConfigManager.defaultTabColumns = Integer.parseInt(timerInfo[2]);
+					ConfigManager.getInstance().setDefaultTabColumns(Integer.parseInt(timerInfo[2]));
 				} else if("gridRows".equals(timerInfo[1])) { //Deprecated
-					ConfigManager.defaultTabRows = Integer.parseInt(timerInfo[2]);
+					ConfigManager.getInstance().setDefaultTabRows(Integer.parseInt(timerInfo[2]));
 				} else if ("winSize".equals(timerInfo[1])) { //Deprecated
-					ConfigManager.winWidth = Integer.parseInt(timerInfo[2]);
-					ConfigManager.winHeight = Integer.parseInt(timerInfo[3]);
+					ConfigManager.getInstance().setWinWidth(Integer.parseInt(timerInfo[2]));
+					ConfigManager.getInstance().setWinHeight(Integer.parseInt(timerInfo[3]));
 				} else if ("logLevel".equals(timerInfo[1])) {
-					ConfigManager.logLevel = Level.parse(timerInfo[2]);
-					LoggerConstructor.setGlobalLoggingLevel(ConfigManager.logLevel);
+					ConfigManager.getInstance().setLogLevel(Level.parse(timerInfo[2]));
 				}
 			} 
 			if (!isFXBased) { //Add a new tab and set isFXBased and importResave to true
 				logger.info("Creating a new first-tab based on imported swing data");
-				MainWindow.instance.addTab( ConfigManager.defaultTabRows, ConfigManager.defaultTabColumns, ConfigManager.defaultTabName);
+				MainWindow.instance.addDefaultTab();
 				isFXBased = true;
 				importResave = true;
 			} 
@@ -225,11 +222,11 @@ public class FXController {
 			this.saveTimers();
 		}
 		if (importResaveConfig) {
-			ConfigManager.save();
+			ConfigManager.getInstance().save();
 		}
 		if (MainWindow.instance.getTabList().isEmpty()) {
 			logger.info("Loaded no tabs! Adding a default first tab");
-			MainWindow.instance.addTab(ConfigManager.defaultTabRows, ConfigManager.defaultTabColumns, ConfigManager.defaultTabName);
+			MainWindow.instance.addDefaultTab();
 		}
 		if (timerMap.isEmpty()) {
 			addTimer(System.currentTimeMillis(),120000, 0, TimerType.STANDARD, "Sample: Two Minutes");
@@ -360,6 +357,10 @@ public class FXController {
 		}
 		MainWindow.instance.getTabList().remove(tabNum);
 		saveTimers();
+	}
+	
+	public void destroyTrayIcon() {
+		SystemTray.getSystemTray().remove(trayIcon);
 	}
 	
 }

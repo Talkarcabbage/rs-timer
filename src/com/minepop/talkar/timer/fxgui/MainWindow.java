@@ -1,6 +1,5 @@
 package com.minepop.talkar.timer.fxgui;
 
-import java.awt.SystemTray;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -21,8 +20,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -70,14 +67,14 @@ public class MainWindow extends Application {
 		try {
 			Platform.setImplicitExit(false);
 			primaryStage.setOnCloseRequest( event -> {
-				SystemTray.getSystemTray().remove(FXController.trayIcon);
+				FXController.instance.destroyTrayIcon();
 				System.exit(0);
 			});
 			AddTimerController.createRoot();
 			instance = this;
 			stage = primaryStage;
 			BorderPane rootPane = new BorderPane();
-			Scene scene = new Scene(rootPane,ConfigManager.winWidth,ConfigManager.winHeight);
+			Scene scene = new Scene(rootPane, ConfigManager.getInstance().getWinWidth() ,ConfigManager.getInstance().getWinHeight());
 			scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.initStyle(StageStyle.UNDECORATED);
@@ -139,9 +136,9 @@ public class MainWindow extends Application {
 			
 			transSlider.setOnMouseDragged( event -> {
 				setTransparency(transSlider.getValue());
-				ConfigManager.transparency = transSlider.getValue();
+				ConfigManager.getInstance().setTransparency(transSlider.getValue());
 			});
-			transSlider.setValue(ConfigManager.transparency);
+			transSlider.setValue(ConfigManager.getInstance().getTransparency());
 			setTransparency(transSlider.getValue());
 			
 			tabPane.setOnMousePressed( event -> {
@@ -150,7 +147,7 @@ public class MainWindow extends Application {
 				}
 			);
 			
-			transSlider.setOnMouseReleased( event -> ConfigManager.save());
+			transSlider.setOnMouseReleased( event -> ConfigManager.getInstance().save());
 			
 			tabPane.setOnMouseDragged(new EventHandler<MouseEvent>() { //NOSONAR
 				@Override
@@ -210,6 +207,31 @@ public class MainWindow extends Application {
 		return tab;
 	}
 	
+	public Tab addDefaultTab() {
+		TimerTab tab = new TimerTab(ConfigManager.getInstance().getDefaultTabName());
+		tab.setClosable(false);
+		GridPane gp = new GridPane();
+		gp.setHgap(8);
+		gp.setVgap(8);
+		gp.getStyleClass().add("gridPane");
+		
+		for (int i = 0; i < ConfigManager.getInstance().getDefaultTabColumns(); i++) {
+			ColumnConstraints cc = new ColumnConstraints();
+			cc.setHgrow(Priority.ALWAYS);
+			gp.getColumnConstraints().add(cc);
+		}
+		for (int i = 0; i < ConfigManager.getInstance().getDefaultTabRows(); i++) {
+			RowConstraints rc = new RowConstraints();
+			rc.setVgrow(Priority.NEVER);
+			gp.getRowConstraints().add(rc);
+		}
+		
+		tab.setContent(gp);
+		tabPane.getTabs().add(tab);
+		gp.getChildren().clear();
+		return tab;
+	}
+	
 	/**
 	 * Adds the specified progress pane to the specified tab. Handles placement but does not add to map.
 	 * @param progPane
@@ -219,7 +241,7 @@ public class MainWindow extends Application {
 	public ProgressPane addTimerBar(ProgressPane progPane, int tab) {
 		
 		if (tabPane.getTabs().isEmpty()) {
-			addTab(ConfigManager.defaultTabRows, ConfigManager.defaultTabColumns, ConfigManager.defaultTabName);
+			addTab(ConfigManager.getInstance().getDefaultTabRows(), ConfigManager.getInstance().getDefaultTabColumns(), ConfigManager.getInstance().getDefaultTabName());
 		}
 		if (tab < 0) {
 			tab = 0; //NOSONAR

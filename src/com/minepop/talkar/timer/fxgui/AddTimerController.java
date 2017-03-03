@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import com.minepop.talkar.timer.FXController;
 import com.minepop.talkar.timer.Timer;
 import com.minepop.talkar.timer.Timer.TimerType;
-import com.minepop.talkar.util.ConfigManager;
 import com.minepop.talkar.util.logging.LoggerConstructor;
 
 import javafx.event.ActionEvent;
@@ -32,7 +31,7 @@ public class AddTimerController {
 	
 	static final Logger logger = LoggerConstructor.getLogger("AddTimerController");
 
-	public static AddTimerController instance = new AddTimerController();
+	static AddTimerController instance;
 	Stage stage;
 	
 	@FXML protected TextField nameTextField;
@@ -52,23 +51,42 @@ public class AddTimerController {
 	static Parent root;
 	
 	/**
-	 * If this is non-null, the current data in the GUI applies to a specific timer
+	 * If this is non-null, the current data in the GUI applies to a specific timer. Otherwise, it is creating a new timer.
 	 */
 	Timer editedTimer;
+	
+	/**
+	 * This constructor is called internally by the JavaFX loader when createRoot is called and it should not be called manually.
+	 * @throws IllegalStageException - If this constructor is called while the instance already exists.
+	 */
+	public AddTimerController() {
+		if (instance != null) {
+			throw new IllegalStateException("Cannot initialize this method more than once!");
+		}
+		logger.fine("Created instance of AddTimerController");
+		instance = this;
+	}
 
+	/**
+	 * 
+	 */
 	public static void createRoot() {
-		try {
-			root = FXMLLoader.load(AddTimerController.class.getResource("AddTimerFXML.fxml"));
-			instance.stage = instance.createStage();
-
-		} catch (IOException e) {
-			logger.log(Level.SEVERE, "An error occured making the add-gui: ", e);
+		if (instance == null) {
+			try {
+				root = FXMLLoader.load(AddTimerController.class.getResource("AddTimerFXML.fxml"));
+				
+				if (instance != null) //NOSONAR
+					instance.stage = instance.createStage();
+	
+			} catch (IOException e) {
+				logger.log(Level.SEVERE, "An error occured making the add-gui: ", e);
+			}
+		} else {
+			logger.warning("Tried to call createRoot after the instance has been initialized! This is a bug!");
 		}
 	}
 	
-	public AddTimerController() {
-		instance = this;
-	}
+
 	
 	public Stage getStage() {
 		return stage;
@@ -101,7 +119,8 @@ public class AddTimerController {
 		stage.hide();
 		if (editedTimer == null) { //Making a new timer
 			if (MainWindow.instance.getTabList().isEmpty()) {
-				MainWindow.instance.addTab(ConfigManager.defaultTabRows, ConfigManager.defaultTabColumns, ConfigManager.defaultTabName);
+				MainWindow.instance.addDefaultTab();
+
 			}
 			if (standardRadioButton.isSelected()) {
 				long time = 0;

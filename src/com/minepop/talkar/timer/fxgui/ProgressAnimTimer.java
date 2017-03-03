@@ -24,7 +24,7 @@ public class ProgressAnimTimer extends AnimationTimer {
 
 	@Override
 	public void handle(long now) {
-		if (++animCycle >= ConfigManager.framesPerUpdate) {
+		if (++animCycle >= ConfigManager.getInstance().getFramesPerUpdate()) {
 			animCycle = 0;
 			map.forEach( (pane, timer) -> {
 				pane.setProgress(timer.getPercentageComplete());

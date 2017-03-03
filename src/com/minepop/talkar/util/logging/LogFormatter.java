@@ -31,12 +31,12 @@ public class LogFormatter extends Formatter {
 			.append("] [")
 			.append(record.getLevel())
 			.append("] ");
-		if (ConfigManager.logLevel.intValue() < Level.INFO.intValue()) {
+		if (ConfigManager.getInstance().getLogLevel().intValue() < Level.INFO.intValue()) {
 			sb.append("[")
 			.append(record.getLoggerName())
 			.append("] ");
 		}
-		if (ConfigManager.logLevel.intValue() == Level.ALL.intValue()) {
+		if (ConfigManager.getInstance().getLogLevel().intValue() == Level.ALL.intValue()) {
 			sb.append("[");
 			try {
 				sb.append(Class.forName(record.getSourceClassName()).getSimpleName());

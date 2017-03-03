@@ -28,7 +28,7 @@ public class ProgressAnimTimer extends AnimationTimer {
 			animCycle = 0;
 			map.forEach( (pane, timer) -> {
 				pane.setProgress(timer.getPercentageComplete());
-				pane.bar.getTooltip().setText(FXController.formatTime(timer.getTimeRemaining()));;
+				pane.bar.getTooltip().setText(FXController.formatTime(timer.getTimeRemaining()));
 				pane.label.getTooltip().setText(FXController.formatTime(timer.getTimeRemaining()));
 			});	
 		}

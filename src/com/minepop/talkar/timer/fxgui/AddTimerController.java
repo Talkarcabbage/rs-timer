@@ -113,11 +113,11 @@ public class AddTimerController {
 				if (time == 0) {
 					time = 1000;
 				}
-				FXController.instance.addTimer(System.currentTimeMillis(), time, MainWindow.instance.getCurrentTab(), TimerType.STANDARD, nameTextField.getText()).resetTimer();;
+				FXController.instance.addTimer(System.currentTimeMillis(), time, MainWindow.instance.getCurrentTab(), TimerType.STANDARD, nameTextField.getText()).resetTimer();
 			} else if (dailyRadioButton.isSelected()) {
-				FXController.instance.addTimer(System.currentTimeMillis(), Timer.DAY_LENGTH, MainWindow.instance.getCurrentTab(), TimerType.PERIODIC, nameTextField.getText()).resetTimer();;
+				FXController.instance.addTimer(System.currentTimeMillis(), Timer.DAY_LENGTH, MainWindow.instance.getCurrentTab(), TimerType.PERIODIC, nameTextField.getText()).resetTimer();
 			} else if (weeklyRadioButton.isSelected()) {
-				FXController.instance.addTimer(System.currentTimeMillis(), Timer.WEEK_LENGTH, MainWindow.instance.getCurrentTab(), TimerType.PERIODIC, nameTextField.getText()).resetTimer();;
+				FXController.instance.addTimer(System.currentTimeMillis(), Timer.WEEK_LENGTH, MainWindow.instance.getCurrentTab(), TimerType.PERIODIC, nameTextField.getText()).resetTimer();
 			} else if (monthlyRadioButton.isSelected()) {
 				FXController.instance.addTimer(System.currentTimeMillis(), 1, MainWindow.instance.getCurrentTab(), TimerType.MONTHLY, nameTextField.getText());	
 			}

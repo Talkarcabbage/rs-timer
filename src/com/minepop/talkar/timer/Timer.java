@@ -20,12 +20,12 @@ public class Timer {
 		MONTHLY
 	}
 	
-	TimerType timerType;
+	volatile TimerType timerType;
 	
-	long startingTime;
-	long duration;
-	String name;
-	int tab;
+	volatile long startingTime;
+	volatile long duration;
+	volatile String name;
+	volatile int tab;
 	
 	public static final long DAY_LENGTH = 86400000;
 	public static final long WEEK_LENGTH = 604800000;
@@ -50,7 +50,7 @@ public class Timer {
 		return startingTime;
 	}
 
-	public synchronized void setStartingTime(long startingTime) {
+	public void setStartingTime(long startingTime) {
 		this.startingTime = startingTime;
 	}
 
@@ -58,7 +58,7 @@ public class Timer {
 		return duration;
 	}
 
-	public synchronized void setDuration(long durationTotal) {
+	public void setDuration(long durationTotal) {
 		this.duration = durationTotal;
 	}
 	
@@ -74,7 +74,7 @@ public class Timer {
 		return name;
 	}
 
-	public synchronized void setName(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 

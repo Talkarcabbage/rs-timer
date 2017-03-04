@@ -138,7 +138,7 @@ public class AddTimerController {
 			} else if (weeklyRadioButton.isSelected()) {
 				FXController.instance.addTimer(System.currentTimeMillis(), Timer.WEEK_LENGTH, MainWindow.instance.getCurrentTab(), TimerType.PERIODIC, nameTextField.getText()).resetTimer();
 			} else if (monthlyRadioButton.isSelected()) {
-				FXController.instance.addTimer(System.currentTimeMillis(), 1, MainWindow.instance.getCurrentTab(), TimerType.MONTHLY, nameTextField.getText());	
+				FXController.instance.addTimer(System.currentTimeMillis(), 1, MainWindow.instance.getCurrentTab(), TimerType.MONTHLY, nameTextField.getText()).resetTimer();	
 			}
 			FXController.instance.saveTimers();
 		} else { //Updating the existing timer			

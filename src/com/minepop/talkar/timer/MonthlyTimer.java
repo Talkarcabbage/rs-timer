@@ -20,7 +20,7 @@ public class MonthlyTimer extends Timer {
 	public MonthlyTimer(long targetTime, long durationTotal, String name, int tab) {
 		super(targetTime, durationTotal, name, tab);
 		timerType = TimerType.MONTHLY;
-		resetTimer();
+		//resetTimer();
 	}
 	
 	@Override

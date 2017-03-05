@@ -92,7 +92,8 @@ public class FXController {
 		try {
 			
 			SystemTray.getSystemTray().add(trayIcon);
-			trayIcon.addActionListener( event -> MainWindow.instance.setVisible(!MainWindow.instance.isVisible()));	
+			trayIcon.addActionListener( event -> 
+				Platform.runLater( () -> MainWindow.instance.setVisible(!MainWindow.instance.isVisible())));	
 			PopupMenu trayMenu = new PopupMenu("[Insert Creative Name Here]");
 
 			MenuItem toggleVisibilityMenu = new MenuItem("Toggle Window");

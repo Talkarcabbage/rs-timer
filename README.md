@@ -24,7 +24,7 @@ A simple timer program intended for, but not limited to, use for timing RuneScap
 Please note that features may be added, changed, or removed at any time. Also, no guarantee is given on the lack of existence of bugs. Information here is based on the listed version and may not match newer or older versions.
 
 # Configuration/Syntax
-##Properties file
+## Properties file
 Several settings can be configured via the properties file. The settings file can be refreshed to defaults by deleting it. The order these appear in may not be maintained/consistent.
 
 ```
@@ -39,7 +39,7 @@ defaultTabName=Main   # Non-empty-string  [Name of the first tab if it is import
 framesPerUpdate=15    # 1 to 2.1 billion  [Number of frames per update of the GUI. Lower values make the timer GUI more fluid, higher values decrease CPU usage. Recommended maximum is 60, i.e. once per second]
 ```
 
-#Disclaimer
+# Disclaimer
 THIS PROGRAM IS NOT AFFILIATED WITH RUNESCAPE NOR JAGEX. THIS PROGRAM DOES NOT INTERACT WITH ANY OF RUNESCAPE'S CONTENT OR PROGRAM. JAVAFX SKINS (JavaFX CSS/images) HERE WERE INSPIRED RUNESCAPE'S UI DESIGN, BUT DO NOT DIRECTLY USE RUNESCAPE'S ASSETS. THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY KIND OF WARRANTY.
 
 # Building and Versioning

@@ -46,7 +46,7 @@ THIS PROGRAM IS NOT AFFILIATED WITH RUNESCAPE NOR JAGEX. THIS PROGRAM DOES NOT I
 
 This project includes preconfigured ANT versioning and packaging options.
 
-###To display the current version used by ANT:
+### To display the current version used by ANT:
 ```
 ant
 ```

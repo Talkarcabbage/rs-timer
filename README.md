@@ -51,12 +51,12 @@ This project includes preconfigured ANT versioning and packaging options.
 ant
 ```
 
-###To package the current version into a jar:
+### To package the current version into a jar:
 ```
 ant dist
 ```
 
-###To change the version and package the current version into a jar:
+### To change the version and package the current version into a jar:
 ```
 ant revision
 ant dist
@@ -65,7 +65,7 @@ Use `ant major`, `ant minor`, or `ant revision` to increment the respective part
 
 Note that changing the version and packaging the jar must occur as two separate ANT operations.
 
-###To automatically draft a new release using Travis CI:
+### To automatically draft a new release using Travis CI:
 ```
 git tag v0.0.1
 git push origin v0.0.1

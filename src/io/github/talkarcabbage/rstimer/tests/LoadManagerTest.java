@@ -1,4 +1,4 @@
-package com.minepop.talkar.timer.tests;
+package io.github.talkarcabbage.rstimer.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -8,13 +8,12 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.minepop.talkar.timer.newtimers.Daily;
-import com.minepop.talkar.timer.newtimers.Monthly;
-import com.minepop.talkar.timer.newtimers.NewTimer;
-import com.minepop.talkar.timer.newtimers.Standard;
-import com.minepop.talkar.timer.newtimers.Weekly;
-import com.minepop.talkar.timer.persistence.LoadManager;
-
+import io.github.talkarcabbage.rstimer.newtimers.Daily;
+import io.github.talkarcabbage.rstimer.newtimers.Monthly;
+import io.github.talkarcabbage.rstimer.newtimers.NewTimer;
+import io.github.talkarcabbage.rstimer.newtimers.Standard;
+import io.github.talkarcabbage.rstimer.newtimers.Weekly;
+import io.github.talkarcabbage.rstimer.persistence.LoadManager;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.GridPane;
 

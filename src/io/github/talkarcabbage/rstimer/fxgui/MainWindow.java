@@ -1,4 +1,4 @@
-package com.minepop.talkar.timer.fxgui;
+package io.github.talkarcabbage.rstimer.fxgui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,11 +6,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.collect.BiMap;
-import com.minepop.talkar.timer.FXController;
-import com.minepop.talkar.timer.Timer;
 import com.minepop.talkar.util.ConfigManager;
 import com.minepop.talkar.util.logging.LoggerConstructor;
 
+import io.github.talkarcabbage.rstimer.FXController;
+import io.github.talkarcabbage.rstimer.Timer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;

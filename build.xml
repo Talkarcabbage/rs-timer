@@ -45,7 +45,9 @@
 
 	<target name="compile">
 		<mkdir dir="${dir.bin}"/>
-		<javac srcdir="${dir.src}" destdir="${dir.bin}" classpathref="classpath" fork="yes" includeantruntime="false"/>
+		<javac srcdir="${dir.src}" destdir="${dir.bin}" classpathref="classpath" fork="yes" includeantruntime="false">
+			<exclude name="**/io/github/talkarcabbage/rstimer/tests/*.java" />
+		</javac>
 	</target>
 	
 	<target name="dist" depends="compile">
@@ -53,14 +55,14 @@
 		<jar destfile="${dir.jarfile}/RS-Timer-${build.number}.jar">
 			<manifest>
 				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
-				<attribute name="Rsrc-Main-Class" value="com.minepop.talkar.timer.FXController"/>
+				<attribute name="Rsrc-Main-Class" value="io.github.talkarcabbage.rstimer.FXController"/>
 				<attribute name="Class-Path" value="."/>
 				<attribute name="Rsrc-Class-Path" value="./ guava-20.0.jar"/>
 			</manifest>
 			<zipfileset src="jar-in-jar-loader.zip"/>
 			<fileset dir="${dir.buildfile}/bin"/>
 			<fileset dir="." includes="LICENSE" />
-			<zipfileset dir="./src/com/minepop/talkar/timer/fxgui/" includes="AddTimerFXML.fxml" prefix="com/minepop/talkar/timer/fxgui/"/>
+			<zipfileset dir="./src/io/github/talkarcabbage/rstimer/fxgui/" includes="AddTimerFXML.fxml" prefix="io/github/talkarcabbage/rstimer/fxgui/"/>
 			<zipfileset dir="./src/images" includes="*" prefix="images"/>
 			<zipfileset dir="./src/css" includes="*" prefix="css"/>
 			<zipfileset dir="./lib" includes="guava-20.0.jar"/>

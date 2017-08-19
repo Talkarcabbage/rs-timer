@@ -5,4 +5,4 @@
  * @author Talkarcabbage
  *
  */
-package com.minepop.talkar.timer.fxgui;
+package io.github.talkarcabbage.rstimer.fxgui;

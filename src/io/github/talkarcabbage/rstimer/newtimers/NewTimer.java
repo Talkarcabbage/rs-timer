@@ -1,4 +1,4 @@
-package com.minepop.talkar.timer.newtimers;
+package io.github.talkarcabbage.rstimer.newtimers;
 
 import java.util.HashMap;
 import java.util.Map;

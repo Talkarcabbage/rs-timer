@@ -1,14 +1,13 @@
-package com.minepop.talkar.timer.persistence;
+package io.github.talkarcabbage.rstimer.persistence;
 
 import java.util.Collection;
 import java.util.List;
 import javafx.scene.layout.GridPane;
 
-
-import com.minepop.talkar.timer.Timer;
-import com.minepop.talkar.timer.newtimers.NewTimer;
 import com.minepop.talkar.util.IOThreadManager;
 
+import io.github.talkarcabbage.rstimer.Timer;
+import io.github.talkarcabbage.rstimer.newtimers.NewTimer;
 import javafx.scene.control.Tab;
 
 public final class SaveManager {

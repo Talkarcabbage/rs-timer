@@ -1,12 +1,12 @@
-package com.minepop.talkar.timer.newtimers;
+package io.github.talkarcabbage.rstimer.newtimers;
 
 import java.util.Map;
 
-public class Weekly extends NewTimer {
+public class Daily extends NewTimer {
 	
 	long latestReset;
 
-	public Weekly(String name, int tabID, String audio, long latestReset) {
+	public Daily(String name, int tabID, String audio, long latestReset) {
 		super(name, tabID, audio);
 		this.latestReset = latestReset;
 	}
@@ -15,7 +15,7 @@ public class Weekly extends NewTimer {
 	 * Creates a timer from the given map of timer data. Invalid properties will be ignored with a console warning and missing values will be defaulted.
 	 * @param dataMap
 	 */
-	public Weekly(Map<String, String> dataMap) {
+	public Daily(Map<String, String> dataMap) {
 		super("MISSING", 0, "none"); //Some arbitrary defaults in case of missing data
 		latestReset = 0; //Arbitrary default values
 		for (Map.Entry<String, String> entry : dataMap.entrySet()) {
@@ -34,7 +34,7 @@ public class Weekly extends NewTimer {
 					this.latestReset = Long.parseLong(entry.getValue());
 					break;
 				default:
-					logger.warning("Unknown property type found while parsing Weekly timer:" + entry.getKey());
+					logger.warning("Unknown property type found while parsing Daily timer:" + entry.getKey());
 					break;
 				}
 			} catch (NumberFormatException e) {
@@ -46,17 +46,17 @@ public class Weekly extends NewTimer {
 	public long getLatestReset() {
 		return this.latestReset;
 	}
-	
+
 	@Override
 	public void resetTimer() {
-		latestReset = (((System.currentTimeMillis()+DAY_LENGTH)/WEEK_LENGTH)*WEEK_LENGTH)-DAY_LENGTH;
-		logger.fine( () -> ("Reset weekly timer timer with data: " + this.toString()));
-		
+		latestReset = (System.currentTimeMillis()/DAY_LENGTH)*DAY_LENGTH;
+		logger.fine( () -> ("Reset daily timer timer with data: " + this.toString()));
 	}
 
 	@Override
 	public void resetTimerComplete() {
-		latestReset = 0;
+		this.latestReset = 0;
+		
 	}
 
 	@Override
@@ -66,18 +66,18 @@ public class Weekly extends NewTimer {
 
 	@Override
 	public String getTooltipText() {
-		return "Weekly Timer\n" + formatTimeRemaining(getTimeRemaining());
+		return "Daily Timer\n" + formatTimeRemaining(getTimeRemaining());
 	}
 
 	@Override
 	public int getPercentageComplete() {
-		long rawPercentage = (100*(System.currentTimeMillis() - latestReset))/(WEEK_LENGTH);
+		long rawPercentage = (100*(System.currentTimeMillis() - latestReset))/(DAY_LENGTH);
 		return rawPercentage >= 100 ? 100 : (int) rawPercentage;
 	}
 
 	@Override
 	public long getTimeRemaining() {
-		return (latestReset + WEEK_LENGTH) - System.currentTimeMillis();
+		return (latestReset + DAY_LENGTH) - System.currentTimeMillis();
 	}
 	
 	@Override
@@ -87,4 +87,5 @@ public class Weekly extends NewTimer {
 		return map;
 	}
 	
+
 }

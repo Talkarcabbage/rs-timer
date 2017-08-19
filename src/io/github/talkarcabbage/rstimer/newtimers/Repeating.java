@@ -1,4 +1,4 @@
-package com.minepop.talkar.timer.newtimers;
+package io.github.talkarcabbage.rstimer.newtimers;
 
 public class Repeating extends NewTimer {
 

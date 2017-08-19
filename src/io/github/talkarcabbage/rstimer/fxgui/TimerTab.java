@@ -1,4 +1,4 @@
-package com.minepop.talkar.timer.fxgui;
+package io.github.talkarcabbage.rstimer.fxgui;
 
 import javafx.scene.Node;
 import javafx.scene.control.Tab;

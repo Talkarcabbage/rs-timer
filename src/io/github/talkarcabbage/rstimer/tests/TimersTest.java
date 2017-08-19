@@ -1,4 +1,4 @@
-package com.minepop.talkar.timer.tests;
+package io.github.talkarcabbage.rstimer.tests;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,9 +9,9 @@ import java.util.Map.Entry;
 
 import org.junit.Test;
 
-import com.minepop.talkar.timer.newtimers.NewTimer;
-import com.minepop.talkar.timer.newtimers.Standard;
-import com.minepop.talkar.timer.persistence.LoadManager;
+import io.github.talkarcabbage.rstimer.newtimers.NewTimer;
+import io.github.talkarcabbage.rstimer.newtimers.Standard;
+import io.github.talkarcabbage.rstimer.persistence.LoadManager;
 
 public class TimersTest {
 	

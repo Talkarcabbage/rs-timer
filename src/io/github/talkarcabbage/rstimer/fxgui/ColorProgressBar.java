@@ -1,4 +1,4 @@
-package com.minepop.talkar.timer.fxgui;
+package io.github.talkarcabbage.rstimer.fxgui;
 
 import java.util.logging.Logger;
 

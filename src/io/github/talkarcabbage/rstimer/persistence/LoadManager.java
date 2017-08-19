@@ -1,4 +1,4 @@
-package com.minepop.talkar.timer.persistence;
+package io.github.talkarcabbage.rstimer.persistence;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.minepop.talkar.timer.fxgui.MainWindow;
-import com.minepop.talkar.timer.newtimers.Daily;
-import com.minepop.talkar.timer.newtimers.Monthly;
-import com.minepop.talkar.timer.newtimers.NewTimer;
-import com.minepop.talkar.timer.newtimers.Standard;
-import com.minepop.talkar.timer.newtimers.Weekly;
 import com.minepop.talkar.util.logging.LoggerConstructor;
 
+import io.github.talkarcabbage.rstimer.fxgui.MainWindow;
+import io.github.talkarcabbage.rstimer.newtimers.Daily;
+import io.github.talkarcabbage.rstimer.newtimers.Monthly;
+import io.github.talkarcabbage.rstimer.newtimers.NewTimer;
+import io.github.talkarcabbage.rstimer.newtimers.Standard;
+import io.github.talkarcabbage.rstimer.newtimers.Weekly;
 import javafx.scene.control.Tab;
 
 public class LoadManager {

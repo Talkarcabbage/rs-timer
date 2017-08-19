@@ -1,15 +1,15 @@
-package com.minepop.talkar.timer.fxgui;
+package io.github.talkarcabbage.rstimer.fxgui;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.minepop.talkar.timer.FXController;
-import com.minepop.talkar.timer.Timer;
-import com.minepop.talkar.timer.Timer.TimerType;
 import com.minepop.talkar.util.logging.LoggerConstructor;
 
+import io.github.talkarcabbage.rstimer.FXController;
+import io.github.talkarcabbage.rstimer.Timer;
+import io.github.talkarcabbage.rstimer.Timer.TimerType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

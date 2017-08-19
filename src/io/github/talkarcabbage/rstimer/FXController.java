@@ -1,4 +1,4 @@
-package com.minepop.talkar.timer;
+package io.github.talkarcabbage.rstimer;
 
 import java.awt.AWTException;
 import java.awt.MenuItem;
@@ -18,16 +18,16 @@ import javax.swing.SwingUtilities;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashBiMap;
-import com.minepop.talkar.timer.Timer.TimerType;
-import com.minepop.talkar.timer.fxgui.MainWindow;
-import com.minepop.talkar.timer.fxgui.ProgressPane;
-import com.minepop.talkar.timer.newtimers.NewTimer;
-import com.minepop.talkar.timer.persistence.SaveManager;
 import com.minepop.talkar.util.ConfigManager;
 import com.minepop.talkar.util.FileManager;
 import com.minepop.talkar.util.IOThreadManager;
 import com.minepop.talkar.util.logging.LoggerConstructor;
 
+import io.github.talkarcabbage.rstimer.Timer.TimerType;
+import io.github.talkarcabbage.rstimer.fxgui.MainWindow;
+import io.github.talkarcabbage.rstimer.fxgui.ProgressPane;
+import io.github.talkarcabbage.rstimer.newtimers.NewTimer;
+import io.github.talkarcabbage.rstimer.persistence.SaveManager;
 import javafx.application.Platform;
 import javafx.scene.layout.GridPane;
 

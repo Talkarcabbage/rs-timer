@@ -64,7 +64,7 @@ public class AddTimerController {
 			throw new IllegalStateException("Cannot initialize this method more than once!");
 		}
 		logger.fine("Created instance of AddTimerController");
-		instance = this;
+		instance = this; //NOSONAR
 	}
 
 	/**

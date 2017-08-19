@@ -11,7 +11,7 @@ import javafx.scene.control.ProgressBar;
  * @author Talkarcabbage
  *
  */
-public class ColorProgressBar extends ProgressBar {
+public class ColorProgressBar extends ProgressBar { //NOSONAR We don't care about number of parent classes
 	
 	static final Logger logger = LoggerConstructor.getLogger("FXColorProgressBar");
 

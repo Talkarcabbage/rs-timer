@@ -1,6 +1,8 @@
 package com.minepop.talkar.timer;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Logger;
 
@@ -20,7 +22,6 @@ public class MonthlyTimer extends Timer {
 	public MonthlyTimer(long targetTime, long durationTotal, String name, int tab) {
 		super(targetTime, durationTotal, name, tab);
 		timerType = TimerType.MONTHLY;
-		//resetTimer();
 	}
 	
 	@Override
@@ -50,4 +51,20 @@ public class MonthlyTimer extends Timer {
 	public void resetTimerComplete() {
 		this.startingTime = 0;
 	}
+	
+	@Override
+	public String getNewTimerTypeString() {
+		return "Monthly";
+	}
+	
+	@Override
+	public Map<String, String> getDataMap() {
+		HashMap<String, String> map = new HashMap<>(8);
+		map.put("name", this.name);
+		map.put("latestreset", String.valueOf(this.startingTime));
+		map.put("tab", String.valueOf(this.getTab()));
+		map.put("audio", "false");
+		return map;
+	}
+	
 }

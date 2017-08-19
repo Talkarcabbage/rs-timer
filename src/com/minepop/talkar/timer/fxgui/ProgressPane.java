@@ -2,7 +2,6 @@ package com.minepop.talkar.timer.fxgui;
 
 import java.util.logging.Logger;
 
-import com.minepop.talkar.timer.fxgui.concurrent.ProgressBarTask;
 import com.minepop.talkar.util.logging.LoggerConstructor;
 
 import javafx.geometry.Pos;
@@ -23,7 +22,7 @@ public class ProgressPane extends StackPane { //NOSONAR
 
 	ColorProgressBar bar;
 	Label label;
-	ProgressBarTask progressBarTask;
+
 	
 	public ProgressPane() {
 		bar = new ColorProgressBar();
@@ -96,10 +95,6 @@ public class ProgressPane extends StackPane { //NOSONAR
 	
 	void initBarStyle() {
 		bar.setTrackStyleClass(MainWindow.INCSTRING);
-	}
-	
-	public void setBarTask(ProgressBarTask task) {
-		this.progressBarTask = task;
 	}
 
 }

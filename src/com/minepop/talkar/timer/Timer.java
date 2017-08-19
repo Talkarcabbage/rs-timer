@@ -1,6 +1,8 @@
 package com.minepop.talkar.timer;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import com.minepop.talkar.util.logging.LoggerConstructor;
@@ -108,9 +110,7 @@ public class Timer {
 		if (Double.doubleToLongBits(startingTime) != Double
 				.doubleToLongBits(other.startingTime))
 			return false;
-		if (tab != other.tab)
-			return false;
-		return true;
+		return (tab == other.tab);
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class Timer {
 	 */
 	public void resetTimer() {
 		setStartingTime(System.currentTimeMillis());	
-		logger.fine("Set normal timer with data: " + this.toString());
+		logger.fine( () -> ("Set normal timer with data: " + this.toString()));
 	}
 	
 	/**
@@ -165,4 +165,42 @@ public class Timer {
 	public TimerType getTimerType() {
 		return timerType;
 	}
+	
+	/**
+	 * This should not be overridden. Override getDataMap and getNewTimerTypeString.
+	 * @return
+	 */
+	public String getNewTimerSaveText() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("\t" + getNewTimerTypeString() + " {" + "\n");
+		Map<String, String> map = getDataMap();
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			sb.append("\t\t" + entry.getKey() + ":" + entry.getValue() + "\n");
+		}
+		sb.append("\t" + "}" + "\n");
+		return sb.toString();
+	}
+	
+	/**
+	 * This should always be overridden. It defines the way the timer is saved.
+	 * @return
+	 */
+	public Map<String, String> getDataMap() {
+		HashMap<String, String> map = new HashMap<>(8);
+		map.put("name", this.name);
+		map.put("latestreset", String.valueOf(this.startingTime));
+		map.put("duration", String.valueOf(this.duration));
+		map.put("tab", String.valueOf(this.getTab()));
+		map.put("audio", "none");
+		return map;
+	}
+	
+	/**
+	 * This should always be overridden. It defines the way the timer is saved.
+	 * @return
+	 */
+	public String getNewTimerTypeString() {
+		return "Standard"; //NOSONAR
+	}
+	
 }

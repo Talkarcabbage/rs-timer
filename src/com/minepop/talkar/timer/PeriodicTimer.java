@@ -1,5 +1,7 @@
 package com.minepop.talkar.timer;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 import com.minepop.talkar.util.logging.LoggerConstructor;
 
@@ -20,14 +22,14 @@ public class PeriodicTimer extends Timer {
 	@Override
 	public void resetTimer(){ 
 
-		if ((long)getDuration() == WEEK_LENGTH) {
+		if (getDuration() == WEEK_LENGTH) {
 			setStartingTime((((System.currentTimeMillis()+DAY_LENGTH)/WEEK_LENGTH)*WEEK_LENGTH)-DAY_LENGTH);
-			logger.fine("Set weekly timer timer with data: " + this.toString());
-		} else if ((long)getDuration() == DAY_LENGTH){
+			logger.fine( () -> ("Set weekly timer timer with data: " + this.toString()));
+		} else if (getDuration() == DAY_LENGTH){
 			setStartingTime((System.currentTimeMillis()/DAY_LENGTH)*DAY_LENGTH);
-			logger.fine("Set daily timer timer with data: " + this.toString());
+			logger.fine( () -> ("Set daily timer timer with data: " + this.toString()));
 		} else {
-			logger.severe("Failed to match timer type for periodic timer: " + this.toString());
+			logger.severe( () -> ("Failed to match timer type for periodic timer: " + this.toString()));
 		}
 	}
 	
@@ -35,4 +37,20 @@ public class PeriodicTimer extends Timer {
 	public void resetTimerComplete() {
 		setStartingTime(0);
 	}
+	
+	@Override
+	public String getNewTimerTypeString() {
+		return getDuration() == WEEK_LENGTH ? "Weekly" : "Daily";
+	}
+	
+	@Override
+	public Map<String, String> getDataMap() {
+		HashMap<String, String> map = new HashMap<>(8);
+		map.put("name", this.name);
+		map.put("latestreset", String.valueOf(this.startingTime));
+		map.put("tab", String.valueOf(this.getTab()));
+		map.put("audio", "false");
+		return map;
+	}
+
 }

@@ -21,6 +21,8 @@ import com.google.common.collect.HashBiMap;
 import com.minepop.talkar.timer.Timer.TimerType;
 import com.minepop.talkar.timer.fxgui.MainWindow;
 import com.minepop.talkar.timer.fxgui.ProgressPane;
+import com.minepop.talkar.timer.newtimers.NewTimer;
+import com.minepop.talkar.timer.persistence.SaveManager;
 import com.minepop.talkar.util.ConfigManager;
 import com.minepop.talkar.util.FileManager;
 import com.minepop.talkar.util.IOThreadManager;
@@ -43,6 +45,11 @@ public class FXController {
 	static TrayIcon trayIcon;
 	
 	public final HashBiMap<ProgressPane, Timer> timerMap = HashBiMap.create(50);
+	
+	/**
+	 * New Timers
+	 */
+	public final HashBiMap<ProgressPane, NewTimer> newTimerMap = HashBiMap.create(50);
 	
 	public static final FXController instance = new FXController();
 
@@ -94,7 +101,7 @@ public class FXController {
 			SystemTray.getSystemTray().add(trayIcon);
 			trayIcon.addActionListener( event -> 
 				Platform.runLater( () -> MainWindow.instance.setVisible(!MainWindow.instance.isVisible())));	
-			PopupMenu trayMenu = new PopupMenu("[Insert Creative Name Here]");
+			PopupMenu trayMenu = new PopupMenu("RS Timer");
 
 			MenuItem toggleVisibilityMenu = new MenuItem("Toggle Window");
 			toggleVisibilityMenu.addActionListener( e -> {
@@ -144,7 +151,7 @@ public class FXController {
 			newTimer = new MonthlyTimer(startingTime, duration, name, tab);
 			break;
 		default:
-			logger.severe("Severe error occured trying to add a timer: the specified timer type was invalid: " + timerType);
+			logger.severe( () -> ("Severe error occured trying to add a timer: the specified timer type was invalid: " + timerType));
 			newTimer = new Timer(startingTime, duration, name == null ? "ERROR" : name, (tab >= 0 && tab < MainWindow.instance.getTabList().size()) ? tab : 0);
 			break;
 		}
@@ -181,7 +188,7 @@ public class FXController {
 			if ("cfg".equals(timerInfo[0])) {
 				importResaveConfig = true;
 				importResave = true; //To make sure our timer file doesn't overwrite our configuration repeatedly
-				logger.config("Importing configuration from timers file: " + timerInfo[1]);
+				logger.config( () -> ("Importing configuration from timers file: " + timerInfo[1]));
 				if ("mainTabName".equals(timerInfo[1])) {
 					ConfigManager.getInstance().setDefaultTabName(timerInfo[2]); //Deprecated
 				} else if ("gridColumns".equals(timerInfo[1])) { //Deprecated
@@ -210,7 +217,7 @@ public class FXController {
 					MainWindow.instance.addTab(Integer.parseInt(timerInfo[1]), Integer.parseInt(timerInfo[2]), timerInfo[3]);
 				}
 			} else if ("timer".equals(timerInfo[0])) {
-				logger.finer("Found a timer entry with size: " + timerInfo.length);
+				logger.finer( () -> ("Found a timer entry with size: " + timerInfo.length));
 				loadTimerFromArray(timerInfo, processDoubles); //Actually load the timer.
 				
 			} else if (timerInfo[0].startsWith("1")){
@@ -246,10 +253,10 @@ public class FXController {
 
 	private void loadTimerFromArray(String[] timerInfo, boolean processAsDouble) {
 		if (!processAsDouble) { //Importing up to date data type (long)
-			logger.finer("Up to date timer loaded: " + timerInfo[1] + " | " + timerInfo[2] + " | " + timerInfo[3] + " | " + timerInfo[4] + " | "+ timerInfo[5] + " | ");
+			logger.finer( () -> ("Up to date timer loaded: " + timerInfo[1] + " | " + timerInfo[2] + " | " + timerInfo[3] + " | " + timerInfo[4] + " | "+ timerInfo[5] + " | "));
 			addTimer(Long.parseLong(timerInfo[1]), Long.parseLong(timerInfo[2]), Integer.parseInt(timerInfo[3]), TimerType.valueOf(timerInfo[4].toUpperCase()), timerInfo[5]);
 		} else { //Importing old (double) data type
-			logger.info("Importing old timer data to long format: " + timerInfo[5]);
+			logger.info( () -> ("Importing old timer data to long format: " + timerInfo[5]));
 			if ("true".equalsIgnoreCase(timerInfo[4])) {
 				logger.info("Imported old timer data for standard timer with double type.");
 				addTimer((long)Double.parseDouble(timerInfo[1]), (long)Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), TimerType.STANDARD, timerInfo[5]);
@@ -257,7 +264,7 @@ public class FXController {
 				logger.info("Imported old timer data for periodic timer.");
 				addTimer((long)Double.parseDouble(timerInfo[1]), (long)Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), TimerType.PERIODIC, timerInfo[5]);
 			} else {
-				logger.info("Converting double timer: " + timerInfo[1] + " | " + timerInfo[2] + " | " + timerInfo[3] + " | " + timerInfo[4] + " | "+ timerInfo[5] + " | ");
+				logger.info( () -> ("Converting double timer: " + timerInfo[1] + " | " + timerInfo[2] + " | " + timerInfo[3] + " | " + timerInfo[4] + " | "+ timerInfo[5] + " | "));
 				addTimer((long)Double.parseDouble(timerInfo[1]), (long)Double.parseDouble(timerInfo[2]), Integer.parseInt(timerInfo[3]), TimerType.valueOf(timerInfo[4].toUpperCase()), timerInfo[5]);
 			}
 		}
@@ -288,6 +295,7 @@ public class FXController {
 				toSave.append("timer," + t.startingTime + "," + t.duration + "," + t.tab + "," + t.getTimerTypeString() + "," + t.name + "\n");
 			}
 			IOThreadManager.instance.writeFile(TIMERFILE, toSave.toString(), false);
+			IOThreadManager.instance.writeFile(SaveManager.SAVE_FILE_LOCATION, SaveManager.saveLegacyTimers(MainWindow.instance.getTabList(), timerMap.values()), false);
 		});
 	}
 		
@@ -364,6 +372,30 @@ public class FXController {
 		SystemTray.getSystemTray().remove(trayIcon);
 	}
 	
+	
+	/*
+	 * BEGIN NEW TIMER METHODS HERE
+	 */
+	
+	
+	/**
+	 * Adds a timer to the GUI and adds it to the map. Returns the timer for convenience.
+	 * 
+	 * @param timer The timer to add. The timer data should already be set, including tab.
+	 * @return The newly added Timer
+	 */
+	public NewTimer addNewTimer(NewTimer timer) {
+		ProgressPane progPane = new ProgressPane();
+		progPane.setLabelText(timer.getName());
+		this.newTimerMap.put(progPane, timer);
+		progPane.setOnMouseClicked( event -> MainWindow.instance.onClickNewTimerBar(progPane, event));
+		MainWindow.instance.addTimerBar(progPane, timer.getTab());	
+		return timer;
+	}
+	
+	
+	
+
 }
 
 

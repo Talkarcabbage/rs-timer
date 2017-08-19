@@ -125,7 +125,7 @@ public class MainWindow extends Application {
 			plusButton.setOnMouseClicked( this::onPlusClicked);
 			plusButton.setOnMouseDragReleased( this::onPlusClicked);
 		
-			minusButton.setOnMouseReleased( event -> event.consume());
+			minusButton.setOnMouseReleased(MouseEvent::consume);
 			minusButton.setOnMouseClicked(this::onMinusClicked);
 			minusButton.setOnMouseDragReleased(this::onMinusClicked);
 			
@@ -173,6 +173,38 @@ public class MainWindow extends Application {
 		} catch(Exception e) {
 			logger.log(Level.SEVERE, "An exception occured while initializing the FXGUI: ", e);
 		}
+	}
+	
+	/**
+	 * Creates and returns a tab to add to the GUI with the specified gridpane information and title
+	 * @param gridRows
+	 * @param gridColumns
+	 * @param name
+	 * @return
+	 */
+	public static Tab createTab(int gridRows, int gridColumns, String name) {
+		TimerTab tab = new TimerTab(name);
+		tab.setClosable(false);
+		GridPane gp = new GridPane();
+		gp.setHgap(8);
+		gp.setVgap(8);
+		gp.getStyleClass().add("gridPane");
+		
+		for (int i = 0; i < gridColumns; i++) {
+			ColumnConstraints cc = new ColumnConstraints();
+			cc.setHgrow(Priority.ALWAYS);
+			gp.getColumnConstraints().add(cc);
+		}
+		for (int i = 0; i < gridRows; i++) {
+			RowConstraints rc = new RowConstraints();
+			rc.setVgrow(Priority.NEVER);
+			gp.getRowConstraints().add(rc);
+		}
+		
+		tab.setContent(gp);
+		gp.getChildren().clear();
+		return tab;
+		
 	}
 
 	/**
@@ -394,14 +426,14 @@ public class MainWindow extends Application {
 		inputDialog.setTitle("New Tab Name");
 		inputDialog.showAndWait()
 			.filter(response -> !"".equals(response))
-			.ifPresent( response -> showNewTabRowsDialog(response)); //NOSONAR
+			.ifPresent(this::showNewTabRowsDialog);
 	}
 	
 	/**
 	 * Second entry. This if it returns a value forwards to the third entry.
 	 */
 	void showNewTabRowsDialog(String name) {
-		logger.info("showNewTabRowsDialog Was called with the string: " + name);
+		logger.info( () -> ("showNewTabRowsDialog Was called with the string: " + name));
 		TextInputDialog inputDialog = new TextInputDialog();
 		inputDialog.getEditor().setTextFormatter(new TextFormatter<Integer>(new IntegerStringConverter()));
 		inputDialog.setContentText("Enter the number of rows, or 0 to choose columns instead");
@@ -410,14 +442,14 @@ public class MainWindow extends Application {
 		inputDialog.setTitle("New Tab Rows");
 		inputDialog.showAndWait()
 			.filter(response -> !"".equals(response))
-			.ifPresent( response -> showNewTabColumnsDialog(name, Integer.parseInt(response))); //NOSONAR
+			.ifPresent( response -> showNewTabColumnsDialog(name, Integer.parseInt(response)));
 	}
 	
 	/**
 	 * Third entry. This if it returns a value actually creates the tab
 	 */
 	void showNewTabColumnsDialog(String name, int rows) {
-		logger.info("showNewTabColumnsDialog was called with the data: " + name + " & " + rows);
+		logger.info( () -> ("showNewTabColumnsDialog was called with the data: " + name + " & " + rows));
 		if (rows > 0) {
 			finishNewTabDialogs(rows, 0, name);
 			return;
@@ -451,4 +483,18 @@ public class MainWindow extends Application {
 			.filter(response -> response.getButtonData() == ButtonType.OK.getButtonData())
 			.ifPresent( response -> FXController.instance.removeTimerTab(this.getCurrentTab()));
 	}
+	
+	public void onClickNewTimerBar(ProgressPane pane, MouseEvent event) {
+		logger.fine("OnClickTimerBar fired (new Timers");
+		if (!minusButton.isSelected() && event.isShiftDown()) {
+			//FIXME new edit window : AddTimerController.instance.showEditWindow(FXController.instance.timerMap.get(pane));
+		} else if (minusButton.isSelected() && event.getButton()==MouseButton.PRIMARY) { //Remove timer
+			//FIXME new remove method for new timers and decouple : FXController.instance.removeTimer(pane);  
+		} else if (event.getButton()==MouseButton.SECONDARY) { //Reset timer as complete
+			FXController.instance.resetTimerComplete(pane);
+		} else { //Reset timer as incomplete
+			FXController.instance.resetTimer(pane); 
+		}
+	}
+	
 }

@@ -36,7 +36,7 @@ public class FileManager {
 		
 		File toRead = new File(fileName);
 		if (!toRead.exists()) {
-			logger.info("FileManager: Error reading file " + fileName + " -- The file does not exist or is inaccessible.");
+			logger.warning( () -> "FileManager: Error reading file " + fileName + " -- The file does not exist or is inaccessible.");
 			return null;
 		}
 		

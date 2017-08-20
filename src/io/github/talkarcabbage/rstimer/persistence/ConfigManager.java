@@ -102,7 +102,10 @@ public class ConfigManager {
 	}
 
 	public static ConfigManager getInstance() {
-		return instance == null ? (instance = new ConfigManager()) : instance;
+		if (instance == null) {
+			instance = new ConfigManager();
+		}
+		return instance;
 	}
 	
 	/**
@@ -160,7 +163,7 @@ public class ConfigManager {
 	
 	static int getPropsInt(Properties props, String id, int def) {
 		try {
-			logger.config("Procesing Configuration: " + id + " with value '" + props.getProperty(id) + "' with default: " + def);
+			logger.config( () -> "Procesing Configuration: " + id + " with value '" + props.getProperty(id) + "' with default: " + def);
 			return Integer.parseInt(props.getProperty(id));
 		} catch (NumberFormatException | NullPointerException e) { //NOSONAR
 			logger.config("An acceptable Exception was caught while loading integer from config " + id + ":" + e.getMessage());
@@ -170,7 +173,7 @@ public class ConfigManager {
 	
 	static Level getPropsLogLevel(Properties props, String id, Level def) {
 		try {
-			logger.config("Procesing Configuration: " + id + " with value '" + props.getProperty(id) + "' with default: " + def);
+			logger.config( () -> "Procesing Configuration: " + id + " with value '" + props.getProperty(id) + "' with default: " + def);
 			return Level.parse(props.getProperty(id));
 		} catch (IllegalArgumentException | NullPointerException e) { //NOSONAR
 			logger.config("An acceptable Exception was caught while loading log level value from config " + id + ":" + e.getMessage());
@@ -180,7 +183,7 @@ public class ConfigManager {
 	
 	static double getPropsDouble(Properties props, String id, double def) {
 		try {
-			logger.config("Procesing Configuration: " + id + " with value '" + props.getProperty(id) + "' with default: " + def);
+			logger.config( () -> "Procesing Configuration: " + id + " with value '" + props.getProperty(id) + "' with default: " + def);
 			return Double.parseDouble(props.getProperty(id));
 		} catch (NumberFormatException | NullPointerException e) { //NOSONAR
 			logger.config("An acceptable Exception was caught while loading double value from config " + id + ":" + e.getMessage());

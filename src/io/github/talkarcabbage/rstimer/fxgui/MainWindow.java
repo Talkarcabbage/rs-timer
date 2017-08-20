@@ -46,6 +46,8 @@ public class MainWindow extends Application {
 
 	static final Logger logger = LoggerManager.getInstance().getLogger("FXWin");
 	
+	static final String GRID_PANE_CSS_CLASS = "gridPane";
+	
 	TabPane tabPane;
 	int moveXinit;
 	int moveYinit;
@@ -188,7 +190,7 @@ public class MainWindow extends Application {
 		GridPane gp = new GridPane();
 		gp.setHgap(8);
 		gp.setVgap(8);
-		gp.getStyleClass().add("gridPane");
+		gp.getStyleClass().add(GRID_PANE_CSS_CLASS);
 		
 		for (int i = 0; i < gridColumns; i++) {
 			ColumnConstraints cc = new ColumnConstraints();
@@ -220,7 +222,7 @@ public class MainWindow extends Application {
 		GridPane gp = new GridPane();
 		gp.setHgap(8);
 		gp.setVgap(8);
-		gp.getStyleClass().add("gridPane");
+		gp.getStyleClass().add(GRID_PANE_CSS_CLASS);
 		
 		for (int i = 0; i < gridColumns; i++) {
 			ColumnConstraints cc = new ColumnConstraints();
@@ -245,7 +247,7 @@ public class MainWindow extends Application {
 		GridPane gp = new GridPane();
 		gp.setHgap(8);
 		gp.setVgap(8);
-		gp.getStyleClass().add("gridPane");
+		gp.getStyleClass().add(GRID_PANE_CSS_CLASS);
 		
 		for (int i = 0; i < ConfigManager.getInstance().getDefaultTabColumns(); i++) {
 			ColumnConstraints cc = new ColumnConstraints();

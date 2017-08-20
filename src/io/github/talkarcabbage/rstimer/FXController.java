@@ -18,15 +18,15 @@ import javax.swing.SwingUtilities;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashBiMap;
-import com.minepop.talkar.util.ConfigManager;
-import com.minepop.talkar.util.FileManager;
-import com.minepop.talkar.util.IOThreadManager;
-import com.minepop.talkar.util.logging.LoggerConstructor;
 
+import io.github.talkarcabbage.logger.LoggerManager;
 import io.github.talkarcabbage.rstimer.Timer.TimerType;
 import io.github.talkarcabbage.rstimer.fxgui.MainWindow;
 import io.github.talkarcabbage.rstimer.fxgui.ProgressPane;
 import io.github.talkarcabbage.rstimer.newtimers.NewTimer;
+import io.github.talkarcabbage.rstimer.persistence.ConfigManager;
+import io.github.talkarcabbage.rstimer.persistence.FileManager;
+import io.github.talkarcabbage.rstimer.persistence.IOThreadManager;
 import io.github.talkarcabbage.rstimer.persistence.SaveManager;
 import javafx.application.Platform;
 import javafx.scene.layout.GridPane;
@@ -40,7 +40,7 @@ import javafx.scene.layout.GridPane;
  */
 public class FXController {
 
-	static final Logger logger = LoggerConstructor.getLogger("FX Controller");
+	static final Logger logger = LoggerManager.getInstance().getLogger("FX Controller");
 
 	static TrayIcon trayIcon;
 	

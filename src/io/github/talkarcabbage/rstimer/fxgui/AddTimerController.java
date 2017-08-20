@@ -5,8 +5,7 @@ import java.time.Duration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.minepop.talkar.util.logging.LoggerConstructor;
-
+import io.github.talkarcabbage.logger.LoggerManager;
 import io.github.talkarcabbage.rstimer.FXController;
 import io.github.talkarcabbage.rstimer.Timer;
 import io.github.talkarcabbage.rstimer.Timer.TimerType;
@@ -29,7 +28,7 @@ import javafx.util.converter.IntegerStringConverter;
  */
 public class AddTimerController {
 	
-	static final Logger logger = LoggerConstructor.getLogger("AddTimerController");
+	static final Logger logger = LoggerManager.getInstance().getLogger("AddTimerController");
 
 	static AddTimerController instance;
 	Stage stage;

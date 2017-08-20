@@ -1,4 +1,4 @@
-package com.minepop.talkar.util;
+package io.github.talkarcabbage.rstimer.persistence;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,7 +9,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.base.Throwables;
-import com.minepop.talkar.util.logging.LoggerConstructor;
+
+import io.github.talkarcabbage.logger.LoggerManager;
 
 /**
  * 
@@ -18,7 +19,7 @@ import com.minepop.talkar.util.logging.LoggerConstructor;
  */
 public class ConfigManager {
 
-	private static final Logger logger = LoggerConstructor.getLogger("ConfigManager");
+	private static final Logger logger = LoggerManager.getInstance().getLogger("ConfigManager");
 
 	private static ConfigManager instance;
 	
@@ -81,7 +82,7 @@ public class ConfigManager {
 
 	public void setLogLevel(Level logLevel) {
 		this.logLevel = logLevel;
-		LoggerConstructor.setGlobalLoggingLevel(logLevel);
+		LoggerManager.getInstance().setGlobalLoggingLevel(logLevel);
 	}
 
 	public int getFramesPerUpdate() {
@@ -122,7 +123,7 @@ public class ConfigManager {
 		} 
 		
 		logLevel = getPropsLogLevel(prop, "logLevel", logLevel);
-		LoggerConstructor.setGlobalLoggingLevel(logLevel); //To set the logging as early as possible.
+		LoggerManager.getInstance().setGlobalLoggingLevel(logLevel); //To set the logging as early as possible.
 		defaultTabName = getPropsString(prop, "defaultTabName", defaultTabName);
 		defaultTabColumns = getPropsInt(prop, "defaultTabColumns", defaultTabColumns);
 		defaultTabRows = getPropsInt(prop, "defaultTabRows", defaultTabRows);

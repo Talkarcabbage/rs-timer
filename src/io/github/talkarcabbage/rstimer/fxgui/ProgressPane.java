@@ -2,8 +2,7 @@ package io.github.talkarcabbage.rstimer.fxgui;
 
 import java.util.logging.Logger;
 
-import com.minepop.talkar.util.logging.LoggerConstructor;
-
+import io.github.talkarcabbage.logger.LoggerManager;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -18,7 +17,7 @@ import javafx.scene.layout.StackPane;
  */
 public class ProgressPane extends StackPane { //NOSONAR
 	
-	static final Logger logger = LoggerConstructor.getLogger("FXWinPPane");
+	static final Logger logger = LoggerManager.getInstance().getLogger("FXWinPPane");
 
 	ColorProgressBar bar;
 	Label label;

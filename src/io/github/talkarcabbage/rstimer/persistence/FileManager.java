@@ -1,4 +1,4 @@
-package com.minepop.talkar.util;
+package io.github.talkarcabbage.rstimer.persistence;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,7 +13,8 @@ import java.util.Scanner;
 import java.util.logging.Logger;
 
 import com.google.common.base.Throwables;
-import com.minepop.talkar.util.logging.LoggerConstructor;
+
+import io.github.talkarcabbage.logger.LoggerManager;
 
 /**
  * 
@@ -22,7 +23,7 @@ import com.minepop.talkar.util.logging.LoggerConstructor;
  * The class handles FileNotFoundExceptions itself.
  */
 public class FileManager {
-	static final Logger logger = LoggerConstructor.getLogger("FileManager");
+	static final Logger logger = LoggerManager.getInstance().getLogger("FileManager");
 
 	FileManager() {}
 	

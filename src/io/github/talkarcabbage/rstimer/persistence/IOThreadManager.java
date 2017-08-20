@@ -1,4 +1,4 @@
-package com.minepop.talkar.util;
+package io.github.talkarcabbage.rstimer.persistence;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;

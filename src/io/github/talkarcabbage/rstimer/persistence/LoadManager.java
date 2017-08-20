@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.minepop.talkar.util.logging.LoggerConstructor;
-
+import io.github.talkarcabbage.logger.LoggerManager;
 import io.github.talkarcabbage.rstimer.fxgui.MainWindow;
 import io.github.talkarcabbage.rstimer.newtimers.Daily;
 import io.github.talkarcabbage.rstimer.newtimers.Monthly;
@@ -18,7 +17,7 @@ import javafx.scene.control.Tab;
 
 public class LoadManager {
 	
-	private static final Logger logger = LoggerConstructor.getLogger("Timer");
+	private static final Logger logger = LoggerManager.getInstance().getLogger("Timer");
 	
 	/**
 	 * Parses the tabs from the given fileInput, a list containing the contents of a save file, and returns the tabs contained in it

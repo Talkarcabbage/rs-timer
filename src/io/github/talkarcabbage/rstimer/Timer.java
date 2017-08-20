@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.minepop.talkar.util.logging.LoggerConstructor;
+import io.github.talkarcabbage.logger.LoggerManager;
 
 /**
  * 
@@ -14,7 +14,7 @@ import com.minepop.talkar.util.logging.LoggerConstructor;
  */
 public class Timer {
 	
-	private static final Logger logger = LoggerConstructor.getLogger("Timer");
+	private static final Logger logger = LoggerManager.getInstance().getLogger("Timer");
 
 	public enum TimerType {
 		STANDARD,

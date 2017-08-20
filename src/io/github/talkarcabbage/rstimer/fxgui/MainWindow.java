@@ -6,11 +6,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.collect.BiMap;
-import com.minepop.talkar.util.ConfigManager;
-import com.minepop.talkar.util.logging.LoggerConstructor;
 
+import io.github.talkarcabbage.logger.LoggerManager;
 import io.github.talkarcabbage.rstimer.FXController;
 import io.github.talkarcabbage.rstimer.Timer;
+import io.github.talkarcabbage.rstimer.persistence.ConfigManager;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -44,7 +44,7 @@ import javafx.util.converter.IntegerStringConverter;
  */
 public class MainWindow extends Application {
 
-	static final Logger logger = LoggerConstructor.getLogger("FXWin");
+	static final Logger logger = LoggerManager.getInstance().getLogger("FXWin");
 	
 	TabPane tabPane;
 	int moveXinit;
@@ -71,7 +71,7 @@ public class MainWindow extends Application {
 				System.exit(0);
 			});
 			AddTimerController.createRoot();
-			instance = this;
+			instance = this; //NOSONAR 
 			stage = primaryStage;
 			BorderPane rootPane = new BorderPane();
 			Scene scene = new Scene(rootPane, ConfigManager.getInstance().getWinWidth() ,ConfigManager.getInstance().getWinHeight());

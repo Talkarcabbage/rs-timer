@@ -3,9 +3,6 @@ package io.github.talkarcabbage.rstimer.persistence;
 import java.util.Collection;
 import java.util.List;
 import javafx.scene.layout.GridPane;
-
-import com.minepop.talkar.util.IOThreadManager;
-
 import io.github.talkarcabbage.rstimer.Timer;
 import io.github.talkarcabbage.rstimer.newtimers.NewTimer;
 import javafx.scene.control.Tab;

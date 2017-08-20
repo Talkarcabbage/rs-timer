@@ -1,10 +1,10 @@
 package io.github.talkarcabbage.rstimer.fxgui;
 
 import com.google.common.collect.BiMap;
-import com.minepop.talkar.util.ConfigManager;
 
 import io.github.talkarcabbage.rstimer.FXController;
 import io.github.talkarcabbage.rstimer.Timer;
+import io.github.talkarcabbage.rstimer.persistence.ConfigManager;
 import javafx.animation.AnimationTimer;
 
 /**

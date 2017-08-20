@@ -2,8 +2,7 @@ package io.github.talkarcabbage.rstimer.fxgui;
 
 import java.util.logging.Logger;
 
-import com.minepop.talkar.util.logging.LoggerConstructor;
-
+import io.github.talkarcabbage.logger.LoggerManager;
 import javafx.scene.control.ProgressBar;
 
 /**
@@ -13,7 +12,7 @@ import javafx.scene.control.ProgressBar;
  */
 public class ColorProgressBar extends ProgressBar { //NOSONAR We don't care about number of parent classes
 	
-	static final Logger logger = LoggerConstructor.getLogger("FXColorProgressBar");
+	static final Logger logger = LoggerManager.getInstance().getLogger("FXColorProgressBar");
 
 	public ColorProgressBar() {
 		super();

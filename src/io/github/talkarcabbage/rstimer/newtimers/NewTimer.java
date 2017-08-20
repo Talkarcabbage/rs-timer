@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.minepop.talkar.util.logging.LoggerConstructor;
+import io.github.talkarcabbage.logger.LoggerManager;
 
 public abstract class NewTimer {
 	
 	public static final long DAY_LENGTH = 86400000;
 	public static final long WEEK_LENGTH = 604800000;
-	static Logger logger = LoggerConstructor.getLogger("Timer");
+	static Logger logger = LoggerManager.getInstance().getLogger("Timer");
 	
 	String audio = "none";
 	volatile String name;

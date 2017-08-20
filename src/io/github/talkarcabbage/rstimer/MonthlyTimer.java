@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Logger;
 
-import com.minepop.talkar.util.logging.LoggerConstructor;
+import io.github.talkarcabbage.logger.LoggerManager;
 
 /**
  * 
@@ -17,7 +17,7 @@ public class MonthlyTimer extends Timer {
 
 	
 	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerConstructor.getLogger("MonthlyTimer");
+	private static final Logger logger = LoggerManager.getInstance().getLogger("MonthlyTimer");
 	
 	public MonthlyTimer(long targetTime, long durationTotal, String name, int tab) {
 		super(targetTime, durationTotal, name, tab);

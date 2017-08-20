@@ -57,7 +57,7 @@
 				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
 				<attribute name="Rsrc-Main-Class" value="io.github.talkarcabbage.rstimer.FXController"/>
 				<attribute name="Class-Path" value="."/>
-				<attribute name="Rsrc-Class-Path" value="./ guava-20.0.jar"/>
+				<attribute name="Rsrc-Class-Path" value="./ guava-20.0.jar TalkarLogger-0.2.0.jar"/>
 			</manifest>
 			<zipfileset src="jar-in-jar-loader.zip"/>
 			<fileset dir="${dir.buildfile}/bin"/>
@@ -66,6 +66,7 @@
 			<zipfileset dir="./src/images" includes="*" prefix="images"/>
 			<zipfileset dir="./src/css" includes="*" prefix="css"/>
 			<zipfileset dir="./lib" includes="guava-20.0.jar"/>
+			<zipfileset dir="./lib" includes="TalkarLogger-0.2.0.jar"/>
 		</jar>
 	</target>
 	

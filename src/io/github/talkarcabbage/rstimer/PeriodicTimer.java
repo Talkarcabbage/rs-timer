@@ -3,7 +3,8 @@ package io.github.talkarcabbage.rstimer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import com.minepop.talkar.util.logging.LoggerConstructor;
+
+import io.github.talkarcabbage.logger.LoggerManager;
 
 /**
  * 
@@ -12,7 +13,7 @@ import com.minepop.talkar.util.logging.LoggerConstructor;
  */
 public class PeriodicTimer extends Timer {
 	
-	private static final Logger logger = LoggerConstructor.getLogger("PeriodicTimer");
+	private static final Logger logger = LoggerManager.getInstance().getLogger("PeriodicTimer");
 
 	public PeriodicTimer(long targetTime, long durationTotal, String name, int tab) {
 		super(targetTime, durationTotal, name, tab);

@@ -9,7 +9,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.base.Throwables;
@@ -72,6 +75,29 @@ public class FileManager {
 		return toSplit == null ? null : toSplit.split("\n");
 	}
 	
+	public static List<String> readFileSplitList(String fileName) {
+		ArrayList<String> list = new ArrayList<>();
+		
+		File toRead = new File(fileName);
+		if (!toRead.exists()) {
+			logger.warning( () -> "FileManager: Error reading file " + fileName + " -- The file does not exist or is inaccessible.");
+			return list;
+		}
+		
+		try (Scanner scanIn = new Scanner(toRead)) {
+			
+			while (scanIn.hasNext()) {
+				list.add(scanIn.nextLine());
+			}
+			
+			
+		} catch (FileNotFoundException e) {
+			logger.log(Level.SEVERE, "Somehow we made it past the fileExists check! ", e);
+		}
+		
+		return list;
+	}
+	
 	public static boolean writeFile(String fileName, String text, boolean append) {
 		
 		File toWrite = new File(fileName);
@@ -86,7 +112,7 @@ public class FileManager {
 			return true;
 			
 		} catch (FileNotFoundException e) {
-			logger.severe("Could not write file: ");
+			logger.severe("Could not write file: " + fileName);
 			logger.severe(Throwables.getStackTraceAsString(e));
 		} 
 		

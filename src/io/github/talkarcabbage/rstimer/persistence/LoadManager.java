@@ -24,7 +24,7 @@ public class LoadManager {
 	 * @param fileInput the file contents
 	 * @return the Tabs in the file
 	 */
-	public static List<Tab> betterParseTabs(List<String> fileInput) { //NOSONAR Splitting it up would only complicate it at this point.
+	public static List<Tab> parseTabsFromFileData(List<String> fileInput) { //NOSONAR Splitting it up would only complicate it at this point.
 		
 		int index = 0;
 		ArrayList<Tab> returnTabList = new ArrayList<>(8);
@@ -81,9 +81,9 @@ public class LoadManager {
 	
 	/**
 	 * This method takes the base array of lines of the file and returns a list of Timers from that file for addition to the GUI
-	 * @param fileInput A list containing the contents of a timer save file
+	 * @param fileInput A list containing the contents of a timer save file separated by line
 	 */
-	public static List<NewTimer> betterLoadTimers(List<String> fileInput) {
+	public static List<NewTimer> loadTimersFromFileData(List<String> fileInput) {
 		int index = 0;
 
 		while (index < fileInput.size() && !fileInput.get(index).trim().equals("timers {")) { //Fast-forward to the line with the timers declaration
@@ -105,7 +105,7 @@ public class LoadManager {
 			dataList.add(fileInput.get(index)); //Add the line to the list
 			index++;
 		}
-		return betterLoadNewTimers(dataList); //Pass the dataList, which excludes lines other than between "timers {" and "};", to the betterLoadNewTimers method
+		return loadTimersFromList(dataList); //Pass the dataList, which excludes lines other than between "timers {" and "};", to the betterLoadNewTimers method
 		
 	}
 	
@@ -116,7 +116,7 @@ public class LoadManager {
 	 * @param timerSectionList
 	 * @return A list of timers created from the timer dataset
 	 */
-	private static List<NewTimer> betterLoadNewTimers(List<String> timerSectionList) {
+	private static List<NewTimer> loadTimersFromList(List<String> timerSectionList) {
 		
 		ArrayList<NewTimer> returnList = new ArrayList<>();
 		

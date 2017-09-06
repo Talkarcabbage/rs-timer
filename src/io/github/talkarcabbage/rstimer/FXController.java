@@ -70,6 +70,8 @@ public class FXController {
 		ConfigManager.getInstance().save();
 		logger.fine("Attempting tray initialization");
 		instance.prepareSystemTray();
+		logger.info("You are running a converter version of the RS timer! Use of this version is recommended only for use to upgrade to the new version.");
+		logger.info( () -> "The new format will be saved at " + SaveManager.SAVE_FILE_LOCATION);
 		
 		MainWindow.launchWrap(args);
 	}
@@ -89,8 +91,7 @@ public class FXController {
 		try {
 			SwingUtilities.invokeAndWait( () -> applyWindowIcon(taskBarIcon));
 		} catch (InvocationTargetException | InterruptedException e1) {
-			logger.severe("A thread-related exception occured while setting up the tray");
-			logger.severe(Throwables.getStackTraceAsString(e1));
+			logger.log(Level.SEVERE, "A thread-related exception occured while setting up the tray: ", e1);
 		}
 	}
 	
@@ -295,7 +296,7 @@ public class FXController {
 				toSave.append("timer," + t.startingTime + "," + t.duration + "," + t.tab + "," + t.getTimerTypeString() + "," + t.name + "\n");
 			}
 			IOThreadManager.instance.writeFile(TIMERFILE, toSave.toString(), false);
-			IOThreadManager.instance.writeFile(SaveManager.SAVE_FILE_LOCATION, SaveManager.saveLegacyTimers(MainWindow.instance.getTabList(), timerMap.values()), false);
+			IOThreadManager.instance.writeFile(SaveManager.SAVE_FILE_LOCATION, SaveManager.getLegacySaveDataString(MainWindow.instance.getTabList(), timerMap.values()), false);
 		});
 	}
 		

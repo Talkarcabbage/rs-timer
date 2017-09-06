@@ -11,11 +11,14 @@ import io.github.talkarcabbage.logger.LoggerManager;
 import io.github.talkarcabbage.rstimer.FXController;
 import io.github.talkarcabbage.rstimer.Timer;
 import io.github.talkarcabbage.rstimer.persistence.ConfigManager;
+import io.github.talkarcabbage.rstimer.persistence.SaveManager;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
@@ -171,6 +174,12 @@ public class MainWindow extends Application {
 			
 			pat = new ProgressAnimTimer(FXController.instance.timerMap);
 			pat.start();
+			Alert alert = new Alert(AlertType.INFORMATION, "This is a converter version intended to bridge the old and new save formats and is not intended for general use.\nThe new file will be located at " + SaveManager.SAVE_FILE_LOCATION);
+			alert.setResizable(true);
+			alert.setHeaderText("Converter");
+			alert.show();
+			alert.setHeight(250);
+
 			
 		} catch(Exception e) {
 			logger.log(Level.SEVERE, "An exception occured while initializing the FXGUI: ", e);

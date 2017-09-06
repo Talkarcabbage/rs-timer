@@ -22,7 +22,7 @@ public class LoadManagerTest {
 	@Test
 	public void testBetterParseTabs() {
 		List<String> tabData = createTestTabData();
-		List<Tab> tabList = LoadManager.betterParseTabs(tabData);
+		List<Tab> tabList = LoadManager.parseTabsFromFileData(tabData);
 		assertEquals(tabList.size(), 5);
 		assertEquals(tabList.get(0).getText(), "Main");
 		assertEquals(tabList.get(1).getText(), "Iron");
@@ -34,7 +34,7 @@ public class LoadManagerTest {
 	
 	@Test
 	public void testBetterLoadTimers() {
-		List<NewTimer> timerList = LoadManager.betterLoadTimers(createSampleTimerData());
+		List<NewTimer> timerList = LoadManager.loadTimersFromFileData(createSampleTimerData());
 		assertEquals(timerList.get(0).getName(), "Wicked Hood");
 		assertEquals(timerList.size(), 4);
 		assertTrue(timerList.get(0) instanceof Daily);

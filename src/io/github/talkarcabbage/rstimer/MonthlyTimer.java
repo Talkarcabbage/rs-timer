@@ -63,7 +63,7 @@ public class MonthlyTimer extends Timer {
 		map.put("name", this.name);
 		map.put("latestreset", String.valueOf(this.startingTime));
 		map.put("tab", String.valueOf(this.getTab()));
-		map.put("audio", "false");
+		map.put("audio", "none");
 		return map;
 	}
 	

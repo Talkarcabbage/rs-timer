@@ -93,5 +93,9 @@ public class Standard extends NewTimer {
 	public long getTimeRemaining() {
 		return (latestReset + duration) - System.currentTimeMillis();
 	}
+	
+	public long getDuration() {
+		return duration;
+	}
 
 }

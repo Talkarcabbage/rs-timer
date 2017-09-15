@@ -131,6 +131,25 @@ public abstract class NewTimer {
 		this.name = name;
 	}
 	
+	
+	/**
+	 * Returns the Audio string for this timer. "none" indicates a lack of audio.
+	 * @return
+	 */
+	public String getAudio() {
+		return audio;
+	}
+
+	/**
+	 * Sets the audio string for this timer, used to determine the name of the audio file to play for sound alerts.
+	 * "none" indicates a lack of audio.
+	 * @param audio
+	 */
+	public void setAudio(String audio) {
+		this.audio = audio;
+	}
+
+
 	/**
 	 * Format the given time value in ms for display in hh:mm:ss format on the GUI tooltips.
 	 * @param time Time in ms

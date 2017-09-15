@@ -1,6 +1,8 @@
 package io.github.talkarcabbage.rstimer.newtimers;
 
 public class Repeating extends NewTimer {
+	
+	long duration;
 
 	public Repeating(String name, int tabID, String audio) {
 		super(name, tabID, audio);
@@ -41,6 +43,10 @@ public class Repeating extends NewTimer {
 	public long getTimeRemaining() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	
+	public long getDuration() {
+		return duration;
 	}
 
 }

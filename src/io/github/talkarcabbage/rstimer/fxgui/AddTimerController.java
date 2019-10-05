@@ -2,6 +2,7 @@ package io.github.talkarcabbage.rstimer.fxgui;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -9,13 +10,21 @@ import io.github.talkarcabbage.logger.LoggerManager;
 import io.github.talkarcabbage.rstimer.FXController;
 import io.github.talkarcabbage.rstimer.Timer;
 import io.github.talkarcabbage.rstimer.Timer.TimerType;
+import io.github.talkarcabbage.rstimer.newtimers.Daily;
+import io.github.talkarcabbage.rstimer.newtimers.Hourly;
+import io.github.talkarcabbage.rstimer.newtimers.Monthly;
+import io.github.talkarcabbage.rstimer.newtimers.NewTimer;
+import io.github.talkarcabbage.rstimer.newtimers.Standard;
+import io.github.talkarcabbage.rstimer.newtimers.Weekly;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.stage.Stage;
@@ -40,19 +49,33 @@ public class AddTimerController {
 	@FXML protected TextField minutesTextField;
 	@FXML protected TextField secondsTextField;
 	
-	@FXML protected RadioButton standardRadioButton;
-	@FXML protected RadioButton dailyRadioButton;
-	@FXML protected RadioButton weeklyRadioButton;
-	@FXML protected RadioButton monthlyRadioButton;
+	@FXML protected CheckBox alarmCheckBox;
+	@FXML protected CheckBox resetCheckBox;
 
 	@FXML protected Button createButton;
 	@FXML protected Button cancelButton;
+	
+	@FXML protected ComboBox<String> typeComboBox;
+	
+	// String constants for types box
+	public static final String STANDARD = "Standard";
+	public static final String DAILY = "Daily";
+	public static final String WEEKLY = "Weekly";
+	public static final String MONTHLY = "Monthly";
+	public static final String HOURLY = "Hourly";
+
+	
 	static Parent root;
 	
 	/**
 	 * If this is non-null, the current data in the GUI applies to a specific timer. Otherwise, it is creating a new timer.
 	 */
 	Timer editedTimer;
+	
+	/**
+	 * New timer
+	 */
+	NewTimer editedNewTimer; //TODO
 	
 	/**
 	 * This constructor is called internally by the JavaFX loader when createRoot is called and it should not be called manually.
@@ -101,19 +124,63 @@ public class AddTimerController {
 		minutesTextField.setTextFormatter(new TextFormatter<Integer>(new IntegerStringConverter()));
 		secondsTextField.setTextFormatter(new TextFormatter<Integer>(new IntegerStringConverter()));
 
+		typeComboBox.setItems(FXCollections.observableArrayList(
+				STANDARD,
+				DAILY,
+				WEEKLY,
+				MONTHLY,
+				HOURLY));
+		
 		return newStage;
 	}
 	
 	/**
 	 * Handles what happens when the <b>create</b> button is clicked on the FXML create-timer gui
+	 * TODO: New Timer Models
 	 * @param event
 	 */
 	@FXML
-	protected void onClickCreateButton(ActionEvent event) {
-		if ("".equals(nameTextField.getText())) {
-			logger.warning("Timer name must not be empty! Setting to space");
-			nameTextField.setText(" ");
+	protected void onClickCreateButton(ActionEvent event) { 
+		
+		if (editedTimer == null) { //TODO new timers
+			if ("".equals(nameTextField.getText())) {
+				logger.warning("Timer name must not be empty! Setting to space");
+				nameTextField.setText(" ");
+			}
+			
+			NewTimerModel model = NewTimerModel.getModelFromControllerData(this.nameTextField.getText(), this.typeComboBox.getValue(), daysTextField.getText(), hoursTextField.getText(), minutesTextField.getText(), secondsTextField.getText(), alarmCheckBox.isSelected(), resetCheckBox.isSelected());
+			
+			NewTimer theNewTimer = null;
+			Map<String, String> dataMap = model.asDataMap();
+			dataMap.put(NewTimer.MAP_TAB, "" + MainWindow.instance.getCurrentTab());
+			
+			switch (model.timerType) {
+			case DAILY:
+				theNewTimer = new Daily(dataMap);
+				break;
+			case HOURLY:
+				theNewTimer = new Hourly(dataMap);
+				break;
+			case MONTHLY:
+				theNewTimer = new Monthly(dataMap);
+				break;
+			case STANDARD:
+				theNewTimer = new Standard(dataMap);
+				break;
+			case WEEKLY:
+				theNewTimer = new Weekly(dataMap);
+				break;
+			default:
+				logger.warning(() -> "Encountered nonexisting timer type addition attempt:" + model.timerType);
+				break;
+			}
+			if (theNewTimer != null) {
+				FXController.instance.addNewTimer(theNewTimer);
+			}
+		} else {
+			//TODO editing
 		}
+		
 		logger.info("OnClickCreateButton fired");
 		stage.hide();
 		if (editedTimer == null) { //Making a new timer
@@ -121,7 +188,7 @@ public class AddTimerController {
 				MainWindow.instance.addDefaultTab();
 
 			}
-			if (standardRadioButton.isSelected()) {
+			if (typeComboBox.getValue().equals(STANDARD)) {//standardRadioButton.isSelected()) { //TODO
 				long time = 0;
 				time += getLongForField(secondsTextField);
 				time += 60*getLongForField(minutesTextField);
@@ -132,11 +199,11 @@ public class AddTimerController {
 					time = 1000;
 				}
 				FXController.instance.addTimer(System.currentTimeMillis(), time, MainWindow.instance.getCurrentTab(), TimerType.STANDARD, nameTextField.getText()).resetTimer();
-			} else if (dailyRadioButton.isSelected()) {
+			} else if (typeComboBox.getValue().equals(DAILY)) {//dailyRadioButton.isSelected()) {
 				FXController.instance.addTimer(System.currentTimeMillis(), Timer.DAY_LENGTH, MainWindow.instance.getCurrentTab(), TimerType.PERIODIC, nameTextField.getText()).resetTimer();
-			} else if (weeklyRadioButton.isSelected()) {
+			} else if (typeComboBox.getValue().equals(WEEKLY)) {//weeklyRadioButton.isSelected()) {
 				FXController.instance.addTimer(System.currentTimeMillis(), Timer.WEEK_LENGTH, MainWindow.instance.getCurrentTab(), TimerType.PERIODIC, nameTextField.getText()).resetTimer();
-			} else if (monthlyRadioButton.isSelected()) {
+			} else if (typeComboBox.getValue().equals(MONTHLY)) {//monthlyRadioButton.isSelected()) {
 				FXController.instance.addTimer(System.currentTimeMillis(), 1, MainWindow.instance.getCurrentTab(), TimerType.MONTHLY, nameTextField.getText()).resetTimer();	
 			}
 			FXController.instance.saveTimers();
@@ -251,10 +318,12 @@ public class AddTimerController {
 	void setControlsEdit() {
 		stage.setTitle("Edit Timer");
 		createButton.setText("Update");
-		standardRadioButton.setDisable(true);
+		typeComboBox.setDisable(true);
+		/*standardRadioButton.setDisable(true);
 		dailyRadioButton.setDisable(true);
 		weeklyRadioButton.setDisable(true);
 		monthlyRadioButton.setDisable(true);
+		*/
 	}
 	
 	/**
@@ -264,11 +333,7 @@ public class AddTimerController {
 	void setControlsCreate() {
 		stage.setTitle("Add a timer");
 		createButton.setText("Create");
-		standardRadioButton.setDisable(false);
-		dailyRadioButton.setDisable(false);
-		weeklyRadioButton.setDisable(false);
-		monthlyRadioButton.setDisable(false);
-		standardRadioButton.setSelected(true);
+		typeComboBox.setDisable(false);
 		daysTextField.setText("0");
 		minutesTextField.setText("0");
 		hoursTextField.setText("0");
@@ -283,7 +348,8 @@ public class AddTimerController {
 	 */
 	void setEditStandardTimer() {
 		setTimeFieldsEnabled(true);
-		this.standardRadioButton.setSelected(true);
+		typeComboBox.setValue(STANDARD);
+		//this.standardRadioButton.setSelected(true);
 		fillEditFields();
 	}
 	
@@ -293,7 +359,8 @@ public class AddTimerController {
 	 */
 	void setEditDailyTimer() {
 		setTimeFieldsEnabled(false);
-		this.dailyRadioButton.setSelected(true);
+		typeComboBox.setValue(DAILY);
+		//this.dailyRadioButton.setSelected(true);
 		fillEditFields();
 	}
 	
@@ -303,7 +370,8 @@ public class AddTimerController {
 	 */
 	void setEditWeeklyTimer() {
 		setTimeFieldsEnabled(false);
-		this.weeklyRadioButton.setSelected(true);
+		typeComboBox.setValue(WEEKLY);
+		//this.weeklyRadioButton.setSelected(true);
 		fillEditFields();
 	}
 	
@@ -313,7 +381,8 @@ public class AddTimerController {
 	 */
 	void setEditMonthlyTimer() {
 		setTimeFieldsEnabled(false);
-		this.monthlyRadioButton.setSelected(true);
+		typeComboBox.setValue(MONTHLY);
+		//this.monthlyRadioButton.setSelected(true);
 		fillEditFields();
 	}
 	
@@ -332,4 +401,13 @@ public class AddTimerController {
 		this.minutesTextField.setText(Long.toString(minutesDur));
 		this.secondsTextField.setText(Long.toString(secondsDur));
 	}
+	
+	/**
+	 * 
+	 */
+	public static void getUpdatedModel() {
+		NewTimerModel model = new NewTimerModel();
+		//TODO
+	}
+	
 }

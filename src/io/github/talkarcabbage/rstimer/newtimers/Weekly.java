@@ -6,7 +6,7 @@ public class Weekly extends NewTimer {
 	
 	long latestReset;
 
-	public Weekly(String name, int tabID, String audio, long latestReset) {
+	public Weekly(String name, int tabID, boolean audio, long latestReset) {
 		super(name, tabID, audio);
 		this.latestReset = latestReset;
 	}
@@ -16,7 +16,7 @@ public class Weekly extends NewTimer {
 	 * @param dataMap
 	 */
 	public Weekly(Map<String, String> dataMap) {
-		super("MISSING", 0, "none"); //Some arbitrary defaults in case of missing data
+		super("MISSING", 0, false); //Some arbitrary defaults in case of missing data
 		latestReset = 0; //Arbitrary default values
 		for (Map.Entry<String, String> entry : dataMap.entrySet()) {
 			try {
@@ -25,7 +25,7 @@ public class Weekly extends NewTimer {
 					this.name = entry.getValue();
 					break;
 				case "audio":
-					this.audio = entry.getValue();
+					this.audio = Boolean.parseBoolean(entry.getValue());
 					break;
 				case "tab":
 					this.tabID = Integer.parseInt(entry.getValue());
@@ -49,7 +49,7 @@ public class Weekly extends NewTimer {
 	
 	@Override
 	public void resetTimer() {
-		latestReset = (((System.currentTimeMillis()+DAY_LENGTH)/WEEK_LENGTH)*WEEK_LENGTH)-DAY_LENGTH;
+		latestReset = (((System.currentTimeMillis()+DAY_LENGTH_MILLIS)/WEEK_LENGTH_MILLIS)*WEEK_LENGTH_MILLIS)-DAY_LENGTH_MILLIS;
 		logger.fine( () -> ("Reset weekly timer timer with data: " + this.toString()));
 		
 	}
@@ -71,13 +71,13 @@ public class Weekly extends NewTimer {
 
 	@Override
 	public int getPercentageComplete() {
-		long rawPercentage = (100*(System.currentTimeMillis() - latestReset))/(WEEK_LENGTH);
+		long rawPercentage = (100*(System.currentTimeMillis() - latestReset))/(WEEK_LENGTH_MILLIS);
 		return rawPercentage >= 100 ? 100 : (int) rawPercentage;
 	}
 
 	@Override
 	public long getTimeRemaining() {
-		return (latestReset + WEEK_LENGTH) - System.currentTimeMillis();
+		return (latestReset + WEEK_LENGTH_MILLIS) - System.currentTimeMillis();
 	}
 	
 	@Override

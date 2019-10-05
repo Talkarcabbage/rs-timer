@@ -8,21 +8,46 @@ import io.github.talkarcabbage.logger.LoggerManager;
 
 public abstract class NewTimer {
 	
-	public static final long DAY_LENGTH = 86400000;
-	public static final long WEEK_LENGTH = 604800000;
+	public static final long DAY_LENGTH_MILLIS = 86400000;
+	public static final long WEEK_LENGTH_MILLIS = 604800000;
 	static Logger logger = LoggerManager.getInstance().getLogger("Timer");
 	
-	String audio = "none";
+	public static final String MAP_NAME = "name";
+	public static final String MAP_AUDIO = "audio";
+	public static final String MAP_TAB = "tab";
+	public static final String MAP_DURATION = "duration";
+	public static final String MAP_LATEST_RESET = "latestreset";
+	
+	boolean audio = false;
 	volatile String name;
 	int tabID = 0;
 
-	public NewTimer(String name, int tabID, String audio) {
+	public NewTimer(String name, int tabID, boolean audio) {
 		this.name = name;
 		this.tabID = tabID;
 		this.audio = audio;
 	}
+	
+	public NewTimer(Map<String, String> dataMap) {
+		this.name = "MISSING"; //Some arbitrary defaults in case of missing data
+		this.tabID = 0;
+		this.audio = false;
 		
-
+		for (Map.Entry<String, String> entry : dataMap.entrySet()) {
+			switch (entry.getKey()) { //NOSONAR we don't handle all cases here on purpose, thanks
+			case MAP_NAME: 
+				this.name = entry.getValue();
+				break;
+			case MAP_TAB: 
+				this.tabID = Integer.parseInt(entry.getValue());
+				break;
+			case MAP_AUDIO:
+				this.audio = Boolean.parseBoolean(entry.getValue());
+				break;
+			}
+		}
+	}
+		
 	/**
 	 * Used by timers that require special actions when the GUI ticks.
 	 * Example usage is to reset a self-repeating timer on completion.
@@ -72,7 +97,7 @@ public abstract class NewTimer {
 		HashMap<String, String> map = new HashMap<>(8);
 		map.put("name", this.name);
 		map.put("tab", String.valueOf(this.getTab()));
-		map.put("audio", this.audio);
+		map.put("audio", String.valueOf(this.audio));
 		return map;
 	}
 	
@@ -136,7 +161,7 @@ public abstract class NewTimer {
 	 * Returns the Audio string for this timer. "none" indicates a lack of audio.
 	 * @return
 	 */
-	public String getAudio() {
+	public boolean getAudio() {
 		return audio;
 	}
 
@@ -145,7 +170,7 @@ public abstract class NewTimer {
 	 * "none" indicates a lack of audio.
 	 * @param audio
 	 */
-	public void setAudio(String audio) {
+	public void setAudio(boolean audio) {
 		this.audio = audio;
 	}
 

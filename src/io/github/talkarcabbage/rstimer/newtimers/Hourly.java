@@ -1,11 +1,18 @@
 package io.github.talkarcabbage.rstimer.newtimers;
 
-public class Repeating extends NewTimer {
+import java.util.Map;
+
+public class Hourly extends NewTimer {
 	
 	long duration;
 
-	public Repeating(String name, int tabID, String audio) {
+	public Hourly(String name, int tabID, boolean audio) {
 		super(name, tabID, audio);
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
+	
+	public Hourly(Map<String, String> dataMap) {
+		super(dataMap);
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 

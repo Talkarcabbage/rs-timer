@@ -164,6 +164,7 @@ public class FXController {
 		return newTimer;
 	}
 	
+	//This is the old loading system. Has a lot of legacy in it. 
 	public void loadTimers() {
 		boolean importResave = false;
 		boolean importResaveConfig = false;
@@ -395,7 +396,10 @@ public class FXController {
 	}
 	
 	
-	
+	/*public NewTimer updateTimer() { TODO
+		
+	}
+	*/
 
 }
 

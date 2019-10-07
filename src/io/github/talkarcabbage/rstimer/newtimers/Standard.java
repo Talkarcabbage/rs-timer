@@ -4,8 +4,6 @@ import java.util.Map;
 
 public class Standard extends NewTimer {
 	
-	
-	
 	long latestReset;
 	long duration;
 

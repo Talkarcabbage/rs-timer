@@ -137,11 +137,14 @@ public class AddTimerController {
 	/**
 	 * Handles what happens when the <b>create</b> button is clicked on the FXML create-timer gui
 	 * TODO: New Timer Models
+	 * TODO: Make the controller handle more of this stuff. Too much logic
+	 * happening in the creation gui. 
 	 * @param event
 	 */
 	@FXML
 	protected void onClickCreateButton(ActionEvent event) { 
-		
+		logger.info("OnClickCreateButton fired");
+		stage.hide();
 		if (editedTimer == null) { //TODO new timers
 			if ("".equals(nameTextField.getText())) {
 				logger.warning("Timer name must not be empty! Setting to space");
@@ -180,33 +183,9 @@ public class AddTimerController {
 		} else {
 			//TODO editing
 		}
-		
-		logger.info("OnClickCreateButton fired");
-		stage.hide();
-		if (editedTimer == null) { //Making a new timer
-			if (MainWindow.instance.getTabList().isEmpty()) {
-				MainWindow.instance.addDefaultTab();
 
-			}
-			if (typeComboBox.getValue().equals(STANDARD)) {//standardRadioButton.isSelected()) { //TODO
-				long time = 0;
-				time += getLongForField(secondsTextField);
-				time += 60*getLongForField(minutesTextField);
-				time += 3600*getLongForField(hoursTextField);
-				time += Timer.DAY_LENGTH*getLongForField(daysTextField);
-				time *= 1000;
-				if (time == 0) {
-					time = 1000;
-				}
-				FXController.instance.addTimer(System.currentTimeMillis(), time, MainWindow.instance.getCurrentTab(), TimerType.STANDARD, nameTextField.getText()).resetTimer();
-			} else if (typeComboBox.getValue().equals(DAILY)) {//dailyRadioButton.isSelected()) {
-				FXController.instance.addTimer(System.currentTimeMillis(), Timer.DAY_LENGTH, MainWindow.instance.getCurrentTab(), TimerType.PERIODIC, nameTextField.getText()).resetTimer();
-			} else if (typeComboBox.getValue().equals(WEEKLY)) {//weeklyRadioButton.isSelected()) {
-				FXController.instance.addTimer(System.currentTimeMillis(), Timer.WEEK_LENGTH, MainWindow.instance.getCurrentTab(), TimerType.PERIODIC, nameTextField.getText()).resetTimer();
-			} else if (typeComboBox.getValue().equals(MONTHLY)) {//monthlyRadioButton.isSelected()) {
-				FXController.instance.addTimer(System.currentTimeMillis(), 1, MainWindow.instance.getCurrentTab(), TimerType.MONTHLY, nameTextField.getText()).resetTimer();	
-			}
-			FXController.instance.saveTimers();
+		if (editedTimer == null) { //Making a new timer
+			//Old code can be removed
 		} else { //Updating the existing timer			
 			switch (editedTimer.getTimerType()) {
 			case STANDARD:
@@ -319,11 +298,6 @@ public class AddTimerController {
 		stage.setTitle("Edit Timer");
 		createButton.setText("Update");
 		typeComboBox.setDisable(true);
-		/*standardRadioButton.setDisable(true);
-		dailyRadioButton.setDisable(true);
-		weeklyRadioButton.setDisable(true);
-		monthlyRadioButton.setDisable(true);
-		*/
 	}
 	
 	/**
@@ -407,7 +381,7 @@ public class AddTimerController {
 	 */
 	public static void getUpdatedModel() {
 		NewTimerModel model = new NewTimerModel();
-		//TODO
+		//TODO idk what this method is for
 	}
 	
 }

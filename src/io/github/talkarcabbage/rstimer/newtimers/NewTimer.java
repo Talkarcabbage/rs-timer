@@ -95,9 +95,9 @@ public abstract class NewTimer {
 	 */
 	public Map<String, String> getTimerDataMap() {
 		HashMap<String, String> map = new HashMap<>(8);
-		map.put("name", this.name);
-		map.put("tab", String.valueOf(this.getTab()));
-		map.put("audio", String.valueOf(this.audio));
+		map.put(MAP_NAME, this.name);
+		map.put(MAP_TAB, String.valueOf(this.getTab()));
+		map.put(MAP_AUDIO, String.valueOf(this.audio));
 		return map;
 	}
 	
@@ -187,6 +187,14 @@ public abstract class NewTimer {
 			long timeSeconds = time/1000;
 			return Math.round(Math.floor((double)timeSeconds/3600)) + ":" + (long)Math.floor(((double)timeSeconds%3600)/60) + ":" + timeSeconds%60;
 		}
+	}
+	
+	public static long sanitizeValueRangeMin(long min, long value) {
+		return value>min ? value : min;
+	}
+	
+	public static long sanitizeValueRangeMax(long max, long value) {
+		return value<max ? value : max;
 	}
 	
 }

@@ -183,18 +183,23 @@ class MainWindow : Application() {
 			primaryStage.show()
 
 			if (!File(SaveManager.SAVE_FILE_LOCATION).exists()) {
+				val alert = Alert(AlertType.INFORMATION, ""+
+						"Your old timers are being imported from timers.cfg " +
+						"to the new format at ${SaveManager.SAVE_FILE_LOCATION}. Please double check your timers! " +
+						"If you need to reimport again later, move or delete the new file.")
+				alert.isResizable = true
+				alert.headerText = "Converter"
+				alert.height = 250.0
+				alert.show()
 				FXController.instance.loadLegacyTimers()
 			} else {
+				logger.fine("Found an existing data file for the newer timer format.")
 				FXController.instance.loadNewTimers()
 			}
 
 			patNew = ProgressAnimNewTimer(FXController.instance.newTimerMap)
 			patNew.start()
-			val alert = Alert(AlertType.INFORMATION, "This is a converter version intended to bridge the old and new save formats and is not intended for general use.\nThe new file will be located at ${SaveManager.SAVE_FILE_LOCATION}\nAlso, hello from kotlin!")
-			alert.isResizable = true
-			alert.headerText = "Converter"
-			alert.show()
-			alert.height = 250.0
+
 
 		} catch (e: Exception) {
 			logger.log(Level.SEVERE, "An exception occured while initializing the FXGUI: ", e)
@@ -232,6 +237,10 @@ class MainWindow : Application() {
 		tabPane.tabs.add(tab)
 		gp.children.clear()
 		return tab
+	}
+
+	fun addTabNew(tab: Tab) {
+		tabPane.tabs.add(tab)
 	}
 
 	fun addDefaultTab(): Tab {

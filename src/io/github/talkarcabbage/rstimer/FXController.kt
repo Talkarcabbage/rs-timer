@@ -23,7 +23,6 @@ import io.github.talkarcabbage.rstimer.fxgui.ProgressPane
 import io.github.talkarcabbage.rstimer.newtimers.*
 import io.github.talkarcabbage.rstimer.persistence.*
 import javafx.application.Platform
-import javafx.scene.layout.GridPane
 
 /**
  * The instance of this class controls the underlying logic of the program and
@@ -64,7 +63,8 @@ class FXController internal constructor() {
 	}
 
 	/**
-	 * Adds a timer to the GUI and adds it to the map. Returns the timer for convenience
+	 * Converts a legacy timer to a new timer and adds it to the new timers list.
+	 * Does not save!
 	 * @param startingTime
 	 * @param duration
 	 * @param tab
@@ -73,7 +73,7 @@ class FXController internal constructor() {
 	 * @return
 	 */
 	@Deprecated("Legacy timer converter add func")
-	fun addTimer(startingTime: Long, duration: Long, tab: Int, timerType: TimerType, name: String) {
+	fun addLegacyTimer(startingTime: Long, duration: Long, tab: Int, timerType: TimerType, name: String) {
 		val legacyTimer: Timer
 		logger.info("Adding a legacy imported timer")
 		when (timerType) {
@@ -110,7 +110,6 @@ class FXController internal constructor() {
 			this.newTimerMap[progPane] = theNewTimer
 			progPane.setOnMouseClicked { event -> MainWindow.instance.onClickNewTimerBar(progPane, event) }
 			MainWindow.instance.addTimerBar(progPane, tab)
-			saveTimers()
 		} else {
 			logger.warning("Could not add a new timer from legacy data as it was null!")
 		}
@@ -177,7 +176,7 @@ class FXController internal constructor() {
 
 			} else if (timerInfo[0].startsWith("1")) {
 				logger.info("Imported really old timer data!")
-				addTimer(java.lang.Double.parseDouble(timerInfo[0]).toLong(), java.lang.Double.parseDouble(timerInfo[1]).toLong(), 0, TimerType.STANDARD, timerInfo[2]) //If it's super old data
+				addLegacyTimer(java.lang.Double.parseDouble(timerInfo[0]).toLong(), java.lang.Double.parseDouble(timerInfo[1]).toLong(), 0, TimerType.STANDARD, timerInfo[2]) //If it's super old data
 			}
 		}
 		if (importResaveConfig) {
@@ -188,8 +187,8 @@ class FXController internal constructor() {
 			MainWindow.instance.addDefaultTab()
 		}
 		if (newTimerMap.isEmpty()) {
-			addNewTimer(Standard("Sample: 2m", 0, false, System.currentTimeMillis(), 120000))
-			addNewTimer(Standard("Sample: 60m", 0, false, System.currentTimeMillis(), 3600000))
+			addNewTimerNoSave(Standard("Sample: 2m", 0, false, System.currentTimeMillis(), 120000))
+			addNewTimerNoSave(Standard("Sample: 60m", 0, false, System.currentTimeMillis(), 3600000))
 		}
 		this.saveTimers()
 	}
@@ -206,18 +205,18 @@ class FXController internal constructor() {
 	private fun loadTimerFromArray(timerInfo: Array<String>, processAsDouble: Boolean) {
 		if (!processAsDouble) { //Importing up to date data type (long)
 			logger.finer { "Up to date timer loaded: "+timerInfo[1]+" | "+timerInfo[2]+" | "+timerInfo[3]+" | "+timerInfo[4]+" | "+timerInfo[5]+" | " }
-			addTimer(java.lang.Long.parseLong(timerInfo[1]), java.lang.Long.parseLong(timerInfo[2]), Integer.parseInt(timerInfo[3]), TimerType.valueOf(timerInfo[4].toUpperCase()), timerInfo[5])
+			addLegacyTimer(java.lang.Long.parseLong(timerInfo[1]), java.lang.Long.parseLong(timerInfo[2]), Integer.parseInt(timerInfo[3]), TimerType.valueOf(timerInfo[4].toUpperCase()), timerInfo[5])
 		} else { //Importing old (double) data type
 			logger.info { "Importing old timer data to long format: "+timerInfo[5] }
 			if ("true".equals(timerInfo[4], ignoreCase = true)) {
 				logger.info("Imported old timer data for standard timer with double type.")
-				addTimer(java.lang.Double.parseDouble(timerInfo[1]).toLong(), java.lang.Double.parseDouble(timerInfo[2]).toLong(), Integer.parseInt(timerInfo[3]), TimerType.STANDARD, timerInfo[5])
+				addLegacyTimer(java.lang.Double.parseDouble(timerInfo[1]).toLong(), java.lang.Double.parseDouble(timerInfo[2]).toLong(), Integer.parseInt(timerInfo[3]), TimerType.STANDARD, timerInfo[5])
 			} else if ("false".equals(timerInfo[4], ignoreCase = true)) {
 				logger.info("Imported old timer data for periodic timer.")
-				addTimer(java.lang.Double.parseDouble(timerInfo[1]).toLong(), java.lang.Double.parseDouble(timerInfo[2]).toLong(), Integer.parseInt(timerInfo[3]), TimerType.PERIODIC, timerInfo[5])
+				addLegacyTimer(java.lang.Double.parseDouble(timerInfo[1]).toLong(), java.lang.Double.parseDouble(timerInfo[2]).toLong(), Integer.parseInt(timerInfo[3]), TimerType.PERIODIC, timerInfo[5])
 			} else {
 				logger.info { "Converting double timer: "+timerInfo[1]+" | "+timerInfo[2]+" | "+timerInfo[3]+" | "+timerInfo[4]+" | "+timerInfo[5]+" | " }
-				addTimer(java.lang.Double.parseDouble(timerInfo[1]).toLong(), java.lang.Double.parseDouble(timerInfo[2]).toLong(), Integer.parseInt(timerInfo[3]), TimerType.valueOf(timerInfo[4].toUpperCase()), timerInfo[5])
+				addLegacyTimer(java.lang.Double.parseDouble(timerInfo[1]).toLong(), java.lang.Double.parseDouble(timerInfo[2]).toLong(), Integer.parseInt(timerInfo[3]), TimerType.valueOf(timerInfo[4].toUpperCase()), timerInfo[5])
 			}
 		}
 	}
@@ -337,6 +336,9 @@ class FXController internal constructor() {
 	}
 
 	fun loadNewTimers() {
+		LoadManager.parseTabsFromFileData(FileManager.readFileSplitList(SaveManager.SAVE_FILE_LOCATION)).forEach {
+			MainWindow.instance.addTabNew(it)
+		}
 		val newTimers = LoadManager.loadTimersFromFileData(FileManager.readFileSplitList(SaveManager.SAVE_FILE_LOCATION))
 		newTimers.forEach {
 			addNewTimerNoSave(it)
@@ -371,10 +373,6 @@ class FXController internal constructor() {
 			ConfigManager.save()
 			logger.fine("Attempting tray initialization")
 			instance.prepareSystemTray()
-			logger.info("Hello from kotlin!")
-			logger.info("You are running a converter version of the RS timer! Use of this version is recommended only for use to upgrade to the new version.")
-			logger.info { "The new format will be saved at "+SaveManager.SAVE_FILE_LOCATION }
-
 			MainWindow.launchWrap(args)
 		}
 

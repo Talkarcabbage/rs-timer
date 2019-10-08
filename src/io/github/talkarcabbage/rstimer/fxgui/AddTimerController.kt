@@ -185,6 +185,15 @@ class AddTimerController {
 		stage.hide()
 	}
 
+	@FXML
+	protected fun typeComboChanged(event: ActionEvent) {
+		if (typeComboBox?.value==STANDARD) {
+			setTimeFieldsEnabled(true)
+		} else {
+			setTimeFieldsEnabled(false)
+		}
+	}
+
 	/**
 	 * Sets the visibility of the time input text fields
 	 * @param isEnabled

@@ -349,6 +349,7 @@ class FXController internal constructor() {
 			ConfigManager.save()
 			logger.fine("Attempting tray initialization")
 			instance.prepareSystemTray()
+			logger.info("Hello from kotlin!")
 			logger.info("You are running a converter version of the RS timer! Use of this version is recommended only for use to upgrade to the new version.")
 			logger.info { "The new format will be saved at "+SaveManager.SAVE_FILE_LOCATION }
 

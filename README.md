@@ -45,6 +45,8 @@ THIS PROGRAM IS NOT AFFILIATED WITH RUNESCAPE NOR JAGEX. THIS PROGRAM DOES NOT I
 # Building and Versioning
 
 This project includes preconfigured ANT versioning and packaging options.
+To use the ant compiler, you will need to download the Kotlin compiler -> https://github.com/JetBrains/kotlin/releases/tag/v1.3.50
+And place its contents in the project folder. `rs-timer\kotlinc\lib\kotlin-ant.jar`
 
 ### To display the current version used by ANT:
 ```

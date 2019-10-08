@@ -183,7 +183,7 @@ class MainWindow : Application() {
 
 			pat = ProgressAnimTimer(FXController.instance.timerMap)
 			pat.start()
-			val alert = Alert(AlertType.INFORMATION, "This is a converter version intended to bridge the old and new save formats and is not intended for general use.\nThe new file will be located at "+SaveManager.SAVE_FILE_LOCATION)
+			val alert = Alert(AlertType.INFORMATION, "This is a converter version intended to bridge the old and new save formats and is not intended for general use.\nThe new file will be located at ${SaveManager.SAVE_FILE_LOCATION}\nAlso, hello from kotlin!")
 			alert.isResizable = true
 			alert.headerText = "Converter"
 			alert.show()

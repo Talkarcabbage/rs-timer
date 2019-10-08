@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="current-number" name="RS Timer">
 
+	<typedef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="kotlinc/lib/kotlin-ant.jar"/>
+
 	<property file="build_info.properties"/>
 	<property name="build.number" value="${build.major.number}.${build.minor.number}.${build.revision.number}"/>
 
@@ -48,6 +50,7 @@
 		<javac srcdir="${dir.src}" destdir="${dir.bin}" classpathref="classpath" fork="yes" includeantruntime="false">
 			<exclude name="**/io/github/talkarcabbage/rstimer/tests/*.java" />
 		</javac>
+		<kotlinc src="${dir.src}" output="${dir.bin}" classpathref="classpath" />
 	</target>
 	
 	<target name="dist" depends="compile">

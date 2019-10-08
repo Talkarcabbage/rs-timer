@@ -7,6 +7,11 @@ rs-timer-config.cfg
 timers.cfg
 taskBarIcon.png
 
+#IDEA files. These are the recommended excludes, and it's not a gradle/maven project. 
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+**/.idea/sonarlint
+
 # OS generated files #
 ######################
 .DS_Store

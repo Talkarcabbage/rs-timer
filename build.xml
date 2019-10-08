@@ -57,7 +57,7 @@
 				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
 				<attribute name="Rsrc-Main-Class" value="io.github.talkarcabbage.rstimer.FXController"/>
 				<attribute name="Class-Path" value="."/>
-				<attribute name="Rsrc-Class-Path" value="./ guava-20.0.jar TalkarLogger-0.2.0.jar"/>
+				<attribute name="Rsrc-Class-Path" value="./ guava-20.0.jar TalkarLogger-0.2.0.jar kotlin-reflect.jar kotlin-stdlib.jar kotlin-stdlib-jdk7.jar kotlin-stdlib-jdk8.jar kotlin-test.jar"/>
 			</manifest>
 			<zipfileset src="jar-in-jar-loader.zip"/>
 			<fileset dir="${dir.buildfile}/bin"/>
@@ -67,6 +67,11 @@
 			<zipfileset dir="./src/css" includes="*" prefix="css"/>
 			<zipfileset dir="./lib" includes="guava-20.0.jar"/>
 			<zipfileset dir="./lib" includes="TalkarLogger-0.2.0.jar"/>
+			<zipfileset dir="./lib" includes="kotlin-reflect.jar"/>
+			<zipfileset dir="./lib" includes="kotlin-stdlib.jar"/>
+			<zipfileset dir="./lib" includes="kotlin-stdlib-jdk7.jar"/>
+			<zipfileset dir="./lib" includes="kotlin-stdlib-jdk8.jar"/>
+			<zipfileset dir="./lib" includes="kotlin-test.jar"/>
 		</jar>
 	</target>
 	

@@ -149,12 +149,12 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <CheckBox mnemonicParsing="false" text="Alarm">
+            <CheckBox fx:id="alarmCheckBox" mnemonicParsing="false" text="Alarm">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox mnemonicParsing="false" text="Auto Reset" GridPane.columnIndex="1">
+            <CheckBox fx:id="resetCheckBox" mnemonicParsing="false" text="Auto Reset" GridPane.columnIndex="1">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin>

@@ -8,6 +8,7 @@ import com.google.common.collect.BiMap
 import io.github.talkarcabbage.logger.LoggerManager
 import io.github.talkarcabbage.rstimer.FXController
 import io.github.talkarcabbage.rstimer.Timer
+import io.github.talkarcabbage.rstimer.newtimers.NewTimer
 import io.github.talkarcabbage.rstimer.persistence.ConfigManager
 import io.github.talkarcabbage.rstimer.persistence.SaveManager
 import javafx.application.Application
@@ -38,6 +39,7 @@ import javafx.scene.layout.RowConstraints
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.converter.IntegerStringConverter
+import java.io.File
 import java.util.function.Consumer
 
 /**
@@ -58,6 +60,7 @@ class MainWindow : Application() {
 	internal var tempList = ArrayList<ProgressPane>()
 	internal lateinit var minusButton: ToggleButton
 	internal lateinit var pat: ProgressAnimTimer
+	internal lateinit var patNew: ProgressAnimNewTimer
 
 	/**
 	 * Returns the ObservableList of the tabs of the tabPane.
@@ -84,7 +87,7 @@ class MainWindow : Application() {
 	override fun start(primaryStage: Stage) {
 		try {
 			Platform.setImplicitExit(false)
-			primaryStage.setOnCloseRequest { event ->
+			primaryStage.setOnCloseRequest {
 				FXController.instance.destroyTrayIcon()
 				System.exit(0)
 			}
@@ -97,8 +100,8 @@ class MainWindow : Application() {
 			primaryStage.scene = scene
 			primaryStage.initStyle(StageStyle.UNDECORATED)
 			rootPane.id = "win"
-			rootPane.setOnMouseReleased { event ->
-				if (!event.isConsumed) {
+			rootPane.setOnMouseReleased {
+				if (!it.isConsumed) {
 					minusButton.isSelected = false
 				}
 			}
@@ -147,12 +150,12 @@ class MainWindow : Application() {
 			minusButton.onMouseClicked = EventHandler { this.onMinusClicked(it) }
 			minusButton.onMouseDragReleased = EventHandler<MouseDragEvent> { this.onMinusClicked(it) }
 
-			aotButton.setOnAction { event ->
+			aotButton.setOnAction {
 				logger.fine("AOT button event: "+aotButton.isSelected)
 				this.toggleAOT(aotButton.isSelected)
 			}
 
-			transSlider.setOnMouseDragged { event ->
+			transSlider.setOnMouseDragged {
 				setTransparency(transSlider.value)
 				ConfigManager.transparency = transSlider.value
 			}
@@ -164,7 +167,7 @@ class MainWindow : Application() {
 				moveYinit = event.y.toInt()
 			}
 
-			transSlider.setOnMouseReleased { event -> ConfigManager.save() }
+			transSlider.setOnMouseReleased { ConfigManager.save() }
 
 			tabPane.onMouseDragged = EventHandler { event ->
 				//NOSONAR
@@ -179,16 +182,19 @@ class MainWindow : Application() {
 
 			primaryStage.show()
 
-			FXController.instance.loadTimers()
+			if (!File(SaveManager.SAVE_FILE_LOCATION).exists()) {
+				FXController.instance.loadLegacyTimers()
+			} else {
+				FXController.instance.loadNewTimers()
+			}
 
-			pat = ProgressAnimTimer(FXController.instance.timerMap)
-			pat.start()
+			patNew = ProgressAnimNewTimer(FXController.instance.newTimerMap)
+			patNew.start()
 			val alert = Alert(AlertType.INFORMATION, "This is a converter version intended to bridge the old and new save formats and is not intended for general use.\nThe new file will be located at ${SaveManager.SAVE_FILE_LOCATION}\nAlso, hello from kotlin!")
 			alert.isResizable = true
 			alert.headerText = "Converter"
 			alert.show()
 			alert.height = 250.0
-
 
 		} catch (e: Exception) {
 			logger.log(Level.SEVERE, "An exception occured while initializing the FXGUI: ", e)
@@ -313,6 +319,29 @@ class MainWindow : Application() {
 		}
 	}
 
+	/**
+	 * Removes the timer bar and recalculates the appearance of the window. This will NOT remove the
+	 * bar-timer set from the map and it must be called before removing the timer.
+	 * This method will determine the tab that needs to be reorganized and do so.
+	 * @param pane - The ProgressPane to be removed
+	 * @param biMap - The bidirectional map of ProgressPanes and Timers
+	 */
+	fun removeNewTimerBar(pane: ProgressPane, biMap: BiMap<ProgressPane, NewTimer>) {
+		val timer = biMap[pane]
+		if (timer is NewTimer) {
+			val tabNum = timer.tab
+			val tab = this.tabPane.tabs[tabNum]
+
+			val gp = tab.content as GridPane
+			gp.children.clear()
+			biMap.forEach { (key, value) ->
+				if (value.tab==tabNum && key!==pane) {
+					addTimerBar(key, tabNum)
+				}
+			}
+		}
+	}
+
 	fun toggleAOT(isOnTop: Boolean) {
 		this.stage.isAlwaysOnTop = isOnTop
 	}
@@ -340,20 +369,15 @@ class MainWindow : Application() {
 	fun onClickTimerBar(pane: ProgressPane, event: MouseEvent) {
 		logger.fine("OnClickTimerBar fired")
 		if (!minusButton.isSelected && event.isShiftDown) {
-			AddTimerController.instance!!.showEditWindow(FXController.instance.timerMap[pane]!!) //TODO the safety concerns are apparent here in kotlin vs java. Need to see if it's a potential issue.
+			//TODO editing: AddTimerController.instance!!.showEditWindow(FXController.instance.timerMap[pane]!!)
 		} else if (minusButton.isSelected && event.button==MouseButton.PRIMARY) { //Remove timer
-			FXController.instance.removeTimer(pane)
+			FXController.instance.removeNewTimer(pane)
 		} else if (event.button==MouseButton.SECONDARY) { //Reset timer as complete
-			FXController.instance.resetTimerComplete(pane)
+			FXController.instance.resetNewTimerComplete(pane)
 		} else { //Reset timer as incomplete
-			FXController.instance.resetTimer(pane)
+			FXController.instance.resetNewTimer(pane)
 		}
 		minusButton.isSelected = false
-	}
-
-	fun prepareTimerAnimation(map: BiMap<ProgressPane, Timer>) {
-		pat = ProgressAnimTimer(map)
-		pat.start()
 	}
 
 	internal fun onPlusClicked(event: MouseEvent) {
@@ -438,7 +462,7 @@ class MainWindow : Application() {
 		dialog.contentText = "Are you sure you want to delete the current tab?"
 		dialog.showAndWait()
 				.filter { response -> response.buttonData==ButtonType.OK.buttonData }
-				.ifPresent { response -> FXController.instance.removeTimerTab(this.currentTab) }
+				.ifPresent { FXController.instance.removeNewTimerTab(this.currentTab) }
 	}
 
 	fun onClickNewTimerBar(pane: ProgressPane, event: MouseEvent) {
@@ -446,11 +470,13 @@ class MainWindow : Application() {
 		if (!minusButton.isSelected && event.isShiftDown) {
 			//FIXME new edit window : AddTimerController.instance.showEditWindow(FXController.instance.timerMap.get(pane));
 		} else if (minusButton.isSelected && event.button==MouseButton.PRIMARY) { //Remove timer
-			//FIXME new remove method for new timers and decouple : FXController.instance.removeTimer(pane);
+			FXController.instance.removeNewTimer(pane)
+			minusButton.isSelected = false
+			//TODO new remove method for new timers and decouple : FXController.instance.removeTimer(pane);
 		} else if (event.button==MouseButton.SECONDARY) { //Reset timer as complete
-			FXController.instance.resetTimerComplete(pane)
+			FXController.instance.resetNewTimerComplete(pane)
 		} else { //Reset timer as incomplete
-			FXController.instance.resetTimer(pane)
+			FXController.instance.resetNewTimer(pane)
 		}
 	}
 

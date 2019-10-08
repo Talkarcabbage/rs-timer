@@ -136,6 +136,10 @@ abstract class NewTimer {
 	 */
 	abstract fun resetTimerComplete()
 
+	override fun toString(): String {
+		return "${this.javaClass.simpleName}(audio=$audio, name='$name', tab=$tab, timerTypeString='$timerTypeString', tooltipText='$tooltipText', percentageComplete=$percentageComplete, timeRemaining=$timeRemaining)"
+	}
+
 	companion object {
 
 		val DAY_LENGTH_MILLIS: Long = 86400000
@@ -159,7 +163,11 @@ abstract class NewTimer {
 				return "Complete!"
 			} else {
 				val timeSeconds = time/1000
-				return Math.round(Math.floor(timeSeconds.toDouble()/3600)).toString()+":"+Math.floor(timeSeconds.toDouble()%3600/60).toLong()+":"+timeSeconds%60
+				if (time> DAY_LENGTH_MILLIS) {
+					return (timeSeconds/86400).toString()+"d "+Math.floor((timeSeconds%86400).toDouble()/3600).toLong()+":"+Math.floor(timeSeconds.toDouble()%3600/60).toLong()+":"+timeSeconds%60
+				} else {
+					return Math.round(Math.floor(timeSeconds.toDouble()/3600)).toString()+":"+Math.floor(timeSeconds.toDouble()%3600/60).toLong()+":"+timeSeconds%60
+				}
 			}
 		}
 

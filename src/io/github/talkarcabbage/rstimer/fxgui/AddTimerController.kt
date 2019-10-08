@@ -99,7 +99,7 @@ class AddTimerController {
 				WEEKLY,
 				MONTHLY,
 				HOURLY)
-
+		typeComboBox!!.value = STANDARD
 		return newStage
 	}
 
@@ -135,12 +135,15 @@ class AddTimerController {
 				else -> logger.warning { "Encountered nonexisting timer type addition attempt:"+model.timerType }
 			}
 			if (theNewTimer!=null) {
+				logger.info("Added a new newTimer: ${theNewTimer.toString()}")
 				FXController.instance.addNewTimer(theNewTimer)
+				theNewTimer.resetTimer()
 			}
 		} else {
 			//TODO editing
 		}
 
+		/*
 		if (editedTimer==null) { //Making a new timer
 			//Old code can be removed
 		} else { //Updating the existing timer
@@ -159,6 +162,8 @@ class AddTimerController {
 			FXController.instance.updateProgressPaneTitle(editedTimer!!) //TODO ye olde fix
 			FXController.instance.saveTimers()
 		}
+
+		 */
 	}
 
 	internal fun getLongForField(field: TextField?): Long {
@@ -178,24 +183,6 @@ class AddTimerController {
 	@FXML
 	protected fun onClickCancelButton(event: ActionEvent) {
 		stage.hide()
-	}
-
-	/**
-	 * Fired when the 'standard' radio button is pressed in the timer types
-	 * @param event
-	 */
-	@FXML
-	protected fun onClickTypeRadioStandard(event: ActionEvent) {
-		setTimeFieldsEnabled(true)
-	}
-
-	/**
-	 * Fired when any radio button besides 'standard' is pressed in the timer types
-	 * @param event
-	 */
-	@FXML
-	protected fun onClickTypeRadioOther(event: ActionEvent) {
-		setTimeFieldsEnabled(false)
 	}
 
 	/**
@@ -350,7 +337,9 @@ class AddTimerController {
 		fun createRoot() {
 			if (instance==null) {
 				try {
-					root = FXMLLoader.load(AddTimerController::class.java!!.getResource("AddTimerFXML.fxml"))
+					val resource = AddTimerController::class.java.getResource("AddTimerFXML.fxml")
+					if (resource == null) logger.warning("The FXML file was null!")
+					root = FXMLLoader.load(resource)
 
 					if (instance!=null)
 					//NOSONAR

@@ -55,6 +55,7 @@ class Monthly : NewTimer {
 	 */
 	constructor(dataMap: Map<String, String>) : super("MISSING", 0, false) {
 		latestReset = 0 //Arbitrary default values
+		duration = durationToNextMonth //Because daddy doesn't like dividing by zero
 		for ((key, value) in dataMap) {
 			try {
 				when (key) {

@@ -8,9 +8,7 @@ import java.awt.TrayIcon
 import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.net.MalformedURLException
-import kotlin.collections.Map.Entry
 import java.util.logging.Level
-import java.util.logging.Logger
 
 import javax.swing.ImageIcon
 import javax.swing.SwingUtilities
@@ -22,11 +20,8 @@ import io.github.talkarcabbage.logger.LoggerManager
 import io.github.talkarcabbage.rstimer.Timer.TimerType
 import io.github.talkarcabbage.rstimer.fxgui.MainWindow
 import io.github.talkarcabbage.rstimer.fxgui.ProgressPane
-import io.github.talkarcabbage.rstimer.newtimers.NewTimer
-import io.github.talkarcabbage.rstimer.persistence.ConfigManager
-import io.github.talkarcabbage.rstimer.persistence.FileManager
-import io.github.talkarcabbage.rstimer.persistence.IOThreadManager
-import io.github.talkarcabbage.rstimer.persistence.SaveManager
+import io.github.talkarcabbage.rstimer.newtimers.*
+import io.github.talkarcabbage.rstimer.persistence.*
 import javafx.application.Platform
 import javafx.scene.layout.GridPane
 
@@ -38,7 +33,7 @@ import javafx.scene.layout.GridPane
  */
 class FXController internal constructor() {
 
-	val timerMap = HashBiMap.create<ProgressPane, Timer>(50)
+	//val timerMap = HashBiMap.create<ProgressPane, Timer>(50)
 
 	/**
 	 * New Timers
@@ -77,38 +72,57 @@ class FXController internal constructor() {
 	 * @param name
 	 * @return
 	 */
-	fun addTimer(startingTime: Long, duration: Long, tab: Int, timerType: TimerType, name: String): Timer {
-		val newTimer: Timer
+	@Deprecated("Legacy timer converter add func")
+	fun addTimer(startingTime: Long, duration: Long, tab: Int, timerType: TimerType, name: String) {
+		val legacyTimer: Timer
+		logger.info("Adding a legacy imported timer")
 		when (timerType) {
 			Timer.TimerType.STANDARD -> {
 				logger.fine("Added a standard timer")
-				newTimer = Timer(startingTime, duration, name, tab)
+				legacyTimer = Timer(startingTime, duration, name, tab)
 			}
 			Timer.TimerType.PERIODIC -> {
 				logger.fine("Added a periodic timer")
-				newTimer = PeriodicTimer(startingTime, duration, name, tab)
+				legacyTimer = PeriodicTimer(startingTime, duration, name, tab)
 			}
 			Timer.TimerType.MONTHLY -> {
 				logger.fine("Added a monthly timer")
-				newTimer = MonthlyTimer(startingTime, duration, name, tab)
+				legacyTimer = MonthlyTimer(startingTime, duration, name, tab)
 			}
 			else -> {
 				logger.severe { "Severe error occured trying to add a timer: the specified timer type was invalid: $timerType" }
-				newTimer = Timer(startingTime, duration, name
+				legacyTimer = Timer(startingTime, duration, name
 						?: "ERROR", if (tab >= 0 && tab < MainWindow.instance.tabList.size) tab else 0)
 			}
 		}
-		val progPane = ProgressPane()
-		progPane.labelText = newTimer.name!! //TODO this will be obsolete soon but it's still a nullability concern
-		this.timerMap[progPane] = newTimer
-		progPane.setOnMouseClicked { event -> MainWindow.instance.onClickTimerBar(progPane, event) }
-		MainWindow.instance.addTimerBar(progPane, tab)
-		return newTimer
+
+		var theNewTimer: NewTimer? = null
+		when (legacyTimer.newTimerTypeString) {
+			"Daily" -> theNewTimer = Daily(legacyTimer.dataMap)
+			"Monthly" -> theNewTimer = Monthly(legacyTimer.dataMap)
+			"Standard" -> theNewTimer = Standard(legacyTimer.dataMap)
+			"Weekly" -> theNewTimer = Weekly(legacyTimer.dataMap)
+			else -> logger.warning { "Encountered nonexisting timer type conversion attempt:"+legacyTimer.newTimerTypeString }
+		}
+		if (theNewTimer is NewTimer) {
+			val progPane = ProgressPane()
+			progPane.labelText = theNewTimer.name
+			this.newTimerMap[progPane] = theNewTimer
+			progPane.setOnMouseClicked { event -> MainWindow.instance.onClickNewTimerBar(progPane, event) }
+			MainWindow.instance.addTimerBar(progPane, tab)
+			saveTimers()
+		} else {
+			logger.warning("Could not add a new timer from legacy data as it was null!")
+		}
 	}
 
 	//This is the old loading system. Has a lot of legacy in it.
-	fun loadTimers() {
-		var importResave = false
+	@Deprecated("Marking this dep for now because it's all legacy")
+	fun loadLegacyTimers() {
+		if (File(SaveManager.SAVE_FILE_LOCATION).exists()) {
+			logger.info("Found an existing new timer file, skipping conversion!")
+			//return
+		}
 		var importResaveConfig = false
 		var processDoubles = true
 		var isFXBased = false //If true, do not make a new first tab. Set this to true if a tab is made or if the value is found
@@ -131,7 +145,6 @@ class FXController internal constructor() {
 
 			if ("cfg"==timerInfo[0]) {
 				importResaveConfig = true
-				importResave = true //To make sure our timer file doesn't overwrite our configuration repeatedly
 				logger.config { "Importing configuration from timers file: "+timerInfo[1] }
 				if ("mainTabName"==timerInfo[1]) {
 					ConfigManager.defaultTabName = timerInfo[2] //Deprecated
@@ -150,13 +163,11 @@ class FXController internal constructor() {
 				logger.info("Creating a new first-tab based on imported swing data")
 				MainWindow.instance.addDefaultTab()
 				isFXBased = true
-				importResave = true
 			}
 			if ("tab"==timerInfo[0]) {
 				if (timerInfo.size < 4) {
 					logger.info("Imported old tab data!")
 					MainWindow.instance.addTab(0, 3, timerInfo[1])
-					importResave = true
 				} else {
 					MainWindow.instance.addTab(Integer.parseInt(timerInfo[1]), Integer.parseInt(timerInfo[2]), timerInfo[3])
 				}
@@ -166,12 +177,8 @@ class FXController internal constructor() {
 
 			} else if (timerInfo[0].startsWith("1")) {
 				logger.info("Imported really old timer data!")
-				importResave = true
 				addTimer(java.lang.Double.parseDouble(timerInfo[0]).toLong(), java.lang.Double.parseDouble(timerInfo[1]).toLong(), 0, TimerType.STANDARD, timerInfo[2]) //If it's super old data
 			}
-		}
-		if (importResave || processDoubles) {
-			this.saveTimers()
 		}
 		if (importResaveConfig) {
 			ConfigManager.save()
@@ -180,20 +187,21 @@ class FXController internal constructor() {
 			logger.info("Loaded no tabs! Adding a default first tab")
 			MainWindow.instance.addDefaultTab()
 		}
-		if (timerMap.isEmpty()) {
-			addTimer(System.currentTimeMillis(), 120000, 0, TimerType.STANDARD, "Sample: Two Minutes")
-			addTimer(System.currentTimeMillis(), 3600000, 0, TimerType.STANDARD, "Sample: Sixty Minutes")
-			saveTimers()
+		if (newTimerMap.isEmpty()) {
+			addNewTimer(Standard("Sample: 2m", 0, false, System.currentTimeMillis(), 120000))
+			addNewTimer(Standard("Sample: 60m", 0, false, System.currentTimeMillis(), 3600000))
 		}
+		this.saveTimers()
 	}
 
-	fun updateProgressPaneTitle(timer: Timer) {
+	/*fun updateProgressPaneTitle(timer: Timer) {
 		if (timerMap.inverse()[timer]==null) {
 			logger.warning("Tried to update a timer that has already been deleted or did not exist!")
 			return
 		}
 		timerMap.inverse()[timer]?.labelText = timer.name.toString()
 	}
+	 */
 
 	private fun loadTimerFromArray(timerInfo: Array<String>, processAsDouble: Boolean) {
 		if (!processAsDouble) { //Importing up to date data type (long)
@@ -215,78 +223,106 @@ class FXController internal constructor() {
 	}
 
 	fun saveTimers() {
-		logger.fine("Queueing timers to be saved")
+		logger.info("Queueing timers to be saved")
 
-		IOThreadManager.instance.invokeLater {
-			//NOSONAR
-			val toSave = StringBuilder()
+		//Save new timers to the new timer file
+		IOThreadManager.instance.writeFile(SaveManager.SAVE_FILE_LOCATION, SaveManager.getSaveDataString(MainWindow.instance.tabList, newTimerMap.values), false)
 
-			toSave.append(NUMBERFORMATCONSTANT+"\n")
-			toSave.append(FXBASEDCONSTANT+"\n")
-
-			if (!MainWindow.instance.tabList.isEmpty()) {
-				for (i in 0 until MainWindow.instance.tabList.size) {
-					val gp = MainWindow.instance.tabList[i].content as GridPane
-					val rows = gp.rowConstraints.size
-					val columns = gp.columnConstraints.size
-					toSave.append("tab,"+rows+","+columns+","+MainWindow.instance.tabList[i].text+"\n")
-				}
-			}
-
-			val it = timerMap.values.iterator()
-			var t: Timer
-			while (it.hasNext()) {
-				t = it.next()
-				toSave.append("timer,"+t.startingTime+","+t.duration+","+t.tab+","+t.timerTypeString+","+t.name+"\n")
-			}
-			IOThreadManager.instance.writeFile(TIMERFILE, toSave.toString(), false)
-			IOThreadManager.instance.writeFile(SaveManager.SAVE_FILE_LOCATION, SaveManager.getLegacySaveDataString(MainWindow.instance.tabList, timerMap.values), false)
+		/*
+		val it = timerMap.values.iterator()
+		var t: Timer
+		while (it.hasNext()) {
+			t = it.next()
+			toSave.append("timer,"+t.startingTime+","+t.duration+","+t.tab+","+t.timerTypeString+","+t.name+"\n")
 		}
+		IOThreadManager.instance.writeFile(TIMERFILE, toSave.toString(), false)
+		//Writing the old timer data to the file apparently?
+		IOThreadManager.instance.writeFile(SaveManager.SAVE_FILE_LOCATION, SaveManager.getLegacySaveDataString(MainWindow.instance.tabList, timerMap.values), false)
+		 */
+
 	}
 
-	fun resetTimer(bar: ProgressPane) {
-		logger.info("Attempting timer reset for: "+bar.labelText)
-		val t = this.timerMap[bar]
+	fun destroyTrayIcon() {
+		SystemTray.getSystemTray().remove(trayIcon)
+	}
 
+	/*
+	 * BEGIN NEW TIMER METHODS HERE
+	 */
+
+	/**
+	 * Adds a timer to the GUI and adds it to the map. Returns the timer for convenience.
+	 *
+	 * @param timer The timer to add. The timer data should already be set, including tab.
+	 * @return The newly added Timer
+	 */
+	fun addNewTimer(timer: NewTimer): NewTimer {
+		addNewTimerNoSave(timer)
+		saveTimers()
+		return timer
+	}
+
+	/**
+	 * Mainly for loading in timers. Also used by addNewTimer for less redundancy
+	 */
+	fun addNewTimerNoSave(timer: NewTimer): NewTimer {
+		val progPane = ProgressPane()
+		progPane.labelText = timer.name
+		this.newTimerMap[progPane] = timer
+		progPane.setOnMouseClicked { event -> MainWindow.instance.onClickNewTimerBar(progPane, event) }
+		MainWindow.instance.addTimerBar(progPane, timer.tab)
+		return timer
+	}
+
+	fun resetNewTimer(bar: ProgressPane) {
+		logger.info("Attempting timer reset for newtimer: "+bar.labelText)
+		val t = this.newTimerMap[bar]
 		if (t==null) {
 			logger.severe("Found null when attempting to reset a timer!")
 			return
 		}
-		logger.fine("Found timer mapping for timer: "+t.name!!)
+		logger.fine("Found timer mapping for timer: "+t.name)
 		t.resetTimer()
 		saveTimers()
 	}
 
-	fun resetTimerComplete(bar: ProgressPane) {
-		logger.info("Attempting timer completion for: "+bar.labelText)
-		val t = timerMap[bar]
+	fun resetNewTimerComplete(bar: ProgressPane) {
+		logger.info("Attempting timer completion for newtimer: "+bar.labelText)
+		val t = newTimerMap[bar]
 		if (t==null) {
 			logger.severe("Found null when attempting to reset-complete timer!")
 			return
 		}
-		logger.fine("Found timer mapping for timer: "+t.name!!)
+		logger.fine("Found timer mapping for timer: "+t.name)
 		t.resetTimerComplete()
 		saveTimers()
 	}
 
-	fun removeTimer(pane: ProgressPane) {
+	fun updateNewProgressPaneTitle(timer: NewTimer) {
+		if (newTimerMap.inverse()[timer]==null) {
+			logger.warning("Tried to update a new timer that has already been deleted or did not exist!")
+			return
+		}
+		newTimerMap.inverse()[timer]?.labelText = timer.name.toString()
+	}
+
+	fun removeNewTimer(pane: ProgressPane) {
 		logger.fine("Removing a timer with bar named "+pane.labelText)
-		val timer = timerMap[pane]
+		val timer = newTimerMap[pane]
 		if (timer==null) {
 			logger.severe("Found null when attempting to delete timer. This is a serious error.")
 			return
 		}
 
-		MainWindow.instance.removeTimerBar(pane, timerMap)
+		MainWindow.instance.removeNewTimerBar(pane, newTimerMap)
 
-		timerMap.remove(pane)
+		newTimerMap.remove(pane)
 		saveTimers()
-
 	}
 
-	fun removeTimerTab(tabNum: Int) {
+	fun removeNewTimerTab(tabNum: Int) {
 		logger.fine("Attempting to remove a timer tab.")
-		val it = timerMap.entries.iterator()
+		val it = newTimerMap.entries.iterator()
 		while (it.hasNext()) {
 			val timer = it.next().value
 			if (timer.tab==tabNum) {
@@ -300,30 +336,16 @@ class FXController internal constructor() {
 		saveTimers()
 	}
 
-	fun destroyTrayIcon() {
-		SystemTray.getSystemTray().remove(trayIcon)
+	fun loadNewTimers() {
+		val newTimers = LoadManager.loadTimersFromFileData(FileManager.readFileSplitList(SaveManager.SAVE_FILE_LOCATION))
+		newTimers.forEach {
+			addNewTimerNoSave(it)
+		}
 	}
 
 
-	/*
-	 * BEGIN NEW TIMER METHODS HERE
-	 */
 
 
-	/**
-	 * Adds a timer to the GUI and adds it to the map. Returns the timer for convenience.
-	 *
-	 * @param timer The timer to add. The timer data should already be set, including tab.
-	 * @return The newly added Timer
-	 */
-	fun addNewTimer(timer: NewTimer): NewTimer {
-		val progPane = ProgressPane()
-		progPane.labelText = timer.name
-		this.newTimerMap[progPane] = timer
-		progPane.setOnMouseClicked { event -> MainWindow.instance.onClickNewTimerBar(progPane, event) }
-		MainWindow.instance.addTimerBar(progPane, timer.tab)
-		return timer
-	}
 
 	companion object {
 
@@ -398,6 +420,8 @@ class FXController internal constructor() {
 			val timeSeconds = timeDuration/1000.0
 			return Math.round(Math.floor(timeSeconds/3600)).toString()+":"+Math.round(Math.floor(timeSeconds%3600/60).toLong().toFloat())+":"+Math.round(timeSeconds%60) //NOSONAR
 		}
+
+
 	}
 
 

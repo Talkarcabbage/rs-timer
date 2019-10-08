@@ -7,6 +7,8 @@ rs-timer-config.cfg
 timers.cfg
 taskBarIcon.png
 /kotlinc
+rs-timers-data.cfg
+
 
 #IDEA files. These are the recommended excludes, and it's not a gradle/maven project. 
 **/.idea/workspace.xml

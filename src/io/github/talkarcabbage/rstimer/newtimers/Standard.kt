@@ -57,7 +57,7 @@ class Standard : NewTimer {
 			}
 
 		}
-	}//Some arbitrary defaults in case of missing data
+	}
 
 	override fun resetTimer() {
 		this.latestReset = System.currentTimeMillis()

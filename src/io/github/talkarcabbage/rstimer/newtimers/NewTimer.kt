@@ -12,8 +12,7 @@ abstract class NewTimer {
 	 * @return
 	 */
 	/**
-	 * Sets the audio string for this timer, used to determine the name of the audio file to play for sound alerts.
-	 * "none" indicates a lack of audio.
+	 * Sets the audio setting for the timer. If true, a sound should play on completion
 	 * @param audio
 	 */
 	var audio = false

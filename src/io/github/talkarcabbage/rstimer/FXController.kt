@@ -345,10 +345,6 @@ class FXController internal constructor() {
 		}
 	}
 
-
-
-
-
 	companion object {
 
 		internal val logger = LoggerManager.getInstance().getLogger("FX Controller")

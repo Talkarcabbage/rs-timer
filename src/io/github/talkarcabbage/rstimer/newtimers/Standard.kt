@@ -36,26 +36,21 @@ class Standard : NewTimer {
 	}
 
 	/**
-	 * Creates a timer from the given map of timer data. Invalid properties will be ignored with a console warning and missing values will be defaulted.
+	 * Creates a timer from the given map of timer data. Data unique to all timers will be
+	 * initialized via the super constructor.
 	 * @param dataMap
 	 */
-	constructor(dataMap: Map<String, String>) : super("MISSING", 0, false) {
-		latestReset = 0 //Arbitrary default values
+	constructor(dataMap: Map<String, String>) : super(dataMap) {
 		duration = 1000 //Arbitrary default values
 		for ((key, value) in dataMap) {
 			try {
 				when (key) {
-					"name" -> this.name = value
-					"audio" -> this.audio = java.lang.Boolean.parseBoolean(value)
-					"tab" -> this.tab = Integer.parseInt(value)
-					"latestreset" -> this.latestReset = java.lang.Long.parseLong(value)
-					"duration" -> this.duration = java.lang.Long.parseLong(value)
-					else -> NewTimer.logger.warning("Unknown property type found while parsing Standard timer:$key")
+					MAP_LATEST_RESET -> this.latestReset = java.lang.Long.parseLong(value)
+					MAP_DURATION -> this.duration = java.lang.Long.parseLong(value)
 				}
 			} catch (e: NumberFormatException) {
 				NewTimer.logger.severe("Invalid timer number value $value for property $key")
 			}
-
 		}
 	}
 

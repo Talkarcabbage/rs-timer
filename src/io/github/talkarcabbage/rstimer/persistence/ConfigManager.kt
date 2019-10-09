@@ -38,6 +38,8 @@ object ConfigManager {
 	var framesPerUpdate = 15
 	@Volatile
 	var transparency = 1.0
+	@Volatile
+	var saveGuiResizes = true
 
 	/**
 	 * Loads the application's properties from the config file.
@@ -68,6 +70,7 @@ object ConfigManager {
 		winWidth = getPropsInt(prop, "winWidth", winWidth)
 		framesPerUpdate = getPropsInt(prop, "framesPerUpdate", framesPerUpdate)
 		transparency = getPropsDouble(prop, "transparency", transparency)
+		saveGuiResizes = getPropsBoolean(prop, "saveGuiResizes", saveGuiResizes)
 	}
 
 	@Synchronized
@@ -82,16 +85,13 @@ object ConfigManager {
 		prop.setProperty("logLevel", logLevel.toString())
 		prop.setProperty("framesPerUpdate", Integer.toString(framesPerUpdate))
 		prop.setProperty("transparency", java.lang.Double.toString(transparency))
-
+		prop.setProperty("saveGuiResizes", saveGuiResizes.toString())
 		try {
 			FileOutputStream(CONFIGFILENAME).use { fos -> prop.store(fos, "This file stores configuration options for the RS Timer") }
 		} catch (e: IOException) {
 			logger.severe("Error while saving properties file:")
 			logger.severe(Throwables.getStackTraceAsString(e))
 		}
-
-
-
 	}
 
 	internal fun getPropsString(props: Properties, id: String, def: String): String {
@@ -139,5 +139,12 @@ object ConfigManager {
 			return def
 		}
 
+	}
+
+	internal fun getPropsBoolean(props: Properties, id: String, def: Boolean): Boolean {
+		if (props.containsKey(id)) {
+			return props.getProperty(id).toBoolean()
+		}
+		return def
 	}
 }

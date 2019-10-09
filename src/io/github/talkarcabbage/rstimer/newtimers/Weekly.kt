@@ -6,7 +6,7 @@ class Weekly : NewTimer {
 		internal set
 
 	override val timerTypeString: String
-		get() = "Daily"
+		get() = "Weekly"
 
 	override val tooltipText: String
 		get() = "Weekly Timer\n"+NewTimer.formatTimeRemaining(timeRemaining)
@@ -32,26 +32,20 @@ class Weekly : NewTimer {
 	}
 
 	/**
-	 * Creates a timer from the given map of timer data. Invalid properties will be ignored with a console warning and missing values will be defaulted.
+	 * Creates a timer from the given map of timer data.
 	 * @param dataMap
 	 */
-	constructor(dataMap: Map<String, String>) : super("MISSING", 0, false) {
-		latestReset = 0 //Arbitrary default values
+	constructor(dataMap: Map<String, String>) : super(dataMap) {
 		for ((key, value) in dataMap) {
 			try {
 				when (key) {
-					"name" -> this.name = value
-					"audio" -> this.audio = java.lang.Boolean.parseBoolean(value)
-					"tab" -> this.tab = Integer.parseInt(value)
-					"latestreset" -> this.latestReset = java.lang.Long.parseLong(value)
-					else -> NewTimer.logger.warning("Unknown property type found while parsing Weekly timer:$key")
+					MAP_LATEST_RESET -> this.latestReset = java.lang.Long.parseLong(value)
 				}
 			} catch (e: NumberFormatException) {
 				NewTimer.logger.severe("Invalid timer number value $value for property $key")
 			}
-
 		}
-	}//Some arbitrary defaults in case of missing data
+	}
 
 	override fun resetTimer() {
 		latestReset = (System.currentTimeMillis()+NewTimer.DAY_LENGTH_MILLIS)/NewTimer.WEEK_LENGTH_MILLIS*NewTimer.WEEK_LENGTH_MILLIS-NewTimer.DAY_LENGTH_MILLIS

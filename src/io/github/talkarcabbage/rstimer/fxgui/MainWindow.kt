@@ -56,6 +56,14 @@ class MainWindow : Application() {
 		internal set
 	internal var moveXinit: Int = 0
 	internal var moveYinit: Int = 0
+
+	internal var resizeXinit: Int = 0
+	internal var resizeYinit: Int = 0
+	internal var resizeXStartSize: Int = 0
+	internal var resizeYStartSize: Int = 0
+
+	internal var isMovingOnCorner = false
+
 	internal lateinit var stage: Stage
 	internal var tempList = ArrayList<ProgressPane>()
 	internal lateinit var minusButton: ToggleButton
@@ -162,6 +170,9 @@ class MainWindow : Application() {
 			transSlider.value = ConfigManager.transparency
 			setTransparency(transSlider.value)
 
+
+			transSlider.style += "-fx-border-insets: 32px; -fx-background-insets: 32px; -fx-padding-right: 32px;"
+
 			tabPane.setOnMousePressed { event ->
 				moveXinit = event.x.toInt()
 				moveYinit = event.y.toInt()
@@ -170,10 +181,40 @@ class MainWindow : Application() {
 			transSlider.setOnMouseReleased { ConfigManager.save() }
 
 			tabPane.onMouseDragged = EventHandler { event ->
-				//NOSONAR
 				MainWindow.instance.stage.x = event.screenX-moveXinit
 				MainWindow.instance.stage.y = event.screenY-moveYinit
 			}
+
+
+
+			configPane.setOnMousePressed { event ->
+				moveXinit = event.x.toInt()
+				moveYinit = event.y.toInt()+tabPane.height.toInt()
+				resizeXinit = event.screenX.toInt()
+				resizeYinit = event.screenY.toInt()
+				resizeXStartSize = stage.width.toInt()
+				resizeYStartSize = stage.height.toInt()
+				isMovingOnCorner = (this.stage.width-(resizeXinit-this.stage.x)<12 && this.stage.height-(resizeYinit-this.stage.y)<12)
+			}
+
+			configPane.onMouseDragged = EventHandler { event ->
+				if (isMovingOnCorner) {
+					MainWindow.instance.stage.width = resizeXStartSize+(event.screenX)-resizeXinit.toInt()
+					MainWindow.instance.stage.height = resizeYStartSize+(event.screenY)-resizeYinit.toInt()
+				} else {
+					MainWindow.instance.stage.x = event.screenX-moveXinit
+					MainWindow.instance.stage.y = event.screenY-moveYinit
+				}
+			}
+
+			configPane.onMouseReleased = EventHandler {
+				if (ConfigManager.saveGuiResizes) {
+					ConfigManager.winWidth = stage.width.toInt()
+					ConfigManager.winHeight = stage.height.toInt()
+					ConfigManager.save()
+				}
+			}
+
 			//			tabPane.setOnMouseReleased( event -> {
 			//				if (!(event.getSource() instanceof ProgressBar || event.getSource() instanceof ProgressPane || event.getSource() instanceof Label)) {
 			//					minusButton.setSelected(false);

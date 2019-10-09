@@ -53,24 +53,19 @@ class Monthly : NewTimer {
 	 * Creates a timer from the given map of timer data. Invalid properties will be ignored with a console warning and missing values will be defaulted.
 	 * @param dataMap
 	 */
-	constructor(dataMap: Map<String, String>) : super("MISSING", 0, false) {
-		latestReset = 0 //Arbitrary default values
+	constructor(dataMap: Map<String, String>) : super(dataMap) {
 		duration = durationToNextMonth //Because daddy doesn't like dividing by zero
 		for ((key, value) in dataMap) {
 			try {
 				when (key) {
-					"name" -> this.name = value
-					"audio" -> this.audio = java.lang.Boolean.parseBoolean(value)
-					"tab" -> this.tab = Integer.parseInt(value)
-					"latestreset" -> this.latestReset = java.lang.Long.parseLong(value)
-					else -> NewTimer.logger.warning("Unknown property type found while parsing Monthly timer:$key")
+					MAP_LATEST_RESET -> this.latestReset = java.lang.Long.parseLong(value)
 				}
 			} catch (e: NumberFormatException) {
 				NewTimer.logger.severe("Invalid timer number value $value for property $key")
 			}
-
 		}
-	}//Some arbitrary defaults in case of missing data
+		duration = durationToNextMonth //Because daddy still doesn't like division by 0
+	}
 
 	override fun resetTimer() {
 		val startC = getBeginningOfMonthFor(System.currentTimeMillis())
@@ -83,44 +78,39 @@ class Monthly : NewTimer {
 	override fun resetTimerComplete() {
 		this.latestReset = 0
 	}
+}
 
-	companion object {
+/**
+ * Returns a Calendar object representing the 0:00 first day of the month for a given time.
+ * @param time The time
+ * @return The Calendar
+ */
+private fun getBeginningOfMonthFor(time: Long): Calendar {
+	val startC = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+	startC.timeInMillis = time
+	startC.set(Calendar.DATE, 1)
+	startC.set(Calendar.HOUR, 0)
+	startC.set(Calendar.AM_PM, Calendar.AM)
+	startC.set(Calendar.MINUTE, 0)
+	startC.set(Calendar.SECOND, 0)
+	startC.set(Calendar.MILLISECOND, 0)
+	return startC
+}
 
-		/**
-		 * Returns a Calendar object representing the 0:00 first day of the month for a given time.
-		 * @param time The time
-		 * @return The Calendar
-		 */
-		fun getBeginningOfMonthFor(time: Long): Calendar {
-			val startC = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-			startC.timeInMillis = time
-			startC.set(Calendar.DATE, 1)
-			startC.set(Calendar.HOUR, 0)
-			startC.set(Calendar.AM_PM, Calendar.AM)
-			startC.set(Calendar.MINUTE, 0)
-			startC.set(Calendar.SECOND, 0)
-			startC.set(Calendar.MILLISECOND, 0)
-			return startC
-		}
-
-		/**
-		 * Returns a Calendar object representing the 0:00 first day of the **next** month for a given time.
-		 * @param time The time
-		 * @return The Calendar
-		 */
-		fun getEndOfMonthFor(time: Long): Calendar {
-			val endC = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-			endC.timeInMillis = time
-			endC.set(Calendar.DATE, 1)
-			endC.set(Calendar.HOUR, 0)
-			endC.set(Calendar.AM_PM, Calendar.AM)
-			endC.set(Calendar.MINUTE, 0)
-			endC.set(Calendar.SECOND, 0)
-			endC.set(Calendar.MILLISECOND, 0)
-			endC.set(Calendar.MONTH, endC.get(Calendar.MONTH)+1)
-			return endC
-		}
-	}
-
-
+/**
+ * Returns a Calendar object representing the 0:00 first day of the **next** month for a given time.
+ * @param time The time
+ * @return The Calendar
+ */
+private fun getEndOfMonthFor(time: Long): Calendar {
+	val endC = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+	endC.timeInMillis = time
+	endC.set(Calendar.DATE, 1)
+	endC.set(Calendar.HOUR, 0)
+	endC.set(Calendar.AM_PM, Calendar.AM)
+	endC.set(Calendar.MINUTE, 0)
+	endC.set(Calendar.SECOND, 0)
+	endC.set(Calendar.MILLISECOND, 0)
+	endC.set(Calendar.MONTH, endC.get(Calendar.MONTH)+1)
+	return endC
 }

@@ -37,6 +37,7 @@ defaultTabColumns=0   # 0 to 2.1 billion  [Number of default tab columns if no t
 defaultTabRows=5      # 0 to 2.1 billion  [Number of default tab rows if no tabs exist. Imports from cfg,gridRows]
 defaultTabName=Main   # Non-empty-string  [Name of the first tab if it is imported or does not exist yet. Imports from cfg,mainTabName]
 framesPerUpdate=15    # 1 to 2.1 billion  [Number of frames per update of the GUI. Lower values make the timer GUI more fluid, higher values decrease CPU usage. Recommended maximum is 60, i.e. once per second]
+saveGuiResizes=true   # true or false     [Whether or not to save the size of the GUI to config when resized via drag]
 ```
 
 # Disclaimer

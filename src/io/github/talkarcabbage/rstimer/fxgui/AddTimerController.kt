@@ -9,6 +9,7 @@ import io.github.talkarcabbage.logger.LoggerManager
 import io.github.talkarcabbage.rstimer.FXController
 import io.github.talkarcabbage.rstimer.Timer
 import io.github.talkarcabbage.rstimer.Timer.TimerType
+import io.github.talkarcabbage.rstimer.fxgui.NewTimerModel.TimerModelType
 import io.github.talkarcabbage.rstimer.newtimers.Daily
 import io.github.talkarcabbage.rstimer.newtimers.Hourly
 import io.github.talkarcabbage.rstimer.newtimers.Monthly
@@ -66,7 +67,7 @@ class AddTimerController {
 	/**
 	 * If this is non-null, the current data in the GUI applies to a specific timer. Otherwise, it is creating a new timer.
 	 */
-	internal var editedTimer: Timer? = null
+	internal var editedTimer: NewTimer? = null
 
 	/**
 	 * New timer
@@ -120,51 +121,63 @@ class AddTimerController {
 				nameTextField!!.text = " "
 			}
 
-			val model = NewTimerModel.getModelFromControllerData(this.nameTextField!!.text, this.typeComboBox!!.value, daysTextField!!.text, hoursTextField!!.text, minutesTextField!!.text, secondsTextField!!.text, alarmCheckBox!!.isSelected, resetCheckBox!!.isSelected)
+			val theNewTimer = getTimerForModelData()
 
-			var theNewTimer: NewTimer? = null
-			val dataMap = model.asDataMap().toMutableMap()
-			dataMap[NewTimer.MAP_TAB] = ""+MainWindow.instance.currentTab
-
-			when (model.timerType) {
-				NewTimerModel.TimerModelType.DAILY -> theNewTimer = Daily(dataMap)
-				NewTimerModel.TimerModelType.HOURLY -> theNewTimer = Hourly(dataMap)
-				NewTimerModel.TimerModelType.MONTHLY -> theNewTimer = Monthly(dataMap)
-				NewTimerModel.TimerModelType.STANDARD -> theNewTimer = Standard(dataMap)
-				NewTimerModel.TimerModelType.WEEKLY -> theNewTimer = Weekly(dataMap)
-				else -> logger.warning { "Encountered nonexisting timer type addition attempt:"+model.timerType }
-			}
 			if (theNewTimer!=null) {
 				logger.info("Added a new newTimer: ${theNewTimer.toString()}")
 				FXController.instance.addNewTimer(theNewTimer)
 				theNewTimer.resetTimer()
 			}
 		} else {
+			val editedPane = FXController.instance.newTimerMap.inverse()[editedTimer]
+			val editedModel = NewTimerModel.getModelFromControllerData(this.nameTextField!!.text, this.typeComboBox!!.value, daysTextField!!.text, hoursTextField!!.text, minutesTextField!!.text, secondsTextField!!.text, alarmCheckBox!!.isSelected, resetCheckBox!!.isSelected)
+			val changedTimer = getTimerForModelData(editedTimer!!)
+			if (changedTimer is NewTimer) {
+				FXController.instance.newTimerMap[editedPane] = changedTimer
+				FXController.instance.updateNewProgressPaneTitle(changedTimer)
+			} else {
+				logger.warning("An error occured during editing: the updated timer was null")
+			}
 			//TODO editing
 		}
 
-		/*
-		if (editedTimer==null) { //Making a new timer
-			//Old code can be removed
-		} else { //Updating the existing timer
-			when (editedTimer!!.timerType) {
-				Timer.TimerType.STANDARD -> {
-					editedTimer!!.duration = 1000*(getLongForField(secondsTextField)+60*getLongForField(minutesTextField)+3600*getLongForField(hoursTextField)+Timer.DAY_LENGTH*getLongForField(daysTextField)/1000)
-					editedTimer!!.name = nameTextField!!.text
-					editedTimer!!.setStartingTime(System.currentTimeMillis())
-					editedTimer!!.resetTimer()
-				}
-				Timer.TimerType.MONTHLY, Timer.TimerType.PERIODIC -> {
-					editedTimer!!.name = nameTextField!!.text
-					editedTimer!!.resetTimer()
-				}
-			}
-			FXController.instance.updateProgressPaneTitle(editedTimer!!) //TODO ye olde fix
-			FXController.instance.saveTimers()
-		}
-
-		 */
 	}
+
+	internal fun getTimerForModelData(): NewTimer? {
+		val model = NewTimerModel.getModelFromControllerData(this.nameTextField!!.text, this.typeComboBox!!.value, daysTextField!!.text, hoursTextField!!.text, minutesTextField!!.text, secondsTextField!!.text, alarmCheckBox!!.isSelected, resetCheckBox!!.isSelected)
+		var theNewTimer: NewTimer? = null
+		val dataMap = model.asDataMap().toMutableMap()
+		dataMap[NewTimer.MAP_TAB] = ""+MainWindow.instance.currentTab //TODO find a more reliable way to get this or modalblock
+
+		when (model.timerType) {
+			TimerModelType.DAILY -> theNewTimer = Daily(dataMap)
+			TimerModelType.HOURLY -> theNewTimer = Hourly(dataMap)
+			TimerModelType.MONTHLY -> theNewTimer = Monthly(dataMap)
+			TimerModelType.STANDARD -> theNewTimer = Standard(dataMap)
+			TimerModelType.WEEKLY -> theNewTimer = Weekly(dataMap)
+			else -> logger.warning { "Encountered nonexisting timer type addition attempt:"+model.timerType }
+		}
+		return theNewTimer
+	}
+
+
+	internal fun getTimerForModelData(old: NewTimer): NewTimer? {
+		val dataMap = old.timerDataMap.toMutableMap()
+		val model = NewTimerModel.getModelFromControllerData(this.nameTextField!!.text, this.typeComboBox!!.value, daysTextField!!.text, hoursTextField!!.text, minutesTextField!!.text, secondsTextField!!.text, alarmCheckBox!!.isSelected, resetCheckBox!!.isSelected)
+		var theNewTimer: NewTimer? = null
+		dataMap.putAll(model.asDataMap())
+
+		when (model.timerType) {
+			TimerModelType.DAILY -> theNewTimer = Daily(dataMap)
+			TimerModelType.HOURLY -> theNewTimer = Hourly(dataMap)
+			TimerModelType.MONTHLY -> theNewTimer = Monthly(dataMap)
+			TimerModelType.STANDARD -> theNewTimer = Standard(dataMap)
+			TimerModelType.WEEKLY -> theNewTimer = Weekly(dataMap)
+			else -> logger.warning { "Encountered nonexisting timer type addition attempt:"+model.timerType }
+		}
+		return theNewTimer
+	}
+
 
 	internal fun getLongForField(field: TextField?): Long {
 		try {
@@ -220,9 +233,21 @@ class AddTimerController {
 	 * Should only be called from the FX thread
 	 * @param timer The timer to display to edit. Should not be null.
 	 */
-	fun showEditWindow(timer: Timer) {
+	fun showEditWindow(timer: NewTimer) {
 		setControlsEdit()
 		this.editedTimer = timer
+		val newModel = NewTimerModel(timer)
+		fillEditFields()
+		when (newModel.timerType) {
+			TimerModelType.STANDARD -> setEditStandardTimer()
+			TimerModelType.DAILY -> setEditDailyTimer()
+			TimerModelType.WEEKLY -> setEditWeeklyTimer()
+			TimerModelType.MONTHLY -> setEditMonthlyTimer()
+			TimerModelType.HOURLY -> TODO()
+			else -> logger.warning("Unknown timer type edited!")
+		}
+
+		/*
 		when (timer.timerType) {
 			Timer.TimerType.STANDARD -> setEditStandardTimer()
 			Timer.TimerType.PERIODIC //NOSONAR
@@ -234,7 +259,9 @@ class AddTimerController {
 				logger.severe("Encountered an unrecognized periodic duration trying to initialize timer edit GUI values: "+timer.duration)
 			}
 			Timer.TimerType.MONTHLY -> setEditMonthlyTimer()
+
 		}
+		*/
 		stage.show()
 	}
 
@@ -313,15 +340,17 @@ class AddTimerController {
 	 */
 	internal fun fillEditFields() {
 		this.nameTextField!!.text = editedTimer!!.name
-		val dur = editedTimer!!.durationObject
-		val secondsDur = dur.seconds%60
-		val minutesDur = dur.toMinutes()%60
-		val hoursDur = dur.toHours()%24
-		val daysDur = dur.toDays()
-		this.daysTextField!!.text = java.lang.Long.toString(daysDur)
-		this.hoursTextField!!.text = java.lang.Long.toString(hoursDur)
-		this.minutesTextField!!.text = java.lang.Long.toString(minutesDur)
-		this.secondsTextField!!.text = java.lang.Long.toString(secondsDur)
+		if (editedTimer is Standard) {
+			val dur = Duration.ofMillis((editedTimer as Standard).duration)
+			val secondsDur = dur.seconds%60
+			val minutesDur = dur.toMinutes()%60
+			val hoursDur = dur.toHours()%24
+			val daysDur = dur.toDays()
+			this.daysTextField!!.text = java.lang.Long.toString(daysDur)
+			this.hoursTextField!!.text = java.lang.Long.toString(hoursDur)
+			this.minutesTextField!!.text = java.lang.Long.toString(minutesDur)
+			this.secondsTextField!!.text = java.lang.Long.toString(secondsDur)
+		}
 	}
 
 	companion object {

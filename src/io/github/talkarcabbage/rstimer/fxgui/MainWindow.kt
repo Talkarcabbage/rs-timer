@@ -171,8 +171,8 @@ class MainWindow : Application() {
 			transSlider.style += "-fx-border-insets: 32px; -fx-background-insets: 32px; -fx-padding-right: 32px;"
 
 			tabPane.setOnMousePressed { event ->
-				moveXinit = event.x.toInt()
-				moveYinit = event.y.toInt()
+				moveXinit = event.x.toInt()+3
+				moveYinit = event.y.toInt()+3
 			}
 
 			transSlider.setOnMouseReleased { ConfigManager.save() }
@@ -185,8 +185,8 @@ class MainWindow : Application() {
 
 
 			configPane.setOnMousePressed { event ->
-				moveXinit = event.x.toInt()
-				moveYinit = event.y.toInt()+tabPane.height.toInt()
+				moveXinit = event.x.toInt()+3
+				moveYinit = event.y.toInt()+tabPane.height.toInt()+3
 				resizeXinit = event.screenX.toInt()
 				resizeYinit = event.screenY.toInt()
 				resizeXStartSize = stage.width.toInt()
@@ -213,8 +213,10 @@ class MainWindow : Application() {
 			}
 
 			rootPane.setOnMousePressed { event ->
-				moveXinit = event.x.toInt()
-				moveYinit = event.y.toInt()+tabPane.height.toInt()
+				isMovingOnCorner = (this.stage.width-(resizeXinit-this.stage.x)<12 && this.stage.height-(resizeYinit-this.stage.y)<12)
+				if (!isMovingOnCorner) return@setOnMousePressed
+				moveXinit = event.x.toInt()+3
+				moveYinit = event.y.toInt()+tabPane.height.toInt()+3
 				resizeXinit = event.screenX.toInt()
 				resizeYinit = event.screenY.toInt()
 				resizeXStartSize = stage.width.toInt()
@@ -227,8 +229,9 @@ class MainWindow : Application() {
 					MainWindow.instance.stage.width = resizeXStartSize+(event.screenX)-resizeXinit.toInt()
 					MainWindow.instance.stage.height = resizeYStartSize+(event.screenY)-resizeYinit.toInt()
 				} else {
-					MainWindow.instance.stage.x = event.screenX-moveXinit
+					/*MainWindow.instance.stage.x = event.screenX-moveXinit
 					MainWindow.instance.stage.y = event.screenY-moveYinit
+					 */
 				}
 			}
 
@@ -448,7 +451,7 @@ class MainWindow : Application() {
 	fun onClickTimerBar(pane: ProgressPane, event: MouseEvent) {
 		logger.fine("OnClickTimerBar fired")
 		if (!minusButton.isSelected && event.isShiftDown) {
-			//TODO editing: AddTimerController.instance!!.showEditWindow(FXController.instance.timerMap[pane]!!)
+			AddTimerController.instance?.showEditWindow(FXController.instance.newTimerMap[pane]!!)
 		} else if (minusButton.isSelected && event.button==MouseButton.PRIMARY) { //Remove timer
 			FXController.instance.removeNewTimer(pane)
 		} else if (event.button==MouseButton.SECONDARY) { //Reset timer as complete
@@ -547,7 +550,7 @@ class MainWindow : Application() {
 	fun onClickNewTimerBar(pane: ProgressPane, event: MouseEvent) {
 		logger.fine("OnClickTimerBar fired (new Timers")
 		if (!minusButton.isSelected && event.isShiftDown) {
-			//FIXME new edit window : AddTimerController.instance.showEditWindow(FXController.instance.timerMap.get(pane));
+			AddTimerController.instance!!.showEditWindow(FXController.instance.newTimerMap[pane]!!);
 		} else if (minusButton.isSelected && event.button==MouseButton.PRIMARY) { //Remove timer
 			FXController.instance.removeNewTimer(pane)
 			minusButton.isSelected = false

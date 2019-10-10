@@ -349,7 +349,7 @@ class FXController internal constructor() {
 
 		internal val logger = LoggerManager.getInstance().getLogger("FX Controller")
 
-		internal lateinit var trayIcon: TrayIcon //TODO nullability safety
+		internal var trayIcon: TrayIcon? = null //TODO nullability safety
 
 		val instance = FXController()
 
@@ -377,14 +377,13 @@ class FXController internal constructor() {
 			try {
 
 				SystemTray.getSystemTray().add(trayIcon)
-				trayIcon.addActionListener { event -> Platform.runLater { MainWindow.instance.isVisible = !MainWindow.instance.isVisible } }
+				trayIcon?.addActionListener { event -> Platform.runLater { MainWindow.instance.isVisible = !MainWindow.instance.isVisible } }
 				val trayMenu = PopupMenu("RS Timer")
 
 				val toggleVisibilityMenu = MenuItem("Toggle Window")
-				toggleVisibilityMenu.addActionListener { e ->
+				toggleVisibilityMenu.addActionListener {
 					logger.fine("Tray icon toggle visibility event: "+MainWindow.instance.isVisible)
 					Platform.runLater { MainWindow.instance.isVisible = !MainWindow.instance.isVisible }
-
 				}
 
 				trayMenu.add(toggleVisibilityMenu)
@@ -393,7 +392,7 @@ class FXController internal constructor() {
 				exitMenu.addActionListener { e -> System.exit(0) }
 				trayMenu.add(exitMenu)
 
-				trayIcon.popupMenu = trayMenu
+				trayIcon?.popupMenu = trayMenu
 
 			} catch (e: AWTException) {
 				logger.severe("Error creating tray icon")

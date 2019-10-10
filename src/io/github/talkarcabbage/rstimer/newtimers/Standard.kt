@@ -1,5 +1,8 @@
 package io.github.talkarcabbage.rstimer.newtimers
 
+import java.awt.SystemTray
+import java.awt.TrayIcon
+
 class Standard : NewTimer {
 
 	var latestReset: Long = 0
@@ -51,6 +54,16 @@ class Standard : NewTimer {
 			} catch (e: NumberFormatException) {
 				NewTimer.logger.severe("Invalid timer number value $value for property $key")
 			}
+		}
+	}
+
+	override fun onTimerComplete() {
+		if (audio) {
+			SystemTray.getSystemTray().trayIcons[0]?.displayMessage("RS Timer", "The timer ${this.name} just finished!", TrayIcon.MessageType.INFO)
+		}
+		if (autoreset) {
+			val durationsSinceReset = (System.currentTimeMillis()-latestReset)/duration
+			this.latestReset += this.duration*durationsSinceReset //More precise autoresets
 		}
 	}
 

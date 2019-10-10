@@ -4,42 +4,17 @@ import java.util.HashMap
 import java.util.logging.Logger
 
 import io.github.talkarcabbage.logger.LoggerManager
+import io.github.talkarcabbage.rstimer.FXController
+import java.awt.SystemTray
+import java.awt.TrayIcon
 
 abstract class NewTimer {
 
-	/**
-	 * Returns the Audio string for this timer. "none" indicates a lack of audio.
-	 * @return
-	 */
-	/**
-	 * Sets the audio setting for the timer. If true, a sound should play on completion
-	 * @param audio
-	 */
 	var audio = false
-	/**
-	 * Returns the name of this timer, for display on the GUI
-	 * @return The name
-	 */
-	/**
-	 * Sets the name of this timer, for display on the GUI
-	 * @param name The name
-	 */
 	@Volatile
 	var name: String
-	/*
-	 * Begin common Timer methods (implemented)
-	 */
-
-	/**
-	 * Returns the tab on the GUI this timer is shown on
-	 * @return
-	 */
-	/**
-	 * Sets the tab on the GUI this timer is shown on
-	 * @param tabID The tab to show this timer on.
-	 */
 	var tab = 0
-
+	var autoreset = false
 
 	/**
 	 * Returns the pseudojsonyaml representation of this timer, for saving.
@@ -76,6 +51,7 @@ abstract class NewTimer {
 			map[MAP_NAME] = this.name
 			map[MAP_TAB] = this.tab.toString()
 			map[MAP_AUDIO] = this.audio.toString()
+			map[MAP_AUTO_RESET] = this.autoreset.toString()
 			return map
 		}
 
@@ -98,7 +74,7 @@ abstract class NewTimer {
 	 */
 	abstract val timeRemaining: Long
 
-	constructor(name: String, tabID: Int, audio: Boolean) {
+	constructor(name: String, tabID: Int, audio: Boolean) { //TODO consider if worth to add autoreset since method mostly unused
 		this.name = name
 		this.tab = tabID
 		this.audio = audio
@@ -106,24 +82,38 @@ abstract class NewTimer {
 
 	constructor(dataMap: Map<String, String>) {
 		this.name = "MISSING" //Some arbitrary defaults in case of missing data
-		this.tab = 0
-		this.audio = false
-
 		for ((key, value) in dataMap) {
 			when (key) {
 				//NOSONAR we don't handle all cases here on purpose, thanks
 				MAP_NAME -> this.name = value
 				MAP_TAB -> this.tab = Integer.parseInt(value)
 				MAP_AUDIO -> this.audio = java.lang.Boolean.parseBoolean(value)
+				MAP_AUTO_RESET -> this.autoreset = value.toBoolean()
 			}
 		}
 	}
 
 	/**
 	 * Used by timers that require special actions when the GUI ticks.
-	 * Example usage is to reset a self-repeating timer on completion.
+	 * Not currently in substantial use
 	 */
-	fun tickTimer() {}
+	fun tickTimer() {
+
+	}
+
+	/**
+	 * Called by the GUI when it detects a timer has gone from incomplete to complete
+	 * Normally results in the gui changing the progress bar to orange. Used for
+	 * autoreset and etc.
+	 */
+	open fun onTimerComplete() {
+		if (audio) {
+			SystemTray.getSystemTray().trayIcons[0]?.displayMessage("RS Timer", "The timer ${this.name} just finished!", TrayIcon.MessageType.INFO)
+		}
+		if (autoreset) {
+			this.resetTimer()
+		}
+	}
 
 	/**
 	 * Called when the timer needs to be reset.
@@ -150,7 +140,7 @@ abstract class NewTimer {
 		const val MAP_TAB = "tab"
 		const val MAP_DURATION = "duration"
 		const val MAP_LATEST_RESET = "latestreset"
-
+		const val MAP_AUTO_RESET = "autoreset"
 
 		/**
 		 * Format the given time value in ms for display in hh:mm:ss format on the GUI tooltips.

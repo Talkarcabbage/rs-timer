@@ -160,6 +160,7 @@ class NewTimerModel {
 		theMap[NewTimer.MAP_TAB] = ""+MainWindow.instance.currentTab
 		theMap[NewTimer.MAP_AUDIO] = ""+this.alarm
 		theMap[NewTimer.MAP_LATEST_RESET] = ""+0
+		theMap[NewTimer.MAP_AUTO_RESET] = autoReset.toString()
 		return theMap
 	}
 

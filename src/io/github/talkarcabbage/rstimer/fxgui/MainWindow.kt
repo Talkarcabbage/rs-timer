@@ -10,6 +10,7 @@ import io.github.talkarcabbage.rstimer.FXController
 import io.github.talkarcabbage.rstimer.Timer
 import io.github.talkarcabbage.rstimer.newtimers.NewTimer
 import io.github.talkarcabbage.rstimer.persistence.ConfigManager
+import io.github.talkarcabbage.rstimer.persistence.LoadManager
 import io.github.talkarcabbage.rstimer.persistence.SaveManager
 import javafx.application.Application
 import javafx.application.Platform
@@ -108,11 +109,7 @@ class MainWindow : Application() {
 			primaryStage.scene = scene
 			primaryStage.initStyle(StageStyle.UNDECORATED)
 			rootPane.id = "win"
-			rootPane.setOnMouseReleased {
-				if (!it.isConsumed) {
-					minusButton.isSelected = false
-				}
-			}
+
 			scene.root.styleClass.add("main-root")
 
 			val configPane = GridPane()
@@ -195,7 +192,7 @@ class MainWindow : Application() {
 				resizeXStartSize = stage.width.toInt()
 				resizeYStartSize = stage.height.toInt()
 				isMovingOnCorner = (this.stage.width-(resizeXinit-this.stage.x)<12 && this.stage.height-(resizeYinit-this.stage.y)<12)
-			}
+			} //jank
 
 			configPane.onMouseDragged = EventHandler { event ->
 				if (isMovingOnCorner) {
@@ -215,6 +212,38 @@ class MainWindow : Application() {
 				}
 			}
 
+			rootPane.setOnMousePressed { event ->
+				moveXinit = event.x.toInt()
+				moveYinit = event.y.toInt()+tabPane.height.toInt()
+				resizeXinit = event.screenX.toInt()
+				resizeYinit = event.screenY.toInt()
+				resizeXStartSize = stage.width.toInt()
+				resizeYStartSize = stage.height.toInt()
+				isMovingOnCorner = (this.stage.width-(resizeXinit-this.stage.x)<12 && this.stage.height-(resizeYinit-this.stage.y)<12)
+			}
+
+			rootPane.onMouseDragged = EventHandler { event ->
+				if (isMovingOnCorner) {
+					MainWindow.instance.stage.width = resizeXStartSize+(event.screenX)-resizeXinit.toInt()
+					MainWindow.instance.stage.height = resizeYStartSize+(event.screenY)-resizeYinit.toInt()
+				} else {
+					MainWindow.instance.stage.x = event.screenX-moveXinit
+					MainWindow.instance.stage.y = event.screenY-moveYinit
+				}
+			}
+
+			rootPane.setOnMouseReleased {
+				if (!it.isConsumed) {
+					minusButton.isSelected = false
+				}
+				if (ConfigManager.saveGuiResizes) {
+					ConfigManager.winWidth = stage.width.toInt()
+					ConfigManager.winHeight = stage.height.toInt()
+					ConfigManager.save()
+				}
+			}
+
+
 			//			tabPane.setOnMouseReleased( event -> {
 			//				if (!(event.getSource() instanceof ProgressBar || event.getSource() instanceof ProgressPane || event.getSource() instanceof Label)) {
 			//					minusButton.setSelected(false);
@@ -223,7 +252,7 @@ class MainWindow : Application() {
 
 			primaryStage.show()
 
-			if (!File(SaveManager.SAVE_FILE_LOCATION).exists()) {
+			if (!File(SaveManager.SAVE_FILE_LOCATION).exists() && File("timers.cfg").exists()) {
 				val alert = Alert(AlertType.INFORMATION, ""+
 						"Your old timers are being imported from timers.cfg " +
 						"to the new format at ${SaveManager.SAVE_FILE_LOCATION}. Please double check your timers! " +

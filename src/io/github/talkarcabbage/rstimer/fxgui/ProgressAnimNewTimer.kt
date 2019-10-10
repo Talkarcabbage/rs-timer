@@ -19,6 +19,9 @@ class ProgressAnimNewTimer(internal val map: BiMap<ProgressPane, NewTimer>) : An
 		if (++animCycle >= ConfigManager.framesPerUpdate) {
 			animCycle = 0
 			map.forEach { (pane, timer) ->
+				if (pane.bar.progress<1 && timer.percentageComplete>=100) {
+					timer.onTimerComplete()
+				}
 				pane.setProgress(timer.percentageComplete.toLong())
 				pane.bar.getTooltip().setText(timer.tooltipText)
 				pane.labelObject.getTooltip().setText(timer.tooltipText)

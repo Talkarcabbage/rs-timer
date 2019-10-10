@@ -15,17 +15,20 @@ import javafx.animation.AnimationTimer
 class ProgressAnimNewTimer(internal val map: BiMap<ProgressPane, NewTimer>) : AnimationTimer() {
 	internal var animCycle: Int = 1000000
 
+	private var firstFrame = true
+
 	override fun handle(now: Long) {
 		if (++animCycle >= ConfigManager.framesPerUpdate) {
 			animCycle = 0
 			map.forEach { (pane, timer) ->
 				if (pane.bar.progress<1 && timer.percentageComplete>=100) {
-					timer.onTimerComplete()
+					if (!firstFrame) timer.onTimerComplete()
 				}
 				pane.setProgress(timer.percentageComplete.toLong())
 				pane.bar.getTooltip().setText(timer.tooltipText)
 				pane.labelObject.getTooltip().setText(timer.tooltipText)
 			}
 		}
+		firstFrame = false
 	}
 }

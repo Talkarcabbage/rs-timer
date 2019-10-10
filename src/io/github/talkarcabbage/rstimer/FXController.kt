@@ -341,6 +341,7 @@ class FXController internal constructor() {
 		}
 		val newTimers = LoadManager.loadTimersFromFileData(FileManager.readFileSplitList(SaveManager.SAVE_FILE_LOCATION))
 		newTimers.forEach {
+			it.onLoad()
 			addNewTimerNoSave(it)
 		}
 	}

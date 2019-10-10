@@ -130,17 +130,17 @@ class AddTimerController {
 			}
 		} else {
 			val editedPane = FXController.instance.newTimerMap.inverse()[editedTimer]
-			val editedModel = NewTimerModel.getModelFromControllerData(this.nameTextField!!.text, this.typeComboBox!!.value, daysTextField!!.text, hoursTextField!!.text, minutesTextField!!.text, secondsTextField!!.text, alarmCheckBox!!.isSelected, resetCheckBox!!.isSelected)
 			val changedTimer = getTimerForModelData(editedTimer!!)
 			if (changedTimer is NewTimer) {
 				FXController.instance.newTimerMap[editedPane] = changedTimer
 				FXController.instance.updateNewProgressPaneTitle(changedTimer)
+				changedTimer.resetTimer()
+				FXController.instance.saveTimers()
 			} else {
 				logger.warning("An error occured during editing: the updated timer was null")
 			}
 			//TODO editing
 		}
-
 	}
 
 	internal fun getTimerForModelData(): NewTimer? {
@@ -272,7 +272,7 @@ class AddTimerController {
 	internal fun setControlsEdit() {
 		stage.title = "Edit Timer"
 		createButton!!.text = "Update"
-		typeComboBox!!.isDisable = true
+		//typeComboBox!!.isDisable = true
 	}
 
 	/**
@@ -340,6 +340,8 @@ class AddTimerController {
 	 */
 	internal fun fillEditFields() {
 		this.nameTextField!!.text = editedTimer!!.name
+		this.resetCheckBox?.isSelected = editedTimer?.autoreset!!
+		this.alarmCheckBox?.isSelected = editedTimer?.audio!!
 		if (editedTimer is Standard) {
 			val dur = Duration.ofMillis((editedTimer as Standard).duration)
 			val secondsDur = dur.seconds%60
@@ -350,6 +352,11 @@ class AddTimerController {
 			this.hoursTextField!!.text = java.lang.Long.toString(hoursDur)
 			this.minutesTextField!!.text = java.lang.Long.toString(minutesDur)
 			this.secondsTextField!!.text = java.lang.Long.toString(secondsDur)
+		} else {
+			this.daysTextField!!.text = 0.toString()
+			this.hoursTextField!!.text = 0.toString()
+			this.minutesTextField!!.text = 0.toString()
+			this.secondsTextField!!.text = 0.toString()
 		}
 	}
 

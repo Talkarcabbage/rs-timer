@@ -55,6 +55,12 @@ class Standard : NewTimer {
 				NewTimer.logger.severe("Invalid timer number value $value for property $key")
 			}
 		}
+		if (duration == 0L) {
+			duration = 1000
+		} //Sanitze
+
+		logger.fine("Initialized a timer: ${this.toString()}")
+
 	}
 
 	override fun onTimerComplete() {

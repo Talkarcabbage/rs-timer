@@ -94,6 +94,16 @@ abstract class NewTimer {
 	}
 
 	/**
+	 * For running any code after the timer is first initialized that needs to be
+	 * run once when loading timers, such as ensuring autoreset timers reset themselves if necessary.
+	 */
+	open fun onLoad() {
+		if (this.autoreset && this.percentageComplete>= 100) {
+			resetTimer()
+		}
+	}
+
+	/**
 	 * Used by timers that require special actions when the GUI ticks.
 	 * Not currently in substantial use
 	 */
@@ -126,7 +136,7 @@ abstract class NewTimer {
 	abstract fun resetTimerComplete()
 
 	override fun toString(): String {
-		return "${this.javaClass.simpleName}(audio=$audio, name='$name', tab=$tab, timerTypeString='$timerTypeString', tooltipText='$tooltipText', percentageComplete=$percentageComplete, timeRemaining=$timeRemaining)"
+		return "${this.javaClass.simpleName}(audio=$audio, name='$name', tab=$tab, reset=$autoreset, timerTypeString='$timerTypeString', tooltipText='$tooltipText', percentageComplete=$percentageComplete, timeRemaining=$timeRemaining)"
 	}
 
 	companion object {

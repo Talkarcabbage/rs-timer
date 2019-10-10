@@ -43,6 +43,9 @@ import javafx.util.converter.IntegerStringConverter
 import java.io.File
 import java.util.function.Consumer
 
+private const val mainWinMinWidth = 160.0
+private const val mainWinMinHeight = 120.0
+
 /**
  *
  * @author Talkarcabbage
@@ -100,6 +103,7 @@ class MainWindow : Application() {
 				FXController.instance.destroyTrayIcon()
 				System.exit(0)
 			}
+
 			AddTimerController.createRoot()
 			instance = this //NOSONAR
 			stage = primaryStage
@@ -182,7 +186,8 @@ class MainWindow : Application() {
 				MainWindow.instance.stage.y = event.screenY-moveYinit
 			}
 
-
+			primaryStage.minHeight = 140.0
+			primaryStage.minWidth = 250.0
 
 			configPane.setOnMousePressed { event ->
 				moveXinit = event.x.toInt()+3
@@ -196,8 +201,8 @@ class MainWindow : Application() {
 
 			configPane.onMouseDragged = EventHandler { event ->
 				if (isMovingOnCorner) {
-					MainWindow.instance.stage.width = resizeXStartSize+(event.screenX)-resizeXinit.toInt()
-					MainWindow.instance.stage.height = resizeYStartSize+(event.screenY)-resizeYinit.toInt()
+					MainWindow.instance.stage.setWidthWithMin = resizeXStartSize+(event.screenX)-resizeXinit.toInt()
+					MainWindow.instance.stage.setHeightWithMin = resizeYStartSize+(event.screenY)-resizeYinit.toInt()
 				} else {
 					MainWindow.instance.stage.x = event.screenX-moveXinit
 					MainWindow.instance.stage.y = event.screenY-moveYinit
@@ -226,8 +231,8 @@ class MainWindow : Application() {
 
 			rootPane.onMouseDragged = EventHandler { event ->
 				if (isMovingOnCorner) {
-					MainWindow.instance.stage.width = resizeXStartSize+(event.screenX)-resizeXinit.toInt()
-					MainWindow.instance.stage.height = resizeYStartSize+(event.screenY)-resizeYinit.toInt()
+					MainWindow.instance.stage.setWidthWithMin = resizeXStartSize+(event.screenX)-resizeXinit.toInt()
+					MainWindow.instance.stage.setHeightWithMin = resizeYStartSize+(event.screenY)-resizeYinit.toInt()
 				} else {
 					/*MainWindow.instance.stage.x = event.screenX-moveXinit
 					MainWindow.instance.stage.y = event.screenY-moveYinit
@@ -611,3 +616,21 @@ class MainWindow : Application() {
 	}
 
 }
+
+var Stage.setWidthWithMin: Double
+	get() {return this.width}
+	set(it: Double) {
+		if (it >= mainWinMinWidth)
+			this.width = it
+		else
+			this.width = mainWinMinWidth
+	}
+
+var Stage.setHeightWithMin: Double
+	get() {return this.height}
+	set(it: Double) {
+		if (it >= mainWinMinHeight)
+			this.height = it
+		else
+			this.height = mainWinMinHeight
+	}

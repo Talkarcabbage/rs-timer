@@ -76,7 +76,7 @@ class NewTimerModel {
 
 		//------------------Duration---------------//
 		if (duration <= 0) {
-			duration = 1
+			duration = 1000
 		}
 
 		//------------------Name-------------------//

@@ -18,6 +18,7 @@ import io.github.talkarcabbage.logger.LoggerManager
  */
 object ConfigManager {
 
+	private var lastSave = 0L
 	private val CONFIGFILENAME = "rs-timer-config.cfg"
 	private val logger = LoggerManager.getInstance().getLogger("ConfigManager")
 
@@ -75,6 +76,15 @@ object ConfigManager {
 
 	@Synchronized
 	fun save() {
+		logger.fine {
+			val executingMethod = Exception().stackTrace[5]
+			"An attempt to save has been made by $executingMethod"
+		}
+		if (System.currentTimeMillis() - lastSave < 500) {
+			logger.fine{"Something tried to save the configuration too soon! Discarding the save attempt."}
+			return
+		}
+		lastSave = System.currentTimeMillis()
 		logger.config("Saving configuration file")
 		val prop = Properties()
 		prop.setProperty("defaultTabName", defaultTabName)

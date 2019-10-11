@@ -2,22 +2,22 @@ package io.github.talkarcabbage.rstimer.newtimers
 
 class Hourly : NewTimer {
 
-	var duration: Long = 0
-		internal set
+	var hourStart: Long = 0
+	var hourDelay: Long = 0
 
-	override// TODO Auto-generated method stub
+	override
 	val timerTypeString: String
-		get() = ""
+		get() = "Hourly"
 
-	override// TODO Auto-generated method stub
+	override
 	val tooltipText: String
-		get() = ""
+		get() = "Hourly Timer\n${formatTimeRemaining(timeRemaining)}"
 
-	override// TODO Auto-generated method stub
+	override
 	val percentageComplete: Int
-		get() = 0
+		get() = ((System.currentTimeMillis()-hourStart).toDouble()/(hourDelay * HOUR_LENGTH_MILLIS)*100).toInt()
 
-	override// TODO Auto-generated method stub
+	override
 	val timeRemaining: Long
 		get() = 0
 
@@ -27,16 +27,27 @@ class Hourly : NewTimer {
 
 	constructor(dataMap: Map<String, String>) : super(dataMap) {
 		throw UnsupportedOperationException("Not yet implemented")
+		for ((key, value) in dataMap) {
+			when (key) {
+				MAP_HOUR_DELAY -> hourDelay = value.toLong()
+				MAP_HOUR_START -> hourStart = value.toLong()
+			}
+		}
 	}
 
 	override fun resetTimer() {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	override fun resetTimerComplete() {
-		// TODO Auto-generated method stub
 
+
+	}
+
+	companion object {
+		const val MAP_HOUR_DELAY = "HourDelay"
+		const val MAP_HOUR_START = "HourStart"
 	}
 
 }

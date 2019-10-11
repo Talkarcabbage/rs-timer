@@ -187,8 +187,6 @@ class NewTimerModel {
 		fun getDurationIfFieldExists(timer: NewTimer): Long {
 			if (timer is Standard) {
 				return timer.duration
-			} else if (timer is Hourly) {
-				return timer.duration
 			}
 			return 0
 

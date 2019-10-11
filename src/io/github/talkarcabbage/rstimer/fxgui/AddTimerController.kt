@@ -22,11 +22,7 @@ import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
-import javafx.scene.control.Button
-import javafx.scene.control.CheckBox
-import javafx.scene.control.ComboBox
-import javafx.scene.control.TextField
-import javafx.scene.control.TextFormatter
+import javafx.scene.control.*
 import javafx.stage.Stage
 import javafx.util.converter.IntegerStringConverter
 
@@ -98,8 +94,9 @@ class AddTimerController {
 				STANDARD,
 				DAILY,
 				WEEKLY,
-				MONTHLY,
-				HOURLY)
+				MONTHLY
+				//HOURLY TODO
+		)
 		typeComboBox!!.value = STANDARD
 		return newStage
 	}
@@ -358,6 +355,23 @@ class AddTimerController {
 			this.minutesTextField!!.text = 0.toString()
 			this.secondsTextField!!.text = 0.toString()
 		}
+	}
+
+	/**
+	 * This is mainly for hourly timers.
+	 */
+	fun showNumberEntryDialog(text: String): Long {
+		var theResult = "0"
+		val inputDialog = TextInputDialog()
+		inputDialog.contentText = text
+		inputDialog.editor.textFormatter = TextFormatter(IntegerStringConverter())
+		inputDialog.editor.text = "0"
+		inputDialog.headerText = null
+		inputDialog.title = "Timer Data"
+		inputDialog.showAndWait()
+				.filter {""!=it}
+				.ifPresent { theResult=it }
+		return theResult.toLong()
 	}
 
 	companion object {

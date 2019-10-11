@@ -143,6 +143,7 @@ abstract class NewTimer {
 
 		val DAY_LENGTH_MILLIS: Long = 86400000
 		val WEEK_LENGTH_MILLIS: Long = 604800000
+		val HOUR_LENGTH_MILLIS: Long = 3600000
 		internal var logger = LoggerManager.getInstance().getLogger("Timer")
 
 		const val MAP_NAME = "name"

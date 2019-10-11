@@ -4,6 +4,7 @@ import java.util.ArrayList
 import java.util.logging.Level
 
 import com.google.common.collect.BiMap
+import com.sun.org.apache.bcel.internal.util.SecuritySupport.getResourceAsStream
 
 import io.github.talkarcabbage.logger.LoggerManager
 import io.github.talkarcabbage.rstimer.FXController
@@ -16,19 +17,13 @@ import javafx.application.Application
 import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.geometry.HPos
+import javafx.geometry.VPos
 import javafx.scene.Scene
-import javafx.scene.control.Alert
+import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
-import javafx.scene.control.Button
 import javafx.scene.control.ButtonBar.ButtonData
-import javafx.scene.control.ButtonType
-import javafx.scene.control.Dialog
-import javafx.scene.control.Slider
-import javafx.scene.control.Tab
-import javafx.scene.control.TabPane
-import javafx.scene.control.TextFormatter
-import javafx.scene.control.TextInputDialog
-import javafx.scene.control.ToggleButton
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseDragEvent
 import javafx.scene.input.MouseEvent
@@ -66,6 +61,8 @@ class MainWindow : Application() {
 	internal var resizeXStartSize: Int = 0
 	internal var resizeYStartSize: Int = 0
 
+	internal var xBottomRightDist = 0.0
+	internal var yBottomRightDist = 0.0
 	internal var isMovingOnCorner = false
 
 	internal lateinit var stage: Stage
@@ -122,8 +119,9 @@ class MainWindow : Application() {
 			val minusButtonColumn2 = ColumnConstraints(15.0)
 			val aotCheckboxColumn3 = ColumnConstraints(15.0)
 			val aotSliderColumn4 = ColumnConstraints(20.0, 100.0, java.lang.Double.MAX_VALUE)
+			val cornerGripColumn5 = ColumnConstraints(14.0, 14.0, 14.0)
 			aotSliderColumn4.hgrow = Priority.ALWAYS
-			configPane.columnConstraints.addAll(plusButtonColumn1, minusButtonColumn2, aotCheckboxColumn3, aotSliderColumn4)
+			configPane.columnConstraints.addAll(plusButtonColumn1, minusButtonColumn2, aotCheckboxColumn3, aotSliderColumn4, cornerGripColumn5)
 
 			tabPane = TabPane()
 
@@ -141,16 +139,23 @@ class MainWindow : Application() {
 			val transSlider = Slider(0.0, 1.0, 0.5)
 			transSlider.id = "transSlider"
 			transSlider.maxWidth = 100.0
+			val cornerGripImage = Image(javaClass.getResourceAsStream("/images/cornerGrip.gif"))
+			val cornerGrip = Label("", ImageView(cornerGripImage))
+			cornerGrip.id = "cornerGrip"
+			cornerGrip.maxWidth = 14.0
 
 			GridPane.setHalignment(plusButton, HPos.LEFT)
 			GridPane.setHalignment(minusButton, HPos.LEFT)
 			GridPane.setHalignment(aotButton, HPos.RIGHT)
 			GridPane.setHalignment(transSlider, HPos.RIGHT)
+			GridPane.setHalignment(cornerGrip, HPos.RIGHT)
+			GridPane.setValignment(cornerGrip, VPos.BOTTOM)
 
 			configPane.add(plusButton, 0, 0)
 			configPane.add(minusButton, 1, 0)
 			configPane.add(aotButton, 2, 0)
 			configPane.add(transSlider, 3, 0)
+			configPane.add(cornerGrip, 4, 0)
 
 			plusButton.onMouseClicked = EventHandler { this.onPlusClicked(it) }
 			plusButton.onMouseDragReleased = EventHandler<MouseDragEvent> { this.onPlusClicked(it) }
@@ -196,7 +201,9 @@ class MainWindow : Application() {
 				resizeYinit = event.screenY.toInt()
 				resizeXStartSize = stage.width.toInt()
 				resizeYStartSize = stage.height.toInt()
-				isMovingOnCorner = (this.stage.width-(resizeXinit-this.stage.x)<12 && this.stage.height-(resizeYinit-this.stage.y)<12)
+				xBottomRightDist = this.stage.width-(resizeXinit-this.stage.x)
+				yBottomRightDist = this.stage.height-(resizeYinit-this.stage.y)
+				isMovingOnCorner = (xBottomRightDist<20 && xBottomRightDist>3 && yBottomRightDist<22 && yBottomRightDist>3)
 			} //jank
 
 			configPane.onMouseDragged = EventHandler { event ->
@@ -218,7 +225,9 @@ class MainWindow : Application() {
 			}
 
 			rootPane.setOnMousePressed { event ->
-				isMovingOnCorner = (this.stage.width-(resizeXinit-this.stage.x)<12 && this.stage.height-(resizeYinit-this.stage.y)<12)
+				xBottomRightDist = this.stage.width-(resizeXinit-this.stage.x)
+				yBottomRightDist = this.stage.height-(resizeYinit-this.stage.y)
+				isMovingOnCorner = (xBottomRightDist<20 && xBottomRightDist>3 && yBottomRightDist<22 && yBottomRightDist>3)
 				if (!isMovingOnCorner) return@setOnMousePressed
 				moveXinit = event.x.toInt()+3
 				moveYinit = event.y.toInt()+tabPane.height.toInt()+3
@@ -226,7 +235,9 @@ class MainWindow : Application() {
 				resizeYinit = event.screenY.toInt()
 				resizeXStartSize = stage.width.toInt()
 				resizeYStartSize = stage.height.toInt()
-				isMovingOnCorner = (this.stage.width-(resizeXinit-this.stage.x)<12 && this.stage.height-(resizeYinit-this.stage.y)<12)
+				xBottomRightDist = this.stage.width-(resizeXinit-this.stage.x)
+				yBottomRightDist = this.stage.height-(resizeYinit-this.stage.y)
+				isMovingOnCorner = (xBottomRightDist<20 && xBottomRightDist>3 && yBottomRightDist<22 && yBottomRightDist>3)
 			}
 
 			rootPane.onMouseDragged = EventHandler { event ->

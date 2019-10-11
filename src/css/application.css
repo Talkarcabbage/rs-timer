@@ -85,14 +85,14 @@
 .gridPane {
 	-fx-border-color: #2E3A41 #2E3A41 #585858 #2E3A41;
 	-fx-border-width: 1px;
-	-fx-padding: 5px;	
+	-fx-padding: 5px;
 	-fx-background-color: #070f14;
 }
 
 .configPane {
 	-fx-border-color: #6B6C6C #2E3A41 #2E3A41 #2E3A41;
 	-fx-border-width: 1px;
-	-fx-padding: 1px 4px;
+	-fx-padding: 1px 1px 1px 4px;
 }
 
 #plusButton, #minusButton, #aotButton {
@@ -171,6 +171,11 @@
 	-fx-border-image-repeat: stretch stretch;
 	-fx-min-height: 11px;
 	-fx-pref-height: 11px;
+}
+
+#cornerGrip {
+    -fx-cursor: NW_RESIZE;
+    -fx-alignment: bottom-right;
 }
 
 .tooltip {

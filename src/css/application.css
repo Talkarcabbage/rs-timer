@@ -22,6 +22,10 @@
 	-fx-pref-height: 21px;
 }
 
+.tab:hover {
+    -fx-border-image-source: url("/images/inactiveTabBackgroundHover.png");
+}
+
 .tab .tab-label {
 	-fx-text-fill: #d5d5d5;
 	-fx-font-family: 'Open Sans', sans-serif;
@@ -32,6 +36,10 @@
 	-fx-border-image-source: url("/images/activeTabBackground.png");
 	-fx-min-height: 22px;
 	-fx-pref-height: 22px;
+}
+
+.tab:selected:hover {
+    -fx-border-image-source: url("/images/activeTabBackgroundHover.png");
 }
 
 .tab-pane {

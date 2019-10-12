@@ -18,6 +18,7 @@ import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.geometry.HPos
 import javafx.geometry.VPos
+import javafx.scene.Cursor
 import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
@@ -187,8 +188,13 @@ class MainWindow : Application() {
 			transSlider.setOnMouseReleased { ConfigManager.save() }
 
 			tabPane.onMouseDragged = EventHandler { event ->
+				this.stage.scene.setCursor(Cursor.MOVE)
 				MainWindow.instance.stage.x = event.screenX-moveXinit
 				MainWindow.instance.stage.y = event.screenY-moveYinit
+			}
+
+			tabPane.onMouseReleased = EventHandler {
+				this.stage.scene.setCursor(Cursor.DEFAULT)
 			}
 
 			primaryStage.minHeight = 140.0
@@ -211,12 +217,14 @@ class MainWindow : Application() {
 					MainWindow.instance.stage.setWidthWithMin = resizeXStartSize+(event.screenX)-resizeXinit.toInt()
 					MainWindow.instance.stage.setHeightWithMin = resizeYStartSize+(event.screenY)-resizeYinit.toInt()
 				} else {
+					this.stage.scene.setCursor(Cursor.MOVE)
 					MainWindow.instance.stage.x = event.screenX-moveXinit
 					MainWindow.instance.stage.y = event.screenY-moveYinit
 				}
 			}
 
 			configPane.onMouseReleased = EventHandler {
+				this.stage.scene.setCursor(Cursor.DEFAULT)
 				if (ConfigManager.saveGuiResizes) {
 					ConfigManager.winWidth = stage.width.toInt()
 					ConfigManager.winHeight = stage.height.toInt()
@@ -245,6 +253,7 @@ class MainWindow : Application() {
 					MainWindow.instance.stage.setWidthWithMin = resizeXStartSize+(event.screenX)-resizeXinit.toInt()
 					MainWindow.instance.stage.setHeightWithMin = resizeYStartSize+(event.screenY)-resizeYinit.toInt()
 				} else {
+					this.stage.scene.setCursor(Cursor.MOVE)
 					/*MainWindow.instance.stage.x = event.screenX-moveXinit
 					MainWindow.instance.stage.y = event.screenY-moveYinit
 					 */
@@ -252,6 +261,7 @@ class MainWindow : Application() {
 			}
 
 			rootPane.setOnMouseReleased {
+				this.stage.scene.setCursor(Cursor.DEFAULT)
 				if (!it.isConsumed) {
 					minusButton.isSelected = false
 				}

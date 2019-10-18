@@ -32,5 +32,6 @@
     <orderEntry type="library" name="guava-20.0" level="project" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
     <orderEntry type="library" name="junit:junit:4.12" level="project" />
+    <orderEntry type="library" name="tornadofx-1.7.19" level="project" />
   </component>
 </module>

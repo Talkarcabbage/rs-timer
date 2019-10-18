@@ -112,6 +112,9 @@ class AddTimerController {
 	protected fun onClickCreateButton(event: ActionEvent) {
 		logger.info("OnClickCreateButton fired")
 		stage.hide()
+		if (MainWindow.instance.tabList.isEmpty()) {
+			MainWindow.instance.addDefaultTab()
+		}
 		if (editedTimer==null) { //TODO new timers
 			if (""==nameTextField!!.text) {
 				logger.warning("Timer name must not be empty! Setting to space")

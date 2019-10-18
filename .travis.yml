@@ -1,5 +1,6 @@
 language: java
 jdk: oraclejdk8
+dist: trusty
 script: ant dist
 deploy:
   provider: releases

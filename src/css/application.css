@@ -1,8 +1,42 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
 .main-root {
+	-fx-background-color: transparent;
+	-fx-padding: 0px;
+}
+
+.dragPane {
+    -fx-min-height: 12px;
+    -fx-pref-height: 12px;
+    -fx-max-height: 12px;
+}
+
+#dragPaneLeft {
+    -fx-background-image: url("/images/dragBarLeft.png");
+}
+
+#dragPaneMiddle {
+    -fx-background-image: url("/images/dragBarMiddle.png");
+}
+
+#dragPaneClose {
+    -fx-background-image: url("/images/dragBarClose.png");
+    -fx-padding: 0;
+    -fx-pref-height: 12px;
+    -fx-pref-width: 12px;
+}
+
+#dragPaneClose:hover {
+    -fx-background-image: url("/images/dragBarCloseHover.png");
+}
+
+#dragPaneClose:pressed {
+    -fx-background-image: url("/images/dragBarClosePressed.png");
+}
+
+#mainPane {
 	-fx-border-color: #152229, #222D35;
-	-fx-border-width: 3px, 1px;
+	-fx-border-width: 0 3px 3px 3px, 0 1px 1px 1px;
 	-fx-background-color: #070f14;
 	-fx-padding: 0px;
 }

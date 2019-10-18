@@ -18,7 +18,6 @@ import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.geometry.HPos
 import javafx.geometry.VPos
-import javafx.scene.Cursor
 import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
@@ -28,11 +27,8 @@ import javafx.scene.image.ImageView
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseDragEvent
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.BorderPane
-import javafx.scene.layout.ColumnConstraints
-import javafx.scene.layout.GridPane
-import javafx.scene.layout.Priority
-import javafx.scene.layout.RowConstraints
+import javafx.scene.layout.*
+import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.converter.IntegerStringConverter
@@ -105,15 +101,58 @@ class MainWindow : Application() {
 			AddTimerController.createRoot()
 			instance = this //NOSONAR
 			stage = primaryStage
+
+			// Define rootPane
 			val rootPane = BorderPane()
 			val scene = Scene(rootPane, ConfigManager.winWidth.toDouble(), ConfigManager.winHeight.toDouble())
 			scene.stylesheets.add(javaClass.getResource("/css/application.css").toExternalForm())
 			primaryStage.scene = scene
-			primaryStage.initStyle(StageStyle.UNDECORATED)
+			primaryStage.initStyle(StageStyle.TRANSPARENT)
+			scene.setFill(Color.TRANSPARENT);
 			rootPane.id = "win"
 
 			scene.root.styleClass.add("main-root")
 
+			// Define dragPane
+			val dragPane = GridPane()
+			val dragPaneLeftColumn1 = ColumnConstraints(9.0)
+			val dragPaneMiddleColumn2 = ColumnConstraints(10.0, 100.0, java.lang.Double.MAX_VALUE)
+			val dragPaneCloseColumn3 = ColumnConstraints(12.0)
+			dragPaneMiddleColumn2.hgrow = Priority.ALWAYS
+			dragPane.columnConstraints.addAll(dragPaneLeftColumn1, dragPaneMiddleColumn2, dragPaneCloseColumn3)
+			dragPane.styleClass.add("dragPane")
+
+			// Define mainPane
+			val mainPane = BorderPane()
+			mainPane.id = "mainPane"
+
+			// rootPane contents
+			rootPane.top = dragPane
+			rootPane.center = mainPane
+
+			// dragPane contents
+
+			val dragPaneLeft = Pane()
+			dragPaneLeft.id = "dragPaneLeft"
+
+			val dragPaneMiddle = Pane()
+			dragPaneMiddle.id = "dragPaneMiddle"
+
+			val dragPaneClose = Button()
+			dragPaneClose.id = "dragPaneClose"
+
+			GridPane.setHalignment(dragPaneLeft, HPos.LEFT)
+			GridPane.setHalignment(dragPaneMiddle, HPos.LEFT)
+			GridPane.setHalignment(dragPaneClose, HPos.RIGHT)
+
+			dragPane.add(dragPaneLeft, 0, 0)
+			dragPane.add(dragPaneMiddle, 1, 0)
+			dragPane.add(dragPaneClose, 2, 0)
+
+			// Define tabPane
+			tabPane = TabPane()
+
+			// Define configPane
 			val configPane = GridPane()
 			configPane.hgap = 3.0
 			val plusButtonColumn1 = ColumnConstraints(15.0)
@@ -123,13 +162,9 @@ class MainWindow : Application() {
 			val cornerGripColumn5 = ColumnConstraints(14.0, 14.0, 14.0)
 			aotSliderColumn4.hgrow = Priority.ALWAYS
 			configPane.columnConstraints.addAll(plusButtonColumn1, minusButtonColumn2, aotCheckboxColumn3, aotSliderColumn4, cornerGripColumn5)
-
-			tabPane = TabPane()
-
-			rootPane.bottom = configPane
-			rootPane.center = tabPane
-
 			configPane.styleClass.add("configPane")
+
+			// configPane contents
 
 			val plusButton = Button()
 			plusButton.id = "plusButton"
@@ -158,6 +193,14 @@ class MainWindow : Application() {
 			configPane.add(transSlider, 3, 0)
 			configPane.add(cornerGrip, 4, 0)
 
+			// mainPane contents
+			mainPane.center = tabPane
+			mainPane.bottom = configPane
+
+			// Event handlers
+
+			dragPaneClose.onMouseClicked = EventHandler { System.exit(0) }
+
 			plusButton.onMouseClicked = EventHandler { this.onPlusClicked(it) }
 			plusButton.onMouseDragReleased = EventHandler<MouseDragEvent> { this.onPlusClicked(it) }
 
@@ -177,32 +220,12 @@ class MainWindow : Application() {
 			transSlider.value = ConfigManager.transparency
 			setTransparency(transSlider.value)
 
-
-			transSlider.style += "-fx-border-insets: 32px; -fx-background-insets: 32px; -fx-padding-right: 32px;"
-
-			tabPane.setOnMousePressed { event ->
-				moveXinit = event.x.toInt()+3
-				moveYinit = event.y.toInt()+3
-			}
-
 			transSlider.setOnMouseReleased { ConfigManager.save() }
-
-			tabPane.onMouseDragged = EventHandler { event ->
-				this.stage.scene.setCursor(Cursor.MOVE)
-				MainWindow.instance.stage.x = event.screenX-moveXinit
-				MainWindow.instance.stage.y = event.screenY-moveYinit
-			}
-
-			tabPane.onMouseReleased = EventHandler {
-				this.stage.scene.setCursor(Cursor.DEFAULT)
-			}
 
 			primaryStage.minHeight = 140.0
 			primaryStage.minWidth = 250.0
 
 			configPane.setOnMousePressed { event ->
-				moveXinit = event.x.toInt()+3
-				moveYinit = event.y.toInt()+tabPane.height.toInt()+3
 				resizeXinit = event.screenX.toInt()
 				resizeYinit = event.screenY.toInt()
 				resizeXStartSize = stage.width.toInt()
@@ -216,15 +239,28 @@ class MainWindow : Application() {
 				if (isMovingOnCorner) {
 					MainWindow.instance.stage.setWidthWithMin = resizeXStartSize+(event.screenX)-resizeXinit.toInt()
 					MainWindow.instance.stage.setHeightWithMin = resizeYStartSize+(event.screenY)-resizeYinit.toInt()
-				} else {
-					this.stage.scene.setCursor(Cursor.MOVE)
-					MainWindow.instance.stage.x = event.screenX-moveXinit
-					MainWindow.instance.stage.y = event.screenY-moveYinit
 				}
 			}
 
 			configPane.onMouseReleased = EventHandler {
-				this.stage.scene.setCursor(Cursor.DEFAULT)
+				if (ConfigManager.saveGuiResizes) {
+					ConfigManager.winWidth = stage.width.toInt()
+					ConfigManager.winHeight = stage.height.toInt()
+					ConfigManager.save()
+				}
+			}
+
+			dragPane.setOnMousePressed { event ->
+				moveXinit = event.x.toInt()
+				moveYinit = event.y.toInt()
+			}
+
+			dragPane.onMouseDragged = EventHandler { event ->
+				MainWindow.instance.stage.x = event.screenX-moveXinit
+				MainWindow.instance.stage.y = event.screenY-moveYinit
+			}
+
+			dragPane.onMouseReleased = EventHandler {
 				if (ConfigManager.saveGuiResizes) {
 					ConfigManager.winWidth = stage.width.toInt()
 					ConfigManager.winHeight = stage.height.toInt()
@@ -252,16 +288,10 @@ class MainWindow : Application() {
 				if (isMovingOnCorner) {
 					MainWindow.instance.stage.setWidthWithMin = resizeXStartSize+(event.screenX)-resizeXinit.toInt()
 					MainWindow.instance.stage.setHeightWithMin = resizeYStartSize+(event.screenY)-resizeYinit.toInt()
-				} else {
-					this.stage.scene.setCursor(Cursor.MOVE)
-					/*MainWindow.instance.stage.x = event.screenX-moveXinit
-					MainWindow.instance.stage.y = event.screenY-moveYinit
-					 */
 				}
 			}
 
 			rootPane.setOnMouseReleased {
-				this.stage.scene.setCursor(Cursor.DEFAULT)
 				if (!it.isConsumed) {
 					minusButton.isSelected = false
 				}

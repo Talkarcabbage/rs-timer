@@ -10,6 +10,7 @@ import io.github.talkarcabbage.logger.LoggerManager
 import io.github.talkarcabbage.rstimer.FXController
 import io.github.talkarcabbage.rstimer.Timer
 import io.github.talkarcabbage.rstimer.newtimers.NewTimer
+import io.github.talkarcabbage.rstimer.newtimers.Standard
 import io.github.talkarcabbage.rstimer.persistence.ConfigManager
 import io.github.talkarcabbage.rstimer.persistence.LoadManager
 import io.github.talkarcabbage.rstimer.persistence.SaveManager
@@ -326,6 +327,8 @@ class MainWindow : Application() {
 				FXController.instance.loadNewTimers()
 			}
 
+			FXController.instance.addDefaultTimersIfNeeded()
+
 			patNew = ProgressAnimNewTimer(FXController.instance.newTimerMap)
 			patNew.start()
 
@@ -610,7 +613,6 @@ class MainWindow : Application() {
 		} else if (minusButton.isSelected && event.button==MouseButton.PRIMARY) { //Remove timer
 			FXController.instance.removeNewTimer(pane)
 			minusButton.isSelected = false
-			//TODO new remove method for new timers and decouple : FXController.instance.removeTimer(pane);
 		} else if (event.button==MouseButton.SECONDARY) { //Reset timer as complete
 			FXController.instance.resetNewTimerComplete(pane)
 		} else { //Reset timer as incomplete
@@ -618,52 +620,48 @@ class MainWindow : Application() {
 		}
 	}
 
+	internal val logger = LoggerManager.getInstance().getLogger("FXWin")
+
+	internal val GRID_PANE_CSS_CLASS = "gridPane"
+
+	//Used to set the style of the ColorProgress for a different completed-style.
+	internal val INCSTRING = "progress-bar-incomplete"
+	internal val COMSTRING = "progress-bar-complete"
+
+	/**
+	 * Creates and returns a tab to add to the GUI with the specified gridpane information and title
+	 * @param gridRows
+	 * @param gridColumns
+	 * @param name
+	 * @return
+	 */
+	fun createTab(gridRows: Int, gridColumns: Int, name: String): Tab {
+		val tab = TimerTab(name)
+		tab.isClosable = false
+		val gp = GridPane()
+		gp.hgap = 8.0
+		gp.vgap = 8.0
+		gp.styleClass.add(GRID_PANE_CSS_CLASS)
+
+		for (i in 0 until gridColumns) {
+			val cc = ColumnConstraints()
+			cc.hgrow = Priority.ALWAYS
+			gp.columnConstraints.add(cc)
+		}
+		for (i in 0 until gridRows) {
+			val rc = RowConstraints()
+			rc.vgrow = Priority.NEVER
+			gp.rowConstraints.add(rc)
+		}
+
+		tab.content = gp
+		gp.children.clear()
+		return tab
+
+	}
+
 	companion object {
-
-		internal val logger = LoggerManager.getInstance().getLogger("FXWin")
-
-		internal val GRID_PANE_CSS_CLASS = "gridPane"
 		lateinit var instance: MainWindow //NOSONAR
-
-		//Used to set the style of the ColorProgress for a different completed-style.
-		internal val INCSTRING = "progress-bar-incomplete"
-		internal val COMSTRING = "progress-bar-complete"
-		@JvmStatic
-		fun launchWrap(args: Array<String>) {
-			Application.launch(MainWindow::class.java, *args)
-		}
-
-		/**
-		 * Creates and returns a tab to add to the GUI with the specified gridpane information and title
-		 * @param gridRows
-		 * @param gridColumns
-		 * @param name
-		 * @return
-		 */
-		fun createTab(gridRows: Int, gridColumns: Int, name: String): Tab {
-			val tab = TimerTab(name)
-			tab.isClosable = false
-			val gp = GridPane()
-			gp.hgap = 8.0
-			gp.vgap = 8.0
-			gp.styleClass.add(GRID_PANE_CSS_CLASS)
-
-			for (i in 0 until gridColumns) {
-				val cc = ColumnConstraints()
-				cc.hgrow = Priority.ALWAYS
-				gp.columnConstraints.add(cc)
-			}
-			for (i in 0 until gridRows) {
-				val rc = RowConstraints()
-				rc.vgrow = Priority.NEVER
-				gp.rowConstraints.add(rc)
-			}
-
-			tab.content = gp
-			gp.children.clear()
-			return tab
-
-		}
 	}
 
 }

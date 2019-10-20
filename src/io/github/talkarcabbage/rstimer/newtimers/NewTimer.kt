@@ -74,7 +74,7 @@ abstract class NewTimer {
 	 */
 	abstract val timeRemaining: Long
 
-	constructor(name: String, tabID: Int, audio: Boolean) { //TODO consider if worth to add autoreset since method mostly unused
+	constructor(name: String, tabID: Int, audio: Boolean) {
 		this.name = name
 		this.tab = tabID
 		this.audio = audio

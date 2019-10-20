@@ -61,17 +61,17 @@ class ProgressPane : StackPane() { //NOSONAR
 		val oldProgress = bar.progress
 		val newProgress = value.toDouble()/100
 		if (oldProgress < 1 && newProgress >= 1) { //Timer just completed
-			bar.setTrackStyleClass(MainWindow.COMSTRING)
+			bar.setTrackStyleClass(MainWindow.instance.COMSTRING)
 			logger.finer("Progress set from incomplete to complete")
 		} else if (oldProgress >= 1 && newProgress < 1) {
 			logger.finer("Progress set from complete to incomplete")
-			bar.setTrackStyleClass(MainWindow.INCSTRING)
+			bar.setTrackStyleClass(MainWindow.instance.INCSTRING)
 		}
 		this.bar.progress = newProgress
 	}
 
 	internal fun initBarStyle() {
-		bar.setTrackStyleClass(MainWindow.INCSTRING)
+		bar.setTrackStyleClass(MainWindow.instance.INCSTRING)
 	}
 
 	companion object {

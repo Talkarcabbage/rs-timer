@@ -59,7 +59,7 @@ object LoadManager {
 					index++
 				}
 
-				returnTabList.add(MainWindow.createTab(newTabRows, newTabColumns, newTabName))
+				returnTabList.add(MainWindow.instance.createTab(newTabRows, newTabColumns, newTabName))
 				index++
 			} else if (fileInput[index].trim { it <= ' ' }=="};") {
 				break
@@ -165,7 +165,7 @@ object LoadManager {
 
 	fun getTimerDataMapFromList(list: List<String>): Map<String, String> {
 		val map = HashMap<String, String>(8)
-		var listEntry = ""
+		var listEntry: String
 		for (i in 1 until list.size) { //NOSONAR Both break and continue are important for flow here. Thanks anyway sonar.
 			listEntry = list[i]
 			if (listEntry.trim { it <= ' ' }=="}") {

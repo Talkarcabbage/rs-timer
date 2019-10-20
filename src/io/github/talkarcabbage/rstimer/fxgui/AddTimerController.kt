@@ -68,7 +68,7 @@ class AddTimerController {
 	/**
 	 * New timer
 	 */
-	internal var editedNewTimer: NewTimer? = null //TODO
+	internal var editedNewTimer: NewTimer? = null
 
 	/**
 	 * This constructor is called internally by the JavaFX loader when createRoot is called and it should not be called manually.
@@ -103,19 +103,19 @@ class AddTimerController {
 
 	/**
 	 * Handles what happens when the **create** button is clicked on the FXML create-timer gui
-	 * TODO: New Timer Models
 	 * TODO: Make the controller handle more of this stuff. Too much logic
 	 * happening in the creation gui.
 	 * @param event
 	 */
 	@FXML
+	@Suppress("UNUSED_PARAMETER")
 	protected fun onClickCreateButton(event: ActionEvent) {
 		logger.info("OnClickCreateButton fired")
 		stage.hide()
 		if (MainWindow.instance.tabList.isEmpty()) {
 			MainWindow.instance.addDefaultTab()
 		}
-		if (editedTimer==null) { //TODO new timers
+		if (editedTimer==null) {
 			if (""==nameTextField!!.text) {
 				logger.warning("Timer name must not be empty! Setting to space")
 				nameTextField!!.text = " "
@@ -139,7 +139,6 @@ class AddTimerController {
 			} else {
 				logger.warning("An error occured during editing: the updated timer was null")
 			}
-			//TODO editing
 		}
 	}
 
@@ -147,7 +146,7 @@ class AddTimerController {
 		val model = NewTimerModel.getModelFromControllerData(this.nameTextField!!.text, this.typeComboBox!!.value, daysTextField!!.text, hoursTextField!!.text, minutesTextField!!.text, secondsTextField!!.text, alarmCheckBox!!.isSelected, resetCheckBox!!.isSelected)
 		var theNewTimer: NewTimer? = null
 		val dataMap = model.asDataMap().toMutableMap()
-		dataMap[NewTimer.MAP_TAB] = ""+MainWindow.instance.currentTab //TODO find a more reliable way to get this or modalblock
+		dataMap[NewTimer.MAP_TAB] = ""+MainWindow.instance.currentTab
 
 		when (model.timerType) {
 			TimerModelType.DAILY -> theNewTimer = Daily(dataMap)
@@ -194,11 +193,13 @@ class AddTimerController {
 	 * @param event
 	 */
 	@FXML
+	@Suppress("UNUSED_PARAMETER")
 	protected fun onClickCancelButton(event: ActionEvent) {
 		stage.hide()
 	}
 
 	@FXML
+	@Suppress("UNUSED_PARAMETER")
 	protected fun typeComboChanged(event: ActionEvent) {
 		if (typeComboBox?.value==STANDARD) {
 			setTimeFieldsEnabled(true)
@@ -246,22 +247,6 @@ class AddTimerController {
 			TimerModelType.HOURLY -> TODO()
 			else -> logger.warning("Unknown timer type edited!")
 		}
-
-		/*
-		when (timer.timerType) {
-			Timer.TimerType.STANDARD -> setEditStandardTimer()
-			Timer.TimerType.PERIODIC //NOSONAR
-			-> if (timer.duration==Timer.DAY_LENGTH) {
-				setEditDailyTimer()
-			} else if (timer.duration==Timer.WEEK_LENGTH) {
-				setEditWeeklyTimer()
-			} else {
-				logger.severe("Encountered an unrecognized periodic duration trying to initialize timer edit GUI values: "+timer.duration)
-			}
-			Timer.TimerType.MONTHLY -> setEditMonthlyTimer()
-
-		}
-		*/
 		stage.show()
 	}
 
@@ -272,7 +257,6 @@ class AddTimerController {
 	internal fun setControlsEdit() {
 		stage.title = "Edit Timer"
 		createButton!!.text = "Update"
-		//typeComboBox!!.isDisable = true
 	}
 
 	/**
@@ -415,14 +399,5 @@ class AddTimerController {
 				logger.warning("Tried to call createRoot after the instance has been initialized! This is a bug!")
 			}
 		}
-
-		/**
-		 *
-		 */
-		fun getUpdatedModel() {
-			val model = NewTimerModel()
-			//TODO idk what this method is for
-		}
 	}
-
 }

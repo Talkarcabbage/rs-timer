@@ -10,6 +10,7 @@ import io.github.talkarcabbage.rstimer.newtimers.NewTimer
 import io.github.talkarcabbage.rstimer.newtimers.Hourly
 import io.github.talkarcabbage.rstimer.newtimers.Standard
 import io.github.talkarcabbage.rstimer.newtimers.Weekly
+import java.time.Duration
 
 /**
  * This class provides an object representation of the data present on an add interface.
@@ -44,7 +45,7 @@ class NewTimerModel {
 
 	/**
 	 * Creates a new model and sets the model's values to those from the given Timer.
-	 * Method may be removed later if not necessary! //TODO: incomplete implementation
+	 * Method may be removed later if not necessary!
 	 * @param timer the timer
 	 */
 	constructor(timer: NewTimer) {
@@ -63,8 +64,9 @@ class NewTimerModel {
 			timerType = TimerModelType.NONE
 		}
 		name = timer.name
-
-
+		setDurationFromTimer(timer)
+		this.alarm = timer.audio
+		this.autoReset = timer.autoreset
 	}
 
 	/**
@@ -106,9 +108,16 @@ class NewTimerModel {
 		tempDuration += getLongForString(hours)*3600
 		tempDuration += getLongForString(days)*(NewTimer.DAY_LENGTH_MILLIS/1000)
 		tempDuration *= 1000
-
 		this.duration = tempDuration
 		sanitize()
+	}
+
+	fun setDurationFromTimer(timer: NewTimer) {
+		if (timer is Standard) {
+			this.duration = timer.duration
+		} else {
+			this.duration = 0
+		}
 	}
 
 	fun setTypeFromTypeString(text: String) {
@@ -168,7 +177,6 @@ class NewTimerModel {
 
 		private val logger = LoggerManager.getInstance().getLogger("TimerModel")
 
-		//TODO Custom audio options?
 		fun getModelFromControllerData(nameText: String, type: String, days: String, hours: String, minutes: String, seconds: String, alarm: Boolean, autoReset: Boolean): NewTimerModel {
 			val model = NewTimerModel()
 			model.name = nameText
@@ -178,7 +186,6 @@ class NewTimerModel {
 			model.autoReset = autoReset
 			return model
 		}
-
 
 		/**
 		 *

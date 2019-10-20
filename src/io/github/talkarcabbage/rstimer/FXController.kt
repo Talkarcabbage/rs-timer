@@ -22,6 +22,7 @@ import io.github.talkarcabbage.rstimer.fxgui.MainWindow
 import io.github.talkarcabbage.rstimer.fxgui.ProgressPane
 import io.github.talkarcabbage.rstimer.newtimers.*
 import io.github.talkarcabbage.rstimer.persistence.*
+import javafx.application.Application
 import javafx.application.Platform
 
 /**
@@ -72,7 +73,6 @@ class FXController internal constructor() {
 	 * @param name
 	 * @return
 	 */
-	@Deprecated("Legacy timer converter add func")
 	fun addLegacyTimer(startingTime: Long, duration: Long, tab: Int, timerType: TimerType, name: String) {
 		val legacyTimer: Timer
 		logger.info("Adding a legacy imported timer")
@@ -88,11 +88,6 @@ class FXController internal constructor() {
 			Timer.TimerType.MONTHLY -> {
 				logger.fine("Added a monthly timer")
 				legacyTimer = MonthlyTimer(startingTime, duration, name, tab)
-			}
-			else -> {
-				logger.severe { "Severe error occured trying to add a timer: the specified timer type was invalid: $timerType" }
-				legacyTimer = Timer(startingTime, duration, name
-						?: "ERROR", if (tab >= 0 && tab < MainWindow.instance.tabList.size) tab else 0)
 			}
 		}
 
@@ -116,7 +111,6 @@ class FXController internal constructor() {
 	}
 
 	//This is the old loading system. Has a lot of legacy in it.
-	@Deprecated("Marking this dep for now because it's all legacy")
 	fun loadLegacyTimers() {
 		if (File(SaveManager.SAVE_FILE_LOCATION).exists()) {
 			logger.info("Found an existing new timer file, skipping conversion!")
@@ -185,10 +179,6 @@ class FXController internal constructor() {
 		if (MainWindow.instance.tabList.isEmpty()) {
 			logger.info("Loaded no tabs! Adding a default first tab")
 			MainWindow.instance.addDefaultTab()
-		}
-		if (newTimerMap.isEmpty()) {
-			addNewTimerNoSave(Standard("Sample: 2m", 0, false, System.currentTimeMillis(), 120000))
-			addNewTimerNoSave(Standard("Sample: 60m", 0, false, System.currentTimeMillis(), 3600000))
 		}
 		this.saveTimers()
 	}
@@ -350,7 +340,7 @@ class FXController internal constructor() {
 
 		internal val logger = LoggerManager.getInstance().getLogger("FX Controller")
 
-		internal var trayIcon: TrayIcon? = null //TODO nullability safety
+		internal var trayIcon: TrayIcon? = null
 
 		val instance = FXController()
 
@@ -370,15 +360,14 @@ class FXController internal constructor() {
 			ConfigManager.save()
 			logger.fine("Attempting tray initialization")
 			instance.prepareSystemTray()
-			MainWindow.launchWrap(args)
+			Application.launch(MainWindow::class.java, *args)
 		}
 
 		private fun applyWindowIcon(taskBarIcon: ImageIcon) {
 			trayIcon = TrayIcon(taskBarIcon.image)
 			try {
-
 				SystemTray.getSystemTray().add(trayIcon)
-				trayIcon?.addActionListener { event -> Platform.runLater { MainWindow.instance.isVisible = !MainWindow.instance.isVisible } }
+				trayIcon?.addActionListener { Platform.runLater { MainWindow.instance.isVisible = !MainWindow.instance.isVisible } }
 				val trayMenu = PopupMenu("RS Timer")
 
 				val toggleVisibilityMenu = MenuItem("Toggle Window")
@@ -390,7 +379,7 @@ class FXController internal constructor() {
 				trayMenu.add(toggleVisibilityMenu)
 
 				val exitMenu = MenuItem("Exit")
-				exitMenu.addActionListener { e -> System.exit(0) }
+				exitMenu.addActionListener { System.exit(0) }
 				trayMenu.add(exitMenu)
 
 				trayIcon?.popupMenu = trayMenu
@@ -414,16 +403,18 @@ class FXController internal constructor() {
 			val timeSeconds = timeDuration/1000.0
 			return Math.round(Math.floor(timeSeconds/3600)).toString()+":"+Math.round(Math.floor(timeSeconds%3600/60).toLong().toFloat())+":"+Math.round(timeSeconds%60) //NOSONAR
 		}
-
-
 	}
 
+	fun addDefaultTimersIfNeeded() {
+		if (MainWindow.instance.tabList.isEmpty()) {
+			MainWindow.instance.addDefaultTab()
+		}
+		if (newTimerMap.isEmpty()) {
+			addNewTimerNoSave(Standard("Sample: 2m", 0, false, System.currentTimeMillis(), 120000))
+			addNewTimerNoSave(Standard("Sample: 60m", 0, false, System.currentTimeMillis(), 3600000))
+		}
 
-	/*public NewTimer updateTimer() { TODO
-		
 	}
-	*/
-
 }
 
 

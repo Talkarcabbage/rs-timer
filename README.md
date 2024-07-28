@@ -2,7 +2,6 @@ RuneScape Timer
 ========
 
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Talkarcabbage/rs-timer/blob/master/LICENSE)
-[![Build Status](https://travis-ci.com/Talkarcabbage/rs-timer.svg?branch=master)](https://travis-ci.com/Talkarcabbage/rs-timer)
 
 ![rs-timer-preview2](https://user-images.githubusercontent.com/2666891/67145781-3ce1cf00-f239-11e9-91f3-f6bb66f6a073.png)
 

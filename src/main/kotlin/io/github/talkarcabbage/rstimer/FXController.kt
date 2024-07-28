@@ -24,6 +24,7 @@ import io.github.talkarcabbage.rstimer.newtimers.*
 import io.github.talkarcabbage.rstimer.persistence.*
 import javafx.application.Application
 import javafx.application.Platform
+import java.util.*
 
 /**
  * The instance of this class controls the underlying logic of the program and
@@ -195,7 +196,7 @@ class FXController internal constructor() {
 	private fun loadTimerFromArray(timerInfo: Array<String>, processAsDouble: Boolean) {
 		if (!processAsDouble) { //Importing up to date data type (long)
 			logger.finer { "Up to date timer loaded: "+timerInfo[1]+" | "+timerInfo[2]+" | "+timerInfo[3]+" | "+timerInfo[4]+" | "+timerInfo[5]+" | " }
-			addLegacyTimer(java.lang.Long.parseLong(timerInfo[1]), java.lang.Long.parseLong(timerInfo[2]), Integer.parseInt(timerInfo[3]), TimerType.valueOf(timerInfo[4].toUpperCase()), timerInfo[5])
+			addLegacyTimer(java.lang.Long.parseLong(timerInfo[1]), java.lang.Long.parseLong(timerInfo[2]), Integer.parseInt(timerInfo[3]), TimerType.valueOf(timerInfo[4].toUp()), timerInfo[5])
 		} else { //Importing old (double) data type
 			logger.info { "Importing old timer data to long format: "+timerInfo[5] }
 			if ("true".equals(timerInfo[4], ignoreCase = true)) {
@@ -206,7 +207,7 @@ class FXController internal constructor() {
 				addLegacyTimer(java.lang.Double.parseDouble(timerInfo[1]).toLong(), java.lang.Double.parseDouble(timerInfo[2]).toLong(), Integer.parseInt(timerInfo[3]), TimerType.PERIODIC, timerInfo[5])
 			} else {
 				logger.info { "Converting double timer: "+timerInfo[1]+" | "+timerInfo[2]+" | "+timerInfo[3]+" | "+timerInfo[4]+" | "+timerInfo[5]+" | " }
-				addLegacyTimer(java.lang.Double.parseDouble(timerInfo[1]).toLong(), java.lang.Double.parseDouble(timerInfo[2]).toLong(), Integer.parseInt(timerInfo[3]), TimerType.valueOf(timerInfo[4].toUpperCase()), timerInfo[5])
+				addLegacyTimer(java.lang.Double.parseDouble(timerInfo[1]).toLong(), java.lang.Double.parseDouble(timerInfo[2]).toLong(), Integer.parseInt(timerInfo[3]), TimerType.valueOf(timerInfo[4].toUp()), timerInfo[5])
 			}
 		}
 	}

@@ -10,6 +10,7 @@ import io.github.talkarcabbage.rstimer.newtimers.NewTimer
 import io.github.talkarcabbage.rstimer.newtimers.Hourly
 import io.github.talkarcabbage.rstimer.newtimers.Standard
 import io.github.talkarcabbage.rstimer.newtimers.Weekly
+import io.github.talkarcabbage.rstimer.toLow
 import java.time.Duration
 
 /**
@@ -121,7 +122,7 @@ class NewTimerModel {
 	}
 
 	fun setTypeFromTypeString(text: String) {
-		val temp = text.toLowerCase()
+		val temp = text.toLow()
 		if (temp=="standard") {
 			timerType = TimerModelType.STANDARD
 		} else if (temp=="daily") {

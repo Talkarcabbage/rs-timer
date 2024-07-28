@@ -34,7 +34,7 @@ object ConfigManager {
 	var winWidth = 400
 	@Volatile
 	var logLevel = Level.INFO
-	set(level: Level) {field = level; LoggerManager.getInstance().setGlobalLoggingLevel(level)}
+	set(level) {field = level; LoggerManager.getInstance().setGlobalLoggingLevel(level)}
 	@Volatile
 	var framesPerUpdate = 15
 	@Volatile

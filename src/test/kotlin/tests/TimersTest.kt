@@ -1,11 +1,10 @@
-package io.github.talkarcabbage.rstimer.tests
+package tests
 
-import org.junit.Assert.assertEquals
-
+import org.junit.jupiter.api.Assertions.assertEquals
 import java.util.ArrayList
 import kotlin.collections.Map.Entry
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import io.github.talkarcabbage.rstimer.newtimers.NewTimer
 import io.github.talkarcabbage.rstimer.newtimers.Standard

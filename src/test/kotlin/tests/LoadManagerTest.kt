@@ -1,11 +1,10 @@
-package io.github.talkarcabbage.rstimer.tests
+package tests
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 import java.util.ArrayList
-
-import org.junit.Test
 
 import io.github.talkarcabbage.rstimer.newtimers.Daily
 import io.github.talkarcabbage.rstimer.newtimers.Monthly

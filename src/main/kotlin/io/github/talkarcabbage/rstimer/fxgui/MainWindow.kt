@@ -4,7 +4,6 @@ import java.util.ArrayList
 import java.util.logging.Level
 
 import com.google.common.collect.BiMap
-import com.sun.org.apache.bcel.internal.util.SecuritySupport.getResourceAsStream
 
 import io.github.talkarcabbage.logger.LoggerManager
 import io.github.talkarcabbage.rstimer.FXController
@@ -35,6 +34,7 @@ import javafx.stage.StageStyle
 import javafx.util.converter.IntegerStringConverter
 import java.io.File
 import java.util.function.Consumer
+import kotlin.system.exitProcess
 
 private const val mainWinMinWidth = 160.0
 private const val mainWinMinHeight = 120.0
@@ -96,7 +96,7 @@ class MainWindow : Application() {
 			Platform.setImplicitExit(false)
 			primaryStage.setOnCloseRequest {
 				FXController.instance.destroyTrayIcon()
-				System.exit(0)
+				exitProcess(0)
 			}
 
 			AddTimerController.createRoot()
@@ -106,7 +106,7 @@ class MainWindow : Application() {
 			// Define rootPane
 			val rootPane = BorderPane()
 			val scene = Scene(rootPane, ConfigManager.winWidth.toDouble(), ConfigManager.winHeight.toDouble())
-			scene.stylesheets.add(javaClass.getResource("/css/application.css").toExternalForm())
+			scene.stylesheets.add(javaClass.getResource("/css/application.css")?.toExternalForm())
 			primaryStage.scene = scene
 			primaryStage.initStyle(StageStyle.TRANSPARENT)
 			scene.setFill(Color.TRANSPARENT);

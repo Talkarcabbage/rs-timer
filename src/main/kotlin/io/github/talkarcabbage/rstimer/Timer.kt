@@ -52,7 +52,7 @@ open class Timer
 	 * @return
 	 */
 	val timerTypeString: String
-		get() = timerType.toString().toLowerCase()
+		get() = timerType.toString().toLow()
 
 	/**
 	 * This should not be overridden. Override getDataMap and getNewTimerTypeString.

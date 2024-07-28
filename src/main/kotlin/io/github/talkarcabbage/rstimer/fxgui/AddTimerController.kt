@@ -383,7 +383,7 @@ class AddTimerController {
 		fun createRoot() {
 			if (instance==null) {
 				try {
-					val resource = AddTimerController::class.java.getResource("AddTimerFXML.fxml")
+					val resource = AddTimerController::class.java.getResource("/fxml/AddTimerFXML.fxml")
 					if (resource == null) logger.warning("The FXML file was null!")
 					root = FXMLLoader.load(resource)
 

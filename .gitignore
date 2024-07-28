@@ -1,19 +1,40 @@
+# Old Build Files
 /dist
 /bin
+
+# Sonar and misc if reimplemented
 /.sonar
 /.settings
 /sonar-project.properties
+
+# Runtime config files
 rs-timer-config.cfg
+rs-timers-data.cfg
 timers.cfg
 taskBarIcon.png
+
+# Kotlin compiler leftovers
 /kotlinc
-rs-timers-data.cfg
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# New build files
+.gradle
+**/build/
+!src/**/build/
+.gradletasknamecache
+
+# Don't exclude Gradle wrapper for builds
+!gradle-wrapper.jar
 
 
-#IDEA files. These are the recommended excludes, and it's not a gradle/maven project. 
-**/.idea/workspace.xml
-**/.idea/tasks.xml
-**/.idea/sonarlint
+#IDEA files.
+.idea/
+*.iml
+*.iws
+*.ipr
+
 
 # OS generated files #
 ######################

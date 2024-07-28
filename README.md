@@ -2,9 +2,9 @@ RuneScape Timer
 ========
 
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Talkarcabbage/rs-timer/blob/master/LICENSE)
-[![Build Status](https://travis-ci.org/Talkarcabbage/rs-timer.svg?branch=master)](https://travis-ci.org/Talkarcabbage/rs-timer)
+[![Build Status](https://travis-ci.com/Talkarcabbage/rs-timer.svg?branch=master)](https://travis-ci.com/Talkarcabbage/rs-timer)
 
-![image](https://cloud.githubusercontent.com/assets/2666891/23511922/b9b51dc8-ff13-11e6-9891-c54818ec5c79.png)
+![rs-timer-preview2](https://user-images.githubusercontent.com/2666891/67145781-3ce1cf00-f239-11e9-91f3-f6bb66f6a073.png)
 
 # Summary
 A simple timer program intended for, but not limited to, use for timing RuneScape repeatables (_e.g._ dailies) and farm runs. Displays a window with customizable timers shown with progress bars. Includes "duration from starting point" timers and daily/weekly/monthly timers, that reset at UTC 0:00 / RS daily, weekly, and monthly reset times. Timers can be left-clicked to reset their time remaining to the length of the timer (or to the next tick for dailies/weeklies/monthlies).
@@ -37,6 +37,7 @@ defaultTabColumns=0   # 0 to 2.1 billion  [Number of default tab columns if no t
 defaultTabRows=5      # 0 to 2.1 billion  [Number of default tab rows if no tabs exist. Imports from cfg,gridRows]
 defaultTabName=Main   # Non-empty-string  [Name of the first tab if it is imported or does not exist yet. Imports from cfg,mainTabName]
 framesPerUpdate=15    # 1 to 2.1 billion  [Number of frames per update of the GUI. Lower values make the timer GUI more fluid, higher values decrease CPU usage. Recommended maximum is 60, i.e. once per second]
+saveGuiResizes=true   # true or false     [Whether or not to save the size of the GUI to config when resized via drag]
 ```
 
 # Disclaimer
@@ -45,6 +46,10 @@ THIS PROGRAM IS NOT AFFILIATED WITH RUNESCAPE NOR JAGEX. THIS PROGRAM DOES NOT I
 # Building and Versioning
 
 This project includes preconfigured ANT versioning and packaging options.
+
+To use the ant compiler, you will need to download the Kotlin compiler -> https://github.com/JetBrains/kotlin/releases/tag/v1.3.50
+
+And place its contents in the project folder. You should be able to see the following file in the new folder, assuming rs-timer is where you have cloned the repository to: `rs-timer\kotlinc\lib\kotlin-ant.jar`
 
 ### To display the current version used by ANT:
 ```

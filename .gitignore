@@ -1,11 +1,40 @@
+# Old Build Files
 /dist
 /bin
+
+# Sonar and misc if reimplemented
 /.sonar
 /.settings
 /sonar-project.properties
+
+# Runtime config files
 rs-timer-config.cfg
+rs-timers-data.cfg
 timers.cfg
 taskBarIcon.png
+
+# Kotlin compiler leftovers
+/kotlinc
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# New build files
+.gradle
+**/build/
+!src/**/build/
+.gradletasknamecache
+
+# Don't exclude Gradle wrapper for builds
+!gradle-wrapper.jar
+
+
+#IDEA files.
+.idea/
+*.iml
+*.iws
+*.ipr
+
 
 # OS generated files #
 ######################

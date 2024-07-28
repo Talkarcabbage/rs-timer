@@ -269,7 +269,7 @@ class AddTimerController {
 		hoursTextField!!.text = "0"
 		secondsTextField!!.text = "0"
 		nameTextField!!.text = ""
-		setTimeFieldsEnabled(true)
+		setTimeFieldsEnabled(typeComboBox?.value==STANDARD)
 	}
 
 	/**

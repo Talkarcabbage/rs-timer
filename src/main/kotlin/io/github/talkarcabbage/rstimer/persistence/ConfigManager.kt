@@ -6,7 +6,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Properties
 import java.util.logging.Level
-import java.util.logging.Logger
 
 import com.google.common.base.Throwables
 
@@ -19,7 +18,7 @@ import io.github.talkarcabbage.logger.LoggerManager
 object ConfigManager {
 
 	private var lastSave = 0L
-	private val CONFIGFILENAME = "rs-timer-config.cfg"
+	private const val CONFIGFILENAME = "rs-timer-config.cfg"
 	private val logger = LoggerManager.getInstance().getLogger("ConfigManager")
 
 	@Volatile
@@ -33,7 +32,7 @@ object ConfigManager {
 	@Volatile
 	var winWidth = 400
 	@Volatile
-	var logLevel = Level.INFO
+	var logLevel: Level = Level.INFO
 	set(level) {field = level; LoggerManager.getInstance().setGlobalLoggingLevel(level)}
 	@Volatile
 	var framesPerUpdate = 15
@@ -88,13 +87,13 @@ object ConfigManager {
 		logger.config("Saving configuration file")
 		val prop = Properties()
 		prop.setProperty("defaultTabName", defaultTabName)
-		prop.setProperty("defaultTabColumns", Integer.toString(defaultTabColumns))
-		prop.setProperty("defaultTabRows", Integer.toString(defaultTabRows))
-		prop.setProperty("winHeight", Integer.toString(winHeight))
-		prop.setProperty("winWidth", Integer.toString(winWidth))
+		prop.setProperty("defaultTabColumns", defaultTabColumns.toString())
+		prop.setProperty("defaultTabRows", defaultTabRows.toString())
+		prop.setProperty("winHeight", winHeight.toString())
+		prop.setProperty("winWidth", winWidth.toString())
 		prop.setProperty("logLevel", logLevel.toString())
-		prop.setProperty("framesPerUpdate", Integer.toString(framesPerUpdate))
-		prop.setProperty("transparency", java.lang.Double.toString(transparency))
+		prop.setProperty("framesPerUpdate", framesPerUpdate.toString())
+		prop.setProperty("transparency", transparency.toString())
 		prop.setProperty("saveGuiResizes", saveGuiResizes.toString())
 		try {
 			FileOutputStream(CONFIGFILENAME).use { fos -> prop.store(fos, "This file stores configuration options for the RS Timer") }

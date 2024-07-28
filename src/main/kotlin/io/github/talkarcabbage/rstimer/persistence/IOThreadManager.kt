@@ -10,14 +10,10 @@ import java.util.concurrent.Future
  * @author Talkarcabbage
  */
 class IOThreadManager internal constructor() {
-	internal var exc: ExecutorService
-
-	init {
-		exc = Executors.newSingleThreadExecutor { r ->
-			val t = Executors.defaultThreadFactory().newThread(r)
-			t.isDaemon = true
-			t
-		}
+	private var exc: ExecutorService = Executors.newSingleThreadExecutor { r ->
+		val t = Executors.defaultThreadFactory().newThread(r)
+		t.isDaemon = true
+		t
 	}
 
 	/**
@@ -34,7 +30,7 @@ class IOThreadManager internal constructor() {
 		return exc.submit<IOThreadManager.ReaderCallable> { ReaderCallable(fileName) }
 	}
 
-	inner class ReaderCallable(val fileName: String) : Callable<String> {
+	inner class ReaderCallable(private val fileName: String) : Callable<String> {
 
 		@Throws(Exception::class)
 		override fun call(): String? {
@@ -56,7 +52,6 @@ class IOThreadManager internal constructor() {
 	}
 
 	companion object {
-
 		val instance = IOThreadManager()
 	}
 }

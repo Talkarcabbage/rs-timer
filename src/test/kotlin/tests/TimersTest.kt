@@ -2,24 +2,23 @@ package tests
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.util.ArrayList
-import kotlin.collections.Map.Entry
 
 import org.junit.jupiter.api.Test
 
-import io.github.talkarcabbage.rstimer.newtimers.NewTimer
-import io.github.talkarcabbage.rstimer.newtimers.Standard
+import io.github.talkarcabbage.rstimer.timers.BaseTimer
+import io.github.talkarcabbage.rstimer.timers.Standard
 import io.github.talkarcabbage.rstimer.persistence.LoadManager
 
 class TimersTest {
 
 	@Test
 	fun testFormatTimeRemaining() {
-		assertEquals("Complete!", NewTimer.formatTimeRemaining(0))
-		assertEquals("Complete!", NewTimer.formatTimeRemaining(java.lang.Long.MIN_VALUE))
-		assertEquals("0:0:1", NewTimer.formatTimeRemaining(1000))
-		assertEquals("0:1:0", NewTimer.formatTimeRemaining(60000))
-		assertEquals("1:0:0", NewTimer.formatTimeRemaining(3600000))
-		assertEquals("0:1:1", NewTimer.formatTimeRemaining(61000))
+		assertEquals("Complete!", BaseTimer.formatTimeRemaining(0))
+		assertEquals("Complete!", BaseTimer.formatTimeRemaining(java.lang.Long.MIN_VALUE))
+		assertEquals("0:0:1", BaseTimer.formatTimeRemaining(1000))
+		assertEquals("0:1:0", BaseTimer.formatTimeRemaining(60000))
+		assertEquals("1:0:0", BaseTimer.formatTimeRemaining(3600000))
+		assertEquals("0:1:1", BaseTimer.formatTimeRemaining(61000))
 	}
 
 	@Test

@@ -1,7 +1,5 @@
 package io.github.talkarcabbage.rstimer.fxgui
 
-import java.util.logging.Logger
-
 import io.github.talkarcabbage.logger.LoggerManager
 import javafx.geometry.Pos
 import javafx.scene.control.Label
@@ -16,8 +14,8 @@ import javafx.scene.layout.StackPane
  */
 class ProgressPane : StackPane() { //NOSONAR
 
-	var bar: ColorProgressBar
-	var labelObject: Label
+	var bar: ColorProgressBar = ColorProgressBar()
+	var labelObject: Label = Label()
 
 	var labelText: String
 		get() = labelObject.text
@@ -26,8 +24,6 @@ class ProgressPane : StackPane() { //NOSONAR
 		}
 
 	init {
-		bar = ColorProgressBar()
-		labelObject = Label()
 
 		bar.maxWidth = java.lang.Double.MAX_VALUE
 		bar.maxHeight = 26.0

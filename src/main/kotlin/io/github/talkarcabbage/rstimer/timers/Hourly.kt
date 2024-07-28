@@ -1,6 +1,6 @@
-package io.github.talkarcabbage.rstimer.newtimers
+package io.github.talkarcabbage.rstimer.timers
 
-class Hourly : NewTimer {
+class Hourly : BaseTimer {
 
 	var hourStart: Long = 0
 	var hourDelay: Long = 0

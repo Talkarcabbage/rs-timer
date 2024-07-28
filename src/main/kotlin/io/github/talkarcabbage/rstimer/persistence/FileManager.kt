@@ -1,22 +1,13 @@
 package io.github.talkarcabbage.rstimer.persistence
 
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.PrintWriter
+import com.google.common.base.Throwables
+import io.github.talkarcabbage.logger.LoggerManager
+import java.io.*
 import java.net.MalformedURLException
 import java.net.URL
 import java.nio.channels.Channels
-import java.nio.channels.ReadableByteChannel
-import java.util.ArrayList
-import java.util.Scanner
+import java.util.*
 import java.util.logging.Level
-import java.util.logging.Logger
-
-import com.google.common.base.Throwables
-
-import io.github.talkarcabbage.logger.LoggerManager
 
 /**
  *
@@ -72,7 +63,7 @@ class FileManager internal constructor() {
 		fun readFileSplit(fileName: String): Array<String>? {
 			val toSplit = readFile(fileName)
 
-			return toSplit?.split("\n".toRegex())?.dropLastWhile({ it.isEmpty() })?.toTypedArray()
+			return toSplit?.split("\n".toRegex())?.dropLastWhile { it.isEmpty() }?.toTypedArray()
 		}
 
 		fun readFileSplitList(fileName: String): List<String> {
@@ -132,17 +123,14 @@ class FileManager internal constructor() {
 		 * @throws MalformedURLException If the url is invalid
 		 */
 		@Throws(MalformedURLException::class)
-		fun downloadFile(fileName: String, url: String): Boolean {
-			val website: URL
-			website = URL(url)
+		fun downloadFile(fileName: String, url: String) {
+			val website = URL(url)
 			try {
 				Channels.newChannel(website.openStream()).use { rbc -> FileOutputStream(fileName).use { fos -> fos.getChannel().transferFrom(rbc, 0, java.lang.Long.MAX_VALUE) } }
 			} catch (e: IOException) {
 				logger.severe("Error downloading assets")
 				logger.severe(Throwables.getStackTraceAsString(e))
 			}
-
-			return false
 		}
 
 		/**

@@ -16,15 +16,9 @@ class TimerTab : Tab {
 	 */
 	internal var tabID: Int = 0
 
-	constructor() {
+	constructor()
 
-	}
+	constructor(arg0: String) : super(arg0)
 
-	constructor(arg0: String) : super(arg0) {
-
-	}
-
-	constructor(arg0: String, arg1: Node) : super(arg0, arg1) {
-
-	}
+	constructor(arg0: String, arg1: Node) : super(arg0, arg1)
 }

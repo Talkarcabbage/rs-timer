@@ -1,17 +1,13 @@
 package io.github.talkarcabbage.rstimer.fxgui
 
-import java.util.ArrayList
 import java.util.logging.Level
 
 import com.google.common.collect.BiMap
 
 import io.github.talkarcabbage.logger.LoggerManager
 import io.github.talkarcabbage.rstimer.FXController
-import io.github.talkarcabbage.rstimer.Timer
-import io.github.talkarcabbage.rstimer.newtimers.NewTimer
-import io.github.talkarcabbage.rstimer.newtimers.Standard
+import io.github.talkarcabbage.rstimer.timers.BaseTimer
 import io.github.talkarcabbage.rstimer.persistence.ConfigManager
-import io.github.talkarcabbage.rstimer.persistence.LoadManager
 import io.github.talkarcabbage.rstimer.persistence.SaveManager
 import javafx.application.Application
 import javafx.application.Platform
@@ -25,7 +21,6 @@ import javafx.scene.control.ButtonBar.ButtonData
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.MouseButton
-import javafx.scene.input.MouseDragEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
@@ -33,11 +28,12 @@ import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.converter.IntegerStringConverter
 import java.io.File
-import java.util.function.Consumer
 import kotlin.system.exitProcess
 
 private const val mainWinMinWidth = 160.0
 private const val mainWinMinHeight = 120.0
+const val GRID_PANE_CSS_CLASS = "gridPane"
+
 
 /**
  *
@@ -64,9 +60,7 @@ class MainWindow : Application() {
 	internal var isMovingOnCorner = false
 
 	internal lateinit var stage: Stage
-	internal var tempList = ArrayList<ProgressPane>()
 	internal lateinit var minusButton: ToggleButton
-	internal lateinit var pat: ProgressAnimTimer
 	internal lateinit var patNew: ProgressAnimNewTimer
 
 	/**
@@ -109,7 +103,7 @@ class MainWindow : Application() {
 			scene.stylesheets.add(javaClass.getResource("/css/application.css")?.toExternalForm())
 			primaryStage.scene = scene
 			primaryStage.initStyle(StageStyle.TRANSPARENT)
-			scene.setFill(Color.TRANSPARENT);
+			scene.fill = Color.TRANSPARENT
 			rootPane.id = "win"
 
 			scene.root.styleClass.add("main-root")
@@ -200,14 +194,14 @@ class MainWindow : Application() {
 
 			// Event handlers
 
-			dragPaneClose.onMouseClicked = EventHandler { System.exit(0) }
+			dragPaneClose.onMouseClicked = EventHandler { exitProcess(0) }
 
 			plusButton.onMouseClicked = EventHandler { this.onPlusClicked(it) }
-			plusButton.onMouseDragReleased = EventHandler<MouseDragEvent> { this.onPlusClicked(it) }
+			plusButton.onMouseDragReleased = EventHandler { this.onPlusClicked(it) }
 
 			minusButton.onMouseReleased = EventHandler { it.consume() }
 			minusButton.onMouseClicked = EventHandler { this.onMinusClicked(it) }
-			minusButton.onMouseDragReleased = EventHandler<MouseDragEvent> { this.onMinusClicked(it) }
+			minusButton.onMouseDragReleased = EventHandler { this.onMinusClicked(it) }
 
 			aotButton.setOnAction {
 				logger.fine("AOT button event: "+aotButton.isSelected)
@@ -238,8 +232,8 @@ class MainWindow : Application() {
 
 			configPane.onMouseDragged = EventHandler { event ->
 				if (isMovingOnCorner) {
-					MainWindow.instance.stage.setWidthWithMin = resizeXStartSize+(event.screenX)-resizeXinit.toInt()
-					MainWindow.instance.stage.setHeightWithMin = resizeYStartSize+(event.screenY)-resizeYinit.toInt()
+					instance.stage.setWidthWithMin = resizeXStartSize+(event.screenX)- resizeXinit
+					instance.stage.setHeightWithMin = resizeYStartSize+(event.screenY)- resizeYinit
 				}
 			}
 
@@ -257,8 +251,8 @@ class MainWindow : Application() {
 			}
 
 			dragPane.onMouseDragged = EventHandler { event ->
-				MainWindow.instance.stage.x = event.screenX-moveXinit
-				MainWindow.instance.stage.y = event.screenY-moveYinit
+				instance.stage.x = event.screenX-moveXinit
+				instance.stage.y = event.screenY-moveYinit
 			}
 
 			dragPane.onMouseReleased = EventHandler {
@@ -287,8 +281,8 @@ class MainWindow : Application() {
 
 			rootPane.onMouseDragged = EventHandler { event ->
 				if (isMovingOnCorner) {
-					MainWindow.instance.stage.setWidthWithMin = resizeXStartSize+(event.screenX)-resizeXinit.toInt()
-					MainWindow.instance.stage.setHeightWithMin = resizeYStartSize+(event.screenY)-resizeYinit.toInt()
+					instance.stage.setWidthWithMin = resizeXStartSize+(event.screenX)- resizeXinit
+					instance.stage.setHeightWithMin = resizeYStartSize+(event.screenY)- resizeYinit
 				}
 			}
 
@@ -314,14 +308,13 @@ class MainWindow : Application() {
 
 			if (!File(SaveManager.SAVE_FILE_LOCATION).exists() && File("timers.cfg").exists()) {
 				val alert = Alert(AlertType.INFORMATION, ""+
-						"Your old timers are being imported from timers.cfg " +
-						"to the new format at ${SaveManager.SAVE_FILE_LOCATION}. Please double check your timers! " +
-						"If you need to reimport again later, move or delete the new file.")
+						"Your old timers WILL NOT be imported from timers.cfg " +
+						"to the new format at ${SaveManager.SAVE_FILE_LOCATION}. " +
+						"If you need to import timers, please do so with version e.g. 0.16")
 				alert.isResizable = true
 				alert.headerText = "Converter"
 				alert.height = 250.0
 				alert.show()
-				FXController.instance.loadLegacyTimers()
 			} else {
 				logger.fine("Found an existing data file for the newer timer format.")
 				FXController.instance.loadNewTimers()
@@ -329,7 +322,7 @@ class MainWindow : Application() {
 
 			FXController.instance.addDefaultTimersIfNeeded()
 
-			patNew = ProgressAnimNewTimer(FXController.instance.newTimerMap)
+			patNew = ProgressAnimNewTimer(FXController.instance.timerMap)
 			patNew.start()
 
 
@@ -444,32 +437,9 @@ class MainWindow : Application() {
 	 * @param pane - The ProgressPane to be removed
 	 * @param biMap - The bidirectional map of ProgressPanes and Timers
 	 */
-	fun removeTimerBar(pane: ProgressPane, biMap: BiMap<ProgressPane, Timer>) {
+	fun removeNewTimerBar(pane: ProgressPane, biMap: BiMap<ProgressPane, BaseTimer>) {
 		val timer = biMap[pane]
-		if (timer is Timer) {
-			val tabNum = timer.tab
-			val tab = this.tabPane.tabs[tabNum]
-
-			val gp = tab.content as GridPane
-			gp.children.clear()
-			biMap.forEach { (key, value) ->
-				if (value.tab==tabNum && key!==pane) {
-					addTimerBar(key, tabNum)
-				}
-			}
-		}
-	}
-
-	/**
-	 * Removes the timer bar and recalculates the appearance of the window. This will NOT remove the
-	 * bar-timer set from the map and it must be called before removing the timer.
-	 * This method will determine the tab that needs to be reorganized and do so.
-	 * @param pane - The ProgressPane to be removed
-	 * @param biMap - The bidirectional map of ProgressPanes and Timers
-	 */
-	fun removeNewTimerBar(pane: ProgressPane, biMap: BiMap<ProgressPane, NewTimer>) {
-		val timer = biMap[pane]
-		if (timer is NewTimer) {
+		if (timer is BaseTimer) {
 			val tabNum = timer.tab
 			val tab = this.tabPane.tabs[tabNum]
 
@@ -510,7 +480,7 @@ class MainWindow : Application() {
 	fun onClickTimerBar(pane: ProgressPane, event: MouseEvent) {
 		logger.fine("OnClickTimerBar fired")
 		if (!minusButton.isSelected && event.isShiftDown) {
-			AddTimerController.instance?.showEditWindow(FXController.instance.newTimerMap[pane]!!)
+			AddTimerController.instance?.showEditWindow(FXController.instance.timerMap[pane]!!)
 		} else if (minusButton.isSelected && event.button==MouseButton.PRIMARY) { //Remove timer
 			FXController.instance.removeNewTimer(pane)
 		} else if (event.button==MouseButton.SECONDARY) { //Reset timer as complete
@@ -548,7 +518,7 @@ class MainWindow : Application() {
 		inputDialog.title = "New Tab Name"
 		inputDialog.showAndWait()
 				.filter { response -> ""!=response }
-				.ifPresent(Consumer<String> { this.showNewTabRowsDialog(it) })
+				.ifPresent { this.showNewTabRowsDialog(it) }
 	}
 
 	/**
@@ -609,7 +579,7 @@ class MainWindow : Application() {
 	fun onClickNewTimerBar(pane: ProgressPane, event: MouseEvent) {
 		logger.fine("OnClickTimerBar fired (new Timers")
 		if (!minusButton.isSelected && event.isShiftDown) {
-			AddTimerController.instance!!.showEditWindow(FXController.instance.newTimerMap[pane]!!);
+			AddTimerController.instance!!.showEditWindow(FXController.instance.timerMap[pane]!!)
 		} else if (minusButton.isSelected && event.button==MouseButton.PRIMARY) { //Remove timer
 			FXController.instance.removeNewTimer(pane)
 			minusButton.isSelected = false
@@ -622,53 +592,49 @@ class MainWindow : Application() {
 
 	internal val logger = LoggerManager.getInstance().getLogger("FXWin")
 
-	internal val GRID_PANE_CSS_CLASS = "gridPane"
-
 	//Used to set the style of the ColorProgress for a different completed-style.
 	internal val INCSTRING = "progress-bar-incomplete"
 	internal val COMSTRING = "progress-bar-complete"
 
-	/**
-	 * Creates and returns a tab to add to the GUI with the specified gridpane information and title
-	 * @param gridRows
-	 * @param gridColumns
-	 * @param name
-	 * @return
-	 */
-	fun createTab(gridRows: Int, gridColumns: Int, name: String): Tab {
-		val tab = TimerTab(name)
-		tab.isClosable = false
-		val gp = GridPane()
-		gp.hgap = 8.0
-		gp.vgap = 8.0
-		gp.styleClass.add(GRID_PANE_CSS_CLASS)
-
-		for (i in 0 until gridColumns) {
-			val cc = ColumnConstraints()
-			cc.hgrow = Priority.ALWAYS
-			gp.columnConstraints.add(cc)
-		}
-		for (i in 0 until gridRows) {
-			val rc = RowConstraints()
-			rc.vgrow = Priority.NEVER
-			gp.rowConstraints.add(rc)
-		}
-
-		tab.content = gp
-		gp.children.clear()
-		return tab
-
-	}
-
 	companion object {
 		lateinit var instance: MainWindow //NOSONAR
+		/**
+		 * Creates and returns a tab to add to the GUI with the specified gridpane information and title
+		 * @param gridRows
+		 * @param gridColumns
+		 * @param name
+		 * @return
+		 */
+		fun createTab(gridRows: Int, gridColumns: Int, name: String): Tab {
+			val tab = TimerTab(name)
+			tab.isClosable = false
+			val gp = GridPane()
+			gp.hgap = 8.0
+			gp.vgap = 8.0
+			gp.styleClass.add(GRID_PANE_CSS_CLASS)
+
+			for (i in 0 until gridColumns) {
+				val cc = ColumnConstraints()
+				cc.hgrow = Priority.ALWAYS
+				gp.columnConstraints.add(cc)
+			}
+			for (i in 0 until gridRows) {
+				val rc = RowConstraints()
+				rc.vgrow = Priority.NEVER
+				gp.rowConstraints.add(rc)
+			}
+
+			tab.content = gp
+			gp.children.clear()
+			return tab
+		}
 	}
 
 }
 
 var Stage.setWidthWithMin: Double
 	get() {return this.width}
-	set(it: Double) {
+	set(it) {
 		if (it >= mainWinMinWidth)
 			this.width = it
 		else
@@ -677,7 +643,7 @@ var Stage.setWidthWithMin: Double
 
 var Stage.setHeightWithMin: Double
 	get() {return this.height}
-	set(it: Double) {
+	set(it) {
 		if (it >= mainWinMinHeight)
 			this.height = it
 		else

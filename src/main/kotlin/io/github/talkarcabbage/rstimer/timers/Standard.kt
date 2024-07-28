@@ -1,9 +1,9 @@
-package io.github.talkarcabbage.rstimer.newtimers
+package io.github.talkarcabbage.rstimer.timers
 
 import java.awt.SystemTray
 import java.awt.TrayIcon
 
-class Standard : NewTimer {
+class Standard : BaseTimer {
 
 	var latestReset: Long = 0
 		internal set
@@ -22,7 +22,7 @@ class Standard : NewTimer {
 		}
 
 	override val tooltipText: String
-		get() = "Standard Timer\n"+NewTimer.formatTimeRemaining(timeRemaining)
+		get() = "Standard Timer\n"+formatTimeRemaining(timeRemaining)
 
 	override val percentageComplete: Int
 		get() {
@@ -52,14 +52,14 @@ class Standard : NewTimer {
 					MAP_DURATION -> this.duration = java.lang.Long.parseLong(value)
 				}
 			} catch (e: NumberFormatException) {
-				NewTimer.logger.severe("Invalid timer number value $value for property $key")
+				logger.severe("Invalid timer number value $value for property $key")
 			}
 		}
 		if (duration == 0L) {
 			duration = 1000
 		} //Sanitze
 
-		logger.fine("Initialized a timer: ${this.toString()}")
+		logger.fine("Initialized a timer: $this")
 
 	}
 
@@ -75,12 +75,12 @@ class Standard : NewTimer {
 
 	override fun resetTimer() {
 		this.latestReset = System.currentTimeMillis()
-		NewTimer.logger.fine { "Reset standard timer with data: $this" }
+		logger.fine { "Reset standard timer with data: $this" }
 	}
 
 	override fun resetTimerComplete() {
 		this.latestReset = 0
-		NewTimer.logger.fine { "Reset-complete standard timer with data: $this" }
+		logger.fine { "Reset-complete standard timer with data: $this" }
 	}
 
 }

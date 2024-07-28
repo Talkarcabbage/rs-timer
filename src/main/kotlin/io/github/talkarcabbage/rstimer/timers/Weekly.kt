@@ -1,6 +1,6 @@
-package io.github.talkarcabbage.rstimer.newtimers
+package io.github.talkarcabbage.rstimer.timers
 
-class Weekly : NewTimer {
+class Weekly : BaseTimer {
 
 	var latestReset: Long = 0
 		internal set
@@ -9,16 +9,16 @@ class Weekly : NewTimer {
 		get() = "Weekly"
 
 	override val tooltipText: String
-		get() = "Weekly Timer\n"+NewTimer.formatTimeRemaining(timeRemaining)
+		get() = "Weekly Timer\n"+formatTimeRemaining(timeRemaining)
 
 	override val percentageComplete: Int
 		get() {
-			val rawPercentage = 100*(System.currentTimeMillis()-latestReset)/NewTimer.WEEK_LENGTH_MILLIS
+			val rawPercentage = 100*(System.currentTimeMillis()-latestReset)/WEEK_LENGTH_MILLIS
 			return if (rawPercentage >= 100) 100 else rawPercentage.toInt()
 		}
 
 	override val timeRemaining: Long
-		get() = latestReset+NewTimer.WEEK_LENGTH_MILLIS-System.currentTimeMillis()
+		get() = latestReset+WEEK_LENGTH_MILLIS-System.currentTimeMillis()
 
 	override val timerDataMap: Map<String, String>
 		get() {
@@ -42,14 +42,14 @@ class Weekly : NewTimer {
 					MAP_LATEST_RESET -> this.latestReset = java.lang.Long.parseLong(value)
 				}
 			} catch (e: NumberFormatException) {
-				NewTimer.logger.severe("Invalid timer number value $value for property $key")
+				logger.severe("Invalid timer number value $value for property $key")
 			}
 		}
 	}
 
 	override fun resetTimer() {
-		latestReset = (System.currentTimeMillis()+NewTimer.DAY_LENGTH_MILLIS)/NewTimer.WEEK_LENGTH_MILLIS*NewTimer.WEEK_LENGTH_MILLIS-NewTimer.DAY_LENGTH_MILLIS
-		NewTimer.logger.fine { "Reset weekly timer timer with data: $this" }
+		latestReset = (System.currentTimeMillis()+DAY_LENGTH_MILLIS)/WEEK_LENGTH_MILLIS*WEEK_LENGTH_MILLIS-DAY_LENGTH_MILLIS
+		logger.fine { "Reset weekly timer timer with data: $this" }
 
 	}
 

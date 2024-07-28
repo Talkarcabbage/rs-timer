@@ -6,13 +6,11 @@ import org.junit.jupiter.api.Test
 
 import java.util.ArrayList
 
-import io.github.talkarcabbage.rstimer.newtimers.Daily
-import io.github.talkarcabbage.rstimer.newtimers.Monthly
-import io.github.talkarcabbage.rstimer.newtimers.NewTimer
-import io.github.talkarcabbage.rstimer.newtimers.Standard
-import io.github.talkarcabbage.rstimer.newtimers.Weekly
+import io.github.talkarcabbage.rstimer.timers.Daily
+import io.github.talkarcabbage.rstimer.timers.Monthly
+import io.github.talkarcabbage.rstimer.timers.Standard
+import io.github.talkarcabbage.rstimer.timers.Weekly
 import io.github.talkarcabbage.rstimer.persistence.LoadManager
-import javafx.scene.control.Tab
 import javafx.scene.layout.GridPane
 
 class LoadManagerTest {

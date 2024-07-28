@@ -3,19 +3,16 @@ package io.github.talkarcabbage.rstimer.fxgui
 import java.io.IOException
 import java.time.Duration
 import java.util.logging.Level
-import java.util.logging.Logger
 
 import io.github.talkarcabbage.logger.LoggerManager
 import io.github.talkarcabbage.rstimer.FXController
-import io.github.talkarcabbage.rstimer.Timer
-import io.github.talkarcabbage.rstimer.Timer.TimerType
 import io.github.talkarcabbage.rstimer.fxgui.NewTimerModel.TimerModelType
-import io.github.talkarcabbage.rstimer.newtimers.Daily
-import io.github.talkarcabbage.rstimer.newtimers.Hourly
-import io.github.talkarcabbage.rstimer.newtimers.Monthly
-import io.github.talkarcabbage.rstimer.newtimers.NewTimer
-import io.github.talkarcabbage.rstimer.newtimers.Standard
-import io.github.talkarcabbage.rstimer.newtimers.Weekly
+import io.github.talkarcabbage.rstimer.timers.Daily
+import io.github.talkarcabbage.rstimer.timers.Hourly
+import io.github.talkarcabbage.rstimer.timers.Monthly
+import io.github.talkarcabbage.rstimer.timers.BaseTimer
+import io.github.talkarcabbage.rstimer.timers.Standard
+import io.github.talkarcabbage.rstimer.timers.Weekly
 import javafx.collections.FXCollections
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
@@ -63,19 +60,19 @@ class AddTimerController {
 	/**
 	 * If this is non-null, the current data in the GUI applies to a specific timer. Otherwise, it is creating a new timer.
 	 */
-	internal var editedTimer: NewTimer? = null
+	internal var editedTimer: BaseTimer? = null
 
 	/**
 	 * New timer
 	 */
-	internal var editedNewTimer: NewTimer? = null
+	internal var editedNewTimer: BaseTimer? = null
 
 	/**
 	 * This constructor is called internally by the JavaFX loader when createRoot is called and it should not be called manually.
 	 * @throws IllegalStageException - If this constructor is called while the instance already exists.
 	 */
 	init {
-		kotlin.check(instance==null) { "Cannot initialize this method more than once!" }
+		check(instance==null) { "Cannot initialize this method more than once!" }
 		logger.fine("Created instance of AddTimerController")
 		instance = this //NOSONAR
 	}
@@ -124,15 +121,15 @@ class AddTimerController {
 			val theNewTimer = getTimerForModelData()
 
 			if (theNewTimer!=null) {
-				logger.info("Added a new newTimer: ${theNewTimer.toString()}")
+				logger.info("Added a new newTimer: $theNewTimer")
 				FXController.instance.addNewTimer(theNewTimer)
 				theNewTimer.resetTimer()
 			}
 		} else {
-			val editedPane = FXController.instance.newTimerMap.inverse()[editedTimer]
+			val editedPane = FXController.instance.timerMap.inverse()[editedTimer]!!
 			val changedTimer = getTimerForModelData(editedTimer!!)
-			if (changedTimer is NewTimer) {
-				FXController.instance.newTimerMap[editedPane] = changedTimer
+			if (changedTimer is BaseTimer) {
+				FXController.instance.timerMap[editedPane] = changedTimer
 				FXController.instance.updateNewProgressPaneTitle(changedTimer)
 				changedTimer.resetTimer()
 				FXController.instance.saveTimers()
@@ -142,11 +139,11 @@ class AddTimerController {
 		}
 	}
 
-	internal fun getTimerForModelData(): NewTimer? {
+	internal fun getTimerForModelData(): BaseTimer? {
 		val model = NewTimerModel.getModelFromControllerData(this.nameTextField!!.text, this.typeComboBox!!.value, daysTextField!!.text, hoursTextField!!.text, minutesTextField!!.text, secondsTextField!!.text, alarmCheckBox!!.isSelected, resetCheckBox!!.isSelected)
-		var theNewTimer: NewTimer? = null
+		var theNewTimer: BaseTimer? = null
 		val dataMap = model.asDataMap().toMutableMap()
-		dataMap[NewTimer.MAP_TAB] = ""+MainWindow.instance.currentTab
+		dataMap[BaseTimer.MAP_TAB] = ""+MainWindow.instance.currentTab
 
 		when (model.timerType) {
 			TimerModelType.DAILY -> theNewTimer = Daily(dataMap)
@@ -160,10 +157,10 @@ class AddTimerController {
 	}
 
 
-	internal fun getTimerForModelData(old: NewTimer): NewTimer? {
+	internal fun getTimerForModelData(old: BaseTimer): BaseTimer? {
 		val dataMap = old.timerDataMap.toMutableMap()
 		val model = NewTimerModel.getModelFromControllerData(this.nameTextField!!.text, this.typeComboBox!!.value, daysTextField!!.text, hoursTextField!!.text, minutesTextField!!.text, secondsTextField!!.text, alarmCheckBox!!.isSelected, resetCheckBox!!.isSelected)
-		var theNewTimer: NewTimer? = null
+		var theNewTimer: BaseTimer? = null
 		dataMap.putAll(model.asDataMap())
 
 		when (model.timerType) {
@@ -234,7 +231,7 @@ class AddTimerController {
 	 * Should only be called from the FX thread
 	 * @param timer The timer to display to edit. Should not be null.
 	 */
-	fun showEditWindow(timer: NewTimer) {
+	fun showEditWindow(timer: BaseTimer) {
 		setControlsEdit()
 		this.editedTimer = timer
 		val newModel = NewTimerModel(timer)
@@ -332,10 +329,10 @@ class AddTimerController {
 			val minutesDur = dur.toMinutes()%60
 			val hoursDur = dur.toHours()%24
 			val daysDur = dur.toDays()
-			this.daysTextField!!.text = java.lang.Long.toString(daysDur)
-			this.hoursTextField!!.text = java.lang.Long.toString(hoursDur)
-			this.minutesTextField!!.text = java.lang.Long.toString(minutesDur)
-			this.secondsTextField!!.text = java.lang.Long.toString(secondsDur)
+			this.daysTextField!!.text = daysDur.toString()
+			this.hoursTextField!!.text = hoursDur.toString()
+			this.minutesTextField!!.text = minutesDur.toString()
+			this.secondsTextField!!.text = secondsDur.toString()
 		} else {
 			this.daysTextField!!.text = 0.toString()
 			this.hoursTextField!!.text = 0.toString()
@@ -368,11 +365,11 @@ class AddTimerController {
 		internal var instance: AddTimerController? = null
 
 		// String constants for types box
-		val STANDARD = "Standard"
-		val DAILY = "Daily"
-		val WEEKLY = "Weekly"
-		val MONTHLY = "Monthly"
-		val HOURLY = "Hourly"
+		const val STANDARD = "Standard"
+		const val DAILY = "Daily"
+		const val WEEKLY = "Weekly"
+		const val MONTHLY = "Monthly"
+		const val HOURLY = "Hourly"
 
 
 		internal lateinit var root: Parent

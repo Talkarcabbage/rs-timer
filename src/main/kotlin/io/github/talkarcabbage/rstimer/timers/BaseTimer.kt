@@ -1,14 +1,11 @@
-package io.github.talkarcabbage.rstimer.newtimers
-
-import java.util.HashMap
-import java.util.logging.Logger
+package io.github.talkarcabbage.rstimer.timers
 
 import io.github.talkarcabbage.logger.LoggerManager
-import io.github.talkarcabbage.rstimer.FXController
 import java.awt.SystemTray
 import java.awt.TrayIcon
+import kotlin.math.floor
 
-abstract class NewTimer {
+abstract class BaseTimer {
 
 	var audio = false
 	@Volatile
@@ -141,9 +138,9 @@ abstract class NewTimer {
 
 	companion object {
 
-		val DAY_LENGTH_MILLIS: Long = 86400000
-		val WEEK_LENGTH_MILLIS: Long = 604800000
-		val HOUR_LENGTH_MILLIS: Long = 3600000
+		const val DAY_LENGTH_MILLIS: Long = 86400000
+		const val WEEK_LENGTH_MILLIS: Long = 604800000
+		const val HOUR_LENGTH_MILLIS: Long = 3600000
 		internal var logger = LoggerManager.getInstance().getLogger("Timer")
 
 		const val MAP_NAME = "name"
@@ -159,14 +156,16 @@ abstract class NewTimer {
 		 * @return The formatted time string
 		 */
 		fun formatTimeRemaining(time: Long): String {
-			if (time <= 0) {
-				return "Complete!"
+			return if (time <= 0) {
+				"Complete!"
 			} else {
 				val timeSeconds = time/1000
 				if (time> DAY_LENGTH_MILLIS) {
-					return (timeSeconds/86400).toString()+"d "+Math.floor((timeSeconds%86400).toDouble()/3600).toLong()+":"+Math.floor(timeSeconds.toDouble()%3600/60).toLong()+":"+timeSeconds%60
+					(timeSeconds/86400).toString()+"d "+ floor((timeSeconds % 86400).toDouble() / 3600).toLong()+":"+ floor(
+						timeSeconds.toDouble() % 3600 / 60
+					).toLong()+":"+timeSeconds%60
 				} else {
-					return Math.round(Math.floor(timeSeconds.toDouble()/3600)).toString()+":"+Math.floor(timeSeconds.toDouble()%3600/60).toLong()+":"+timeSeconds%60
+					Math.round(floor(timeSeconds.toDouble() / 3600)).toString()+":"+ floor(timeSeconds.toDouble() % 3600 / 60).toLong()+":"+timeSeconds%60
 				}
 			}
 		}

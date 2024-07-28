@@ -2,15 +2,14 @@ package io.github.talkarcabbage.rstimer.persistence
 
 import java.util.ArrayList
 import java.util.HashMap
-import java.util.logging.Logger
 
 import io.github.talkarcabbage.logger.LoggerManager
 import io.github.talkarcabbage.rstimer.fxgui.MainWindow
-import io.github.talkarcabbage.rstimer.newtimers.Daily
-import io.github.talkarcabbage.rstimer.newtimers.Monthly
-import io.github.talkarcabbage.rstimer.newtimers.NewTimer
-import io.github.talkarcabbage.rstimer.newtimers.Standard
-import io.github.talkarcabbage.rstimer.newtimers.Weekly
+import io.github.talkarcabbage.rstimer.timers.Daily
+import io.github.talkarcabbage.rstimer.timers.Monthly
+import io.github.talkarcabbage.rstimer.timers.BaseTimer
+import io.github.talkarcabbage.rstimer.timers.Standard
+import io.github.talkarcabbage.rstimer.timers.Weekly
 import javafx.scene.control.Tab
 
 object LoadManager {
@@ -45,21 +44,17 @@ object LoadManager {
 				while (index < fileInput.size && fileInput[index].trim { it <= ' ' }!="}") {
 					if (fileInput[index].trim { it <= ' ' }.indexOf(':') < 2) {
 						index++
-						continue
-						//Skip if there's no colon
+						continue //Skip if there's no colon
 					}
-
 					when (fileInput[index].trim { it <= ' ' }.substring(0, fileInput[index].indexOf(':')-2)) {
 						"title" -> newTabName = fileInput[index].trim { it <= ' ' }.substring(fileInput[index].trim { it <= ' ' }.indexOf(':')+1)
 						"rows" -> newTabRows = Integer.parseInt(fileInput[index].trim { it <= ' ' }.substring(fileInput[index].trim { it <= ' ' }.indexOf(':')+1))
 						"columns" -> newTabColumns = Integer.parseInt(fileInput[index].trim { it <= ' ' }.substring(fileInput[index].trim { it <= ' ' }.indexOf(':')+1))
 						else -> logger.warning("Unrecognized tab data: "+fileInput[index])
 					}
-
 					index++
 				}
-
-				returnTabList.add(MainWindow.instance.createTab(newTabRows, newTabColumns, newTabName))
+				returnTabList.add(MainWindow.createTab(newTabRows, newTabColumns, newTabName))
 				index++
 			} else if (fileInput[index].trim { it <= ' ' }=="};") {
 				break
@@ -73,7 +68,7 @@ object LoadManager {
 	 * This method takes the base array of lines of the file and returns a list of Timers from that file for addition to the GUI
 	 * @param fileInput A list containing the contents of a timer save file separated by line
 	 */
-	fun loadTimersFromFileData(fileInput: List<String>): List<NewTimer> {
+	fun loadTimersFromFileData(fileInput: List<String>): List<BaseTimer> {
 		var index = 0
 
 		while (index < fileInput.size && fileInput[index].trim { it <= ' ' }!="timers {") { //Fast-forward to the line with the timers declaration
@@ -106,13 +101,13 @@ object LoadManager {
 	 * @param timerSectionList
 	 * @return A list of timers created from the timer dataset
 	 */
-	private fun loadTimersFromList(timerSectionList: List<String>): List<NewTimer> {
+	private fun loadTimersFromList(timerSectionList: List<String>): List<BaseTimer> {
 
-		val returnList = ArrayList<NewTimer>()
+		val returnList = ArrayList<BaseTimer>()
 
 		for (list in getSeparateDataStringLists(timerSectionList)) {
 
-			var newTimer: NewTimer? = null //Avoid duplicate variable names
+			var newTimer: BaseTimer? = null //Avoid duplicate variable names
 			val timerType = getTimerTypeFromDataString(list[0])
 			val dataMap = getTimerDataMapFromList(list)
 

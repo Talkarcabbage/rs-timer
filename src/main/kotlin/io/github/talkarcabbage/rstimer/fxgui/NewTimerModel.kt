@@ -1,17 +1,9 @@
 package io.github.talkarcabbage.rstimer.fxgui
 
-import java.util.HashMap
-import java.util.logging.Level
-
 import io.github.talkarcabbage.logger.LoggerManager
-import io.github.talkarcabbage.rstimer.newtimers.Daily
-import io.github.talkarcabbage.rstimer.newtimers.Monthly
-import io.github.talkarcabbage.rstimer.newtimers.NewTimer
-import io.github.talkarcabbage.rstimer.newtimers.Hourly
-import io.github.talkarcabbage.rstimer.newtimers.Standard
-import io.github.talkarcabbage.rstimer.newtimers.Weekly
+import io.github.talkarcabbage.rstimer.timers.*
 import io.github.talkarcabbage.rstimer.toLow
-import java.time.Duration
+import java.util.logging.Level
 
 /**
  * This class provides an object representation of the data present on an add interface.
@@ -49,20 +41,27 @@ class NewTimerModel {
 	 * Method may be removed later if not necessary!
 	 * @param timer the timer
 	 */
-	constructor(timer: NewTimer) {
-		if (timer is Standard) {
-			timerType = TimerModelType.STANDARD
-		} else if (timer is Daily) {
-			timerType = TimerModelType.DAILY
-		} else if (timer is Weekly) {
-			timerType = TimerModelType.WEEKLY
-		} else if (timer is Monthly) {
-			timerType = TimerModelType.MONTHLY
-		} else if (timer is Hourly) {
-			timerType = TimerModelType.HOURLY
-		} else {
-			logger.warning("Unknown timer type in model for timer "+timer.name)
-			timerType = TimerModelType.NONE
+	constructor(timer: BaseTimer) {
+		when (timer) {
+			is Standard -> {
+				timerType = TimerModelType.STANDARD
+			}
+			is Daily -> {
+				timerType = TimerModelType.DAILY
+			}
+			is Weekly -> {
+				timerType = TimerModelType.WEEKLY
+			}
+			is Monthly -> {
+				timerType = TimerModelType.MONTHLY
+			}
+			is Hourly -> {
+				timerType = TimerModelType.HOURLY
+			}
+			else -> {
+				logger.warning("Unknown timer type in model for timer "+timer.name)
+				timerType = TimerModelType.NONE
+			}
 		}
 		name = timer.name
 		setDurationFromTimer(timer)
@@ -88,10 +87,9 @@ class NewTimerModel {
 		}
 		name = name.replace('\n', ' ')
 		name = name.replace('\r', ' ')
-		if (name.length < 1) {
+		if (name.isEmpty()) {
 			name = " "
 		}
-
 	}
 
 	/**
@@ -107,13 +105,13 @@ class NewTimerModel {
 		tempDuration += getLongForString(seconds)
 		tempDuration += getLongForString(minutes)*60
 		tempDuration += getLongForString(hours)*3600
-		tempDuration += getLongForString(days)*(NewTimer.DAY_LENGTH_MILLIS/1000)
+		tempDuration += getLongForString(days)*(BaseTimer.DAY_LENGTH_MILLIS/1000)
 		tempDuration *= 1000
 		this.duration = tempDuration
 		sanitize()
 	}
 
-	fun setDurationFromTimer(timer: NewTimer) {
+	fun setDurationFromTimer(timer: BaseTimer) {
 		if (timer is Standard) {
 			this.duration = timer.duration
 		} else {
@@ -123,19 +121,26 @@ class NewTimerModel {
 
 	fun setTypeFromTypeString(text: String) {
 		val temp = text.toLow()
-		if (temp=="standard") {
-			timerType = TimerModelType.STANDARD
-		} else if (temp=="daily") {
-			timerType = TimerModelType.DAILY
-		} else if (temp=="weekly") {
-			timerType = TimerModelType.WEEKLY
-		} else if (temp=="monthly") {
-			timerType = TimerModelType.MONTHLY
-		} else if (temp=="hourly") {
-			timerType = TimerModelType.HOURLY
-		} else {
-			logger.warning("Unknown timer type in model for text $text")
-			timerType = TimerModelType.NONE
+		when (temp) {
+			"standard" -> {
+				timerType = TimerModelType.STANDARD
+			}
+			"daily" -> {
+				timerType = TimerModelType.DAILY
+			}
+			"weekly" -> {
+				timerType = TimerModelType.WEEKLY
+			}
+			"monthly" -> {
+				timerType = TimerModelType.MONTHLY
+			}
+			"hourly" -> {
+				timerType = TimerModelType.HOURLY
+			}
+			else -> {
+				logger.warning("Unknown timer type in model for text $text")
+				timerType = TimerModelType.NONE
+			}
 		}
 	}
 
@@ -165,12 +170,12 @@ class NewTimerModel {
 	 */
 	fun asDataMap(): Map<String, String> {
 		val theMap = HashMap<String, String>()
-		theMap[NewTimer.MAP_NAME] = this.name
-		theMap[NewTimer.MAP_DURATION] = ""+this.duration
-		theMap[NewTimer.MAP_TAB] = ""+MainWindow.instance.currentTab
-		theMap[NewTimer.MAP_AUDIO] = ""+this.alarm
-		theMap[NewTimer.MAP_LATEST_RESET] = ""+0
-		theMap[NewTimer.MAP_AUTO_RESET] = autoReset.toString()
+		theMap[BaseTimer.MAP_NAME] = this.name
+		theMap[BaseTimer.MAP_DURATION] = ""+this.duration
+		theMap[BaseTimer.MAP_TAB] = ""+MainWindow.instance.currentTab
+		theMap[BaseTimer.MAP_AUDIO] = ""+this.alarm
+		theMap[BaseTimer.MAP_LATEST_RESET] = ""+0
+		theMap[BaseTimer.MAP_AUTO_RESET] = autoReset.toString()
 		return theMap
 	}
 
@@ -192,7 +197,7 @@ class NewTimerModel {
 		 *
 		 * @param timer
 		 */
-		fun getDurationIfFieldExists(timer: NewTimer): Long {
+		fun getDurationIfFieldExists(timer: BaseTimer): Long {
 			if (timer is Standard) {
 				return timer.duration
 			}

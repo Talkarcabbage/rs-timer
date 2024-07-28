@@ -2,9 +2,7 @@ package io.github.talkarcabbage.rstimer.fxgui
 
 import com.google.common.collect.BiMap
 
-import io.github.talkarcabbage.rstimer.FXController
-import io.github.talkarcabbage.rstimer.Timer
-import io.github.talkarcabbage.rstimer.newtimers.NewTimer
+import io.github.talkarcabbage.rstimer.timers.BaseTimer
 import io.github.talkarcabbage.rstimer.persistence.ConfigManager
 import javafx.animation.AnimationTimer
 
@@ -12,7 +10,7 @@ import javafx.animation.AnimationTimer
  *
  * @author Talkarcabbage
  */
-class ProgressAnimNewTimer(internal val map: BiMap<ProgressPane, NewTimer>) : AnimationTimer() {
+class ProgressAnimNewTimer(internal val map: BiMap<ProgressPane, BaseTimer>) : AnimationTimer() {
 	internal var animCycle: Int = 1000000
 
 	private var firstFrame = true
@@ -25,8 +23,8 @@ class ProgressAnimNewTimer(internal val map: BiMap<ProgressPane, NewTimer>) : An
 					if (!firstFrame) timer.onTimerComplete()
 				}
 				pane.setProgress(timer.percentageComplete.toLong())
-				pane.bar.getTooltip().setText(timer.tooltipText)
-				pane.labelObject.getTooltip().setText(timer.tooltipText)
+				pane.bar.tooltip.text = timer.tooltipText
+				pane.labelObject.tooltip.text = timer.tooltipText
 			}
 		}
 		firstFrame = false

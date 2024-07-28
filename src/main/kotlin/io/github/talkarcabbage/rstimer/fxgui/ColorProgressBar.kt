@@ -1,7 +1,5 @@
 package io.github.talkarcabbage.rstimer.fxgui
 
-import java.util.logging.Logger
-
 import io.github.talkarcabbage.logger.LoggerManager
 import javafx.scene.control.ProgressBar
 
@@ -11,7 +9,7 @@ import javafx.scene.control.ProgressBar
  */
 class ColorProgressBar : ProgressBar { //NOSONAR We don't care about number of parent classes
 
-	constructor() : super() {}
+	constructor() : super()
 
 	constructor(arg0: Double) : super(arg0) {}
 

@@ -1,9 +1,9 @@
-package io.github.talkarcabbage.rstimer.newtimers
+package io.github.talkarcabbage.rstimer.timers
 
 import java.util.Calendar
 import java.util.TimeZone
 
-class Monthly : NewTimer {
+class Monthly : BaseTimer {
 
 	var latestReset: Long = 0
 		internal set
@@ -13,7 +13,7 @@ class Monthly : NewTimer {
 		get() = "Monthly"
 
 	override val tooltipText: String
-		get() = "Monthly Timer\n"+NewTimer.formatTimeRemaining(timeRemaining)
+		get() = "Monthly Timer\n"+formatTimeRemaining(timeRemaining)
 
 	override val percentageComplete: Int
 		get() {
@@ -61,7 +61,7 @@ class Monthly : NewTimer {
 					MAP_LATEST_RESET -> this.latestReset = java.lang.Long.parseLong(value)
 				}
 			} catch (e: NumberFormatException) {
-				NewTimer.logger.severe("Invalid timer number value $value for property $key")
+				logger.severe("Invalid timer number value $value for property $key")
 			}
 		}
 		duration = durationToNextMonth //Because daddy still doesn't like division by 0

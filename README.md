@@ -44,34 +44,6 @@ THIS PROGRAM IS NOT AFFILIATED WITH RUNESCAPE NOR JAGEX. THIS PROGRAM DOES NOT I
 
 # Building and Versioning
 
-This project includes preconfigured ANT versioning and packaging options.
+This project now uses Gradle for building and packaging as of v0.17.
 
-To use the ant compiler, you will need to download the Kotlin compiler -> https://github.com/JetBrains/kotlin/releases/tag/v1.3.50
-
-And place its contents in the project folder. You should be able to see the following file in the new folder, assuming rs-timer is where you have cloned the repository to: `rs-timer\kotlinc\lib\kotlin-ant.jar`
-
-### To display the current version used by ANT:
-```
-ant
-```
-
-### To package the current version into a jar:
-```
-ant dist
-```
-
-### To change the version and package the current version into a jar:
-```
-ant revision
-ant dist
-```
-Use `ant major`, `ant minor`, or `ant revision` to increment the respective parts of the version number.
-
-Note that changing the version and packaging the jar must occur as two separate ANT operations.
-
-### To automatically draft a new release using Travis CI:
-```
-git tag v0.0.1
-git push origin v0.0.1
-```
-Make sure to include a 'v' before all tags
+The 'jar' task should automatically create a jar for the **current** operating system when used. This has been tested for Linux and Windows environments only. Premade runnable jars for these operating systems are available in the Github Releases page.
